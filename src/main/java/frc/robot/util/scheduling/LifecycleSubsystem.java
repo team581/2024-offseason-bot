@@ -15,6 +15,8 @@ public class LifecycleSubsystem extends SubsystemBase {
   private final Stopwatch stopwatch = Stopwatch.getInstance();
   private final String loggerName;
 
+  protected final String subsystemName;
+
   private LifecycleStage previousStage = null;
 
   public LifecycleSubsystem(SubsystemPriority priority) {
@@ -23,8 +25,8 @@ public class LifecycleSubsystem extends SubsystemBase {
     LifecycleSubsystemManager.getInstance().registerSubsystem(this);
 
     String name = this.getClass().getSimpleName();
-    name = name.substring(name.lastIndexOf('.') + 1);
-    loggerName = "Scheduler/LifecycleSubsystem/" + name + ".periodic()";
+    subsystemName = name.substring(name.lastIndexOf('.') + 1);
+    loggerName = "Scheduler/LifecycleSubsystem/" + subsystemName + ".periodic()";
   }
 
   /** {@link IterativeRobotBase#robotPeriodic()} */
