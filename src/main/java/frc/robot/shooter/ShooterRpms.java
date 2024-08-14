@@ -1,0 +1,8 @@
+package frc.robot.shooter;
+
+public class ShooterRpms {
+  public static final double SUBWOOFER = 3000.0;
+  public static final double DROP = 500.0;
+  public static final double PODIUM = 4000.0;
+  public static final double IDLE_WITH_GP = 1000.0;
+}
