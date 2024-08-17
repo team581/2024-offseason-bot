@@ -14,7 +14,7 @@ public class QueuerSubsystem extends StateMachine<QueuerState> {
   private final DigitalInput sensor;
   private boolean sensorHasNote = false;
   private boolean debouncedSensorHasNote = false;
-  private final Debouncer debouncer= new Debouncer(3 * 0.02);
+  private final Debouncer debouncer= new Debouncer(3.0 * 0.02);
 
   public QueuerSubsystem(TalonFX motor, DigitalInput sensor) {
     super(SubsystemPriority.QUEUER, QueuerState.IDLE_NO_GP);
@@ -54,8 +54,12 @@ public class QueuerSubsystem extends StateMachine<QueuerState> {
   }
   @Override
   public void robotPeriodic(){
+    super.robotPeriodic();
+
     DogLog.log("Queuer/StatorCurrent", motor.getStatorCurrent().getValueAsDouble());
     DogLog.log("Queuer/SupplyCurrent", motor.getSupplyCurrent().getValueAsDouble());
     DogLog.log("Queuer/AppliedVoltage", motor.getMotorVoltage().getValueAsDouble());
+    DogLog.log("Queuer/RawSensor",sensorHasNote);
+      DogLog.log("Queuer/DebouncedSensor",hasNote());
   }
 }
