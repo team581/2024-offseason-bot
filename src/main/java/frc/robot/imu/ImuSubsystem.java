@@ -1,7 +1,6 @@
 package frc.robot.imu;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
-
 import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.util.scheduling.SubsystemPriority;
@@ -18,7 +17,7 @@ public class ImuSubsystem extends StateMachine<ImuState> {
 
   @Override
   protected void collectInputs() {
-    robotHeading =  Rotation2d.fromDegrees(imu.getYaw().getValue());
+    robotHeading = Rotation2d.fromDegrees(imu.getYaw().getValue());
   }
 
   public Rotation2d getRobotHeading() {

@@ -2,7 +2,6 @@ package frc.robot.shooter;
 
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import frc.robot.util.scheduling.SubsystemPriority;
@@ -39,11 +38,13 @@ public class ShooterSubsystem extends StateMachine<ShooterState> {
   public boolean atGoal() {
     return switch (getState()) {
       case SUBWOOFER_SHOT -> MathUtil.isNear(ShooterRpms.SUBWOOFER, shooterRPM, 50);
-      case IDLE_WITH_GP, IDLE_NO_GP->true;
-      case PODIUM_SHOT-> MathUtil.isNear(ShooterRpms.PODIUM,shooterRPM,50);
-      case DROP->MathUtil.isNear(ShooterRpms.DROP,shooterRPM,50);
-      case FEEDING->MathUtil.isNear(feedSpotDistanceToRpm.get(distanceToFeedSpot),shooterRPM,50);
-      case SPEAKER_SHOT->MathUtil.isNear(speakerDistanceToRpm.get(distanceToSpeaker), shooterRPM, 50);
+      case IDLE_WITH_GP, IDLE_NO_GP -> true;
+      case PODIUM_SHOT -> MathUtil.isNear(ShooterRpms.PODIUM, shooterRPM, 50);
+      case DROP -> MathUtil.isNear(ShooterRpms.DROP, shooterRPM, 50);
+      case FEEDING ->
+          MathUtil.isNear(feedSpotDistanceToRpm.get(distanceToFeedSpot), shooterRPM, 50);
+      case SPEAKER_SHOT ->
+          MathUtil.isNear(speakerDistanceToRpm.get(distanceToSpeaker), shooterRPM, 50);
     };
   }
 
@@ -66,11 +67,13 @@ public class ShooterSubsystem extends StateMachine<ShooterState> {
   protected void afterTransition(ShooterState newState) {
     switch (newState) {
       case IDLE_NO_GP -> motor.disable();
-      case IDLE_WITH_GP -> motor.setControl(velocityRequest.withVelocity(ShooterRpms.IDLE_WITH_GP / 60.0));
+      case IDLE_WITH_GP ->
+          motor.setControl(velocityRequest.withVelocity(ShooterRpms.IDLE_WITH_GP / 60.0));
       case SPEAKER_SHOT ->
           motor.setControl(
               velocityRequest.withVelocity(speakerDistanceToRpm.get(distanceToSpeaker) / 60.0));
-      case SUBWOOFER_SHOT -> motor.setControl(velocityRequest.withVelocity(ShooterRpms.SUBWOOFER / 60.0));
+      case SUBWOOFER_SHOT ->
+          motor.setControl(velocityRequest.withVelocity(ShooterRpms.SUBWOOFER / 60.0));
       case FEEDING ->
           motor.setControl(
               velocityRequest.withVelocity(speakerDistanceToRpm.get(distanceToFeedSpot) / 60.0));

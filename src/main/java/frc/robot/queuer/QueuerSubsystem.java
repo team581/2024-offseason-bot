@@ -1,7 +1,6 @@
 package frc.robot.queuer;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
@@ -15,4 +14,5 @@ public class QueuerSubsystem extends StateMachine<QueuerState> {
 
     this.sensor = sensor;
     this.motor = motor;
-  }}
+  }
+}
