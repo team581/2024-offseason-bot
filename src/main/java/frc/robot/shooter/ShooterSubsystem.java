@@ -3,6 +3,7 @@ package frc.robot.shooter;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import frc.robot.util.scheduling.SubsystemPriority;
@@ -80,5 +81,11 @@ public class ShooterSubsystem extends StateMachine<ShooterState> {
   }
 
   @Override
-  public void robotPeriodic() {}
+  public void robotPeriodic() {
+    // Log stator current, supply current, current velocity in RPM, applied voltage
+    DogLog.log("Shooter/StatorCurrent",motor.getStatorCurrent().getValueAsDouble());
+    DogLog.log("Shooter/SupplyCurrent", motor.getSupplyCurrent().getValueAsDouble());
+    DogLog.log("Shooter/RPM",motor.getVelocity().getValueAsDouble()*60.0);
+    DogLog.log("Shooter/AppliedVoltage",motor.getMotorVoltage().getValueAsDouble());
+  }
 }
