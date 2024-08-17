@@ -2,7 +2,6 @@ package frc.robot.shooter;
 
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
@@ -40,11 +39,13 @@ public class ShooterSubsystem extends StateMachine<ShooterState> {
   public boolean atGoal() {
     return switch (getState()) {
       case SUBWOOFER_SHOT -> MathUtil.isNear(ShooterRpms.SUBWOOFER, shooterRPM, 50);
-      case IDLE_WARMUP, IDLE_STOPPED->true;
-      case PODIUM_SHOT-> MathUtil.isNear(ShooterRpms.PODIUM,shooterRPM,50);
-      case DROP->MathUtil.isNear(ShooterRpms.DROP,shooterRPM,50);
-      case FEEDING->MathUtil.isNear(feedSpotDistanceToRpm.get(distanceToFeedSpot),shooterRPM,50);
-      case SPEAKER_SHOT->MathUtil.isNear(speakerDistanceToRpm.get(distanceToSpeaker), shooterRPM, 50);
+      case IDLE_WARMUP, IDLE_STOPPED -> true;
+      case PODIUM_SHOT -> MathUtil.isNear(ShooterRpms.PODIUM, shooterRPM, 50);
+      case DROP -> MathUtil.isNear(ShooterRpms.DROP, shooterRPM, 50);
+      case FEEDING ->
+          MathUtil.isNear(feedSpotDistanceToRpm.get(distanceToFeedSpot), shooterRPM, 50);
+      case SPEAKER_SHOT ->
+          MathUtil.isNear(speakerDistanceToRpm.get(distanceToSpeaker), shooterRPM, 50);
     };
   }
 
@@ -67,7 +68,8 @@ public class ShooterSubsystem extends StateMachine<ShooterState> {
   protected void afterTransition(ShooterState newState) {
     switch (newState) {
       case IDLE_STOPPED -> motor.disable();
-      case IDLE_WARMUP -> motor.setControl(velocityRequest.withVelocity(ShooterRpms.IDLE_WARMUP / 60.0));
+      case IDLE_WARMUP ->
+          motor.setControl(velocityRequest.withVelocity(ShooterRpms.IDLE_WARMUP / 60.0));
       case SPEAKER_SHOT ->
           motor.setControl(
               velocityRequest.withVelocity(speakerDistanceToRpm.get(distanceToSpeaker) / 60.0));
@@ -86,9 +88,9 @@ public class ShooterSubsystem extends StateMachine<ShooterState> {
 
     super.robotPeriodic();
 
-    DogLog.log("Shooter/StatorCurrent",motor.getStatorCurrent().getValueAsDouble());
+    DogLog.log("Shooter/StatorCurrent", motor.getStatorCurrent().getValueAsDouble());
     DogLog.log("Shooter/SupplyCurrent", motor.getSupplyCurrent().getValueAsDouble());
-    DogLog.log("Shooter/RPM",motor.getVelocity().getValueAsDouble()*60.0);
-    DogLog.log("Shooter/AppliedVoltage",motor.getMotorVoltage().getValueAsDouble());
+    DogLog.log("Shooter/RPM", motor.getVelocity().getValueAsDouble() * 60.0);
+    DogLog.log("Shooter/AppliedVoltage", motor.getMotorVoltage().getValueAsDouble());
   }
 }
