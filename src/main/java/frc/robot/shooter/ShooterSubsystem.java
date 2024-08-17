@@ -28,7 +28,7 @@ public class ShooterSubsystem extends StateMachine<ShooterState> {
   }
 
   public ShooterSubsystem(TalonFX motor) {
-    super(SubsystemPriority.SHOOTER, ShooterState.IDLE_NO_GP);
+    super(SubsystemPriority.SHOOTER, ShooterState.IDLE_STOPPED);
     this.motor = motor;
 
     // TODO: Tune lookup table
@@ -40,7 +40,7 @@ public class ShooterSubsystem extends StateMachine<ShooterState> {
   public boolean atGoal() {
     return switch (getState()) {
       case SUBWOOFER_SHOT -> MathUtil.isNear(ShooterRpms.SUBWOOFER, shooterRPM, 50);
-      case IDLE_WITH_GP, IDLE_NO_GP->true;
+      case IDLE_WARMUP, IDLE_STOPPED->true;
       case PODIUM_SHOT-> MathUtil.isNear(ShooterRpms.PODIUM,shooterRPM,50);
       case DROP->MathUtil.isNear(ShooterRpms.DROP,shooterRPM,50);
       case FEEDING->MathUtil.isNear(feedSpotDistanceToRpm.get(distanceToFeedSpot),shooterRPM,50);
@@ -66,8 +66,8 @@ public class ShooterSubsystem extends StateMachine<ShooterState> {
   @Override
   protected void afterTransition(ShooterState newState) {
     switch (newState) {
-      case IDLE_NO_GP -> motor.disable();
-      case IDLE_WITH_GP -> motor.setControl(velocityRequest.withVelocity(ShooterRpms.IDLE_WITH_GP / 60.0));
+      case IDLE_STOPPED -> motor.disable();
+      case IDLE_WARMUP -> motor.setControl(velocityRequest.withVelocity(ShooterRpms.IDLE_WARMUP / 60.0));
       case SPEAKER_SHOT ->
           motor.setControl(
               velocityRequest.withVelocity(speakerDistanceToRpm.get(distanceToSpeaker) / 60.0));
@@ -82,7 +82,9 @@ public class ShooterSubsystem extends StateMachine<ShooterState> {
 
   @Override
   public void robotPeriodic() {
-    // Log stator current, supply current, current velocity in RPM, applied voltage
+
+    super.robotPeriodic();
+
     DogLog.log("Shooter/StatorCurrent",motor.getStatorCurrent().getValueAsDouble());
     DogLog.log("Shooter/SupplyCurrent", motor.getSupplyCurrent().getValueAsDouble());
     DogLog.log("Shooter/RPM",motor.getVelocity().getValueAsDouble()*60.0);
