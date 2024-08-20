@@ -1,11 +1,18 @@
 package frc.robot.config;
 
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.mechanisms.swerve.utility.PhoenixPIDController;
+import edu.wpi.first.math.filter.Debouncer;
+import frc.robot.config.RobotConfig.QueuerConfig;
 import frc.robot.config.RobotConfig.SwerveConfig;
 
 class CompConfig {
+  private static final String CANIVORE_NAME = "581CANivore";
+  private static final String RIO_CAN_NAME = "rio";
+
   private static final ClosedLoopRampsConfigs CLOSED_LOOP_RAMP =
       new ClosedLoopRampsConfigs()
           .withDutyCycleClosedLoopRampPeriod(0.04)
@@ -20,8 +27,19 @@ class CompConfig {
   public static final RobotConfig competitionBot =
       new RobotConfig(
           "competition",
-          "581CANivore",
-          new SwerveConfig(new PhoenixPIDController(20, 0, 2), true, true, true));
+          new SwerveConfig(new PhoenixPIDController(20, 0, 2), true, true, true),
+          new QueuerConfig(
+              999,
+              CANIVORE_NAME,
+              999,
+              new TalonFXConfiguration()
+                  .withClosedLoopRamps(CLOSED_LOOP_RAMP)
+                  .withOpenLoopRamps(OPEN_LOOP_RAMP)
+                  .withCurrentLimits(
+                      new CurrentLimitsConfigs()
+                          .withSupplyCurrentLimit(25)
+                          .withStatorCurrentLimit(20)),
+              new Debouncer(3.0 * 0.02)));
 
   private CompConfig() {}
 }

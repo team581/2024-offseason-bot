@@ -4,6 +4,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.DigitalInput;
+import frc.robot.config.RobotConfig;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
 
@@ -12,13 +13,15 @@ public class QueuerSubsystem extends StateMachine<QueuerState> {
   private final DigitalInput sensor;
   private boolean sensorHasNote = false;
   private boolean debouncedSensorHasNote = false;
-  private final Debouncer debouncer = new Debouncer(3.0 * 0.02);
+  private final Debouncer debouncer = RobotConfig.get().queuer().debouncer();
 
   public QueuerSubsystem(TalonFX motor, DigitalInput sensor) {
     super(SubsystemPriority.QUEUER, QueuerState.IDLE_NO_GP);
 
     this.sensor = sensor;
     this.motor = motor;
+
+    motor.getConfigurator().apply(RobotConfig.get().queuer().motorConfig());
   }
 
   public void seState(QueuerState newState) {
