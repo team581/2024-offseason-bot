@@ -43,6 +43,7 @@ public class VisionSubsystem extends StateMachine<VisionState> {
       processedVisionResult = Optional.empty();
     } else {
       var rawData = rawVisionResult.get();
+      // TODO: We don't do anything with this VisionResult??
       new VisionResult(VisionUtil.interpolatePose(rawData.pose()), rawData.timestamp());
     }
   }
