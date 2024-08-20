@@ -131,6 +131,7 @@ spotless {
 		googleJavaFormat()
 		trimTrailingWhitespace()
 		endWithNewline()
+		licenseHeader ''
 
 		targetExclude('src/main/java/frc/robot/generated/BuildConstants.java')
 	}
