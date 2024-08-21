@@ -59,12 +59,6 @@ public class ShooterSubsystem extends StateMachine<ShooterState> {
   }
 
   @Override
-  protected ShooterState getNextState(ShooterState currentState) {
-    // The shooter has no sensor, so some other manager will need to set shooter state
-    return currentState;
-  }
-
-  @Override
   protected void afterTransition(ShooterState newState) {
     switch (newState) {
       case IDLE_STOPPED -> motor.disable();
