@@ -30,15 +30,7 @@ public abstract class StateMachine<S extends Enum<S>> extends LifecycleSubsystem
 
     collectInputs();
 
-    var stateBeforeTransitions = state;
-    state = getNextState(state);
-
-    if (state != stateBeforeTransitions) {
-      DogLog.log(subsystemName + "/StateAfterTransition", state);
-      afterTransition(state);
-    } else {
-      DogLog.log(subsystemName + "/StateAfterTransition", "(no change)");
-    }
+    setStateFromRequest(getNextState(state));
   }
 
   /**
@@ -73,7 +65,14 @@ public abstract class StateMachine<S extends Enum<S>> extends LifecycleSubsystem
    * @param requestedState The new state to transition to.
    */
   protected void setStateFromRequest(S requestedState) {
-    this.state = requestedState;
+    if (state != requestedState) {
+      DogLog.log(subsystemName + "/StateAfterTransition", requestedState);
+      afterTransition(requestedState);
+    } else {
+      DogLog.log(subsystemName + "/StateAfterTransition", "(no change)");
+    }
+
+    state = requestedState;
   }
 
   /**
