@@ -3,10 +3,13 @@ package frc.robot.config;
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.mechanisms.swerve.utility.PhoenixPIDController;
 import edu.wpi.first.math.filter.Debouncer;
+import frc.robot.config.RobotConfig.IntakeConfig;
 import frc.robot.config.RobotConfig.QueuerConfig;
+import frc.robot.config.RobotConfig.ShooterConfig;
 import frc.robot.config.RobotConfig.SwerveConfig;
 
 class CompConfig {
@@ -39,6 +42,35 @@ class CompConfig {
                       new CurrentLimitsConfigs()
                           .withSupplyCurrentLimit(25)
                           .withStatorCurrentLimit(20)),
+              new Debouncer(3.0 * 0.02)),
+          new ShooterConfig(
+              999,
+              CANIVORE_NAME,
+              new TalonFXConfiguration()
+                  .withClosedLoopRamps(CLOSED_LOOP_RAMP)
+                  .withOpenLoopRamps(OPEN_LOOP_RAMP)
+                  .withCurrentLimits(
+                      new CurrentLimitsConfigs()
+                          .withStatorCurrentLimit(40)
+                          .withSupplyCurrentLimit(45))
+                  .withSlot0(new Slot0Configs().withKV(0).withKP(0).withKI(0).withKD(0)),
+              feedSpotDistanceToRpm -> {
+                feedSpotDistanceToRpm.put(123.0, 321.0);
+              },
+              speakerDistanceToRpm -> {
+                speakerDistanceToRpm.put(123.0, 321.0);
+              }),
+          new IntakeConfig(
+              999,
+              CANIVORE_NAME,
+              999,
+              new TalonFXConfiguration()
+                  .withClosedLoopRamps(CLOSED_LOOP_RAMP)
+                  .withOpenLoopRamps(OPEN_LOOP_RAMP)
+                  .withCurrentLimits(
+                      new CurrentLimitsConfigs()
+                          .withStatorCurrentLimit(20)
+                          .withSupplyCurrentLimit(25)),
               new Debouncer(3.0 * 0.02)));
 
   private CompConfig() {}

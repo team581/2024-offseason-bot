@@ -5,6 +5,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import frc.robot.config.RobotConfig;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
 
@@ -29,11 +30,10 @@ public class ShooterSubsystem extends StateMachine<ShooterState> {
   public ShooterSubsystem(TalonFX motor) {
     super(SubsystemPriority.SHOOTER, ShooterState.IDLE_STOPPED);
     this.motor = motor;
+    motor.getConfigurator().apply(RobotConfig.get().shooter().motorConfig());
 
-    // TODO: Tune lookup table
-    speakerDistanceToRpm.put(123.0, 321.0);
-
-    feedSpotDistanceToRpm.put(123.0, 321.0);
+    RobotConfig.get().shooter().feedSpotDistanceToRpm().accept(feedSpotDistanceToRpm);
+    RobotConfig.get().shooter().speakerDistanceToRpm().accept(speakerDistanceToRpm);
   }
 
   public boolean atGoal() {
