@@ -11,7 +11,8 @@ public record RobotConfig(
     SwerveConfig swerve,
     QueuerConfig queuer,
     ShooterConfig shooter,
-    IntakeConfig intake) {
+    IntakeConfig intake,
+    ArmConfig arm) {
   public record SwerveConfig(
       PhoenixPIDController snapController,
       boolean invertRotation,
@@ -38,6 +39,15 @@ public record RobotConfig(
       int sensorID,
       TalonFXConfiguration motorConfig,
       Debouncer debouncer) {}
+
+  public record ArmConfig(
+      String canBusName,
+      int leftMotorID,
+      int rightMotorID,
+      TalonFXConfiguration leftMotorConfig,
+      TalonFXConfiguration rightMotorConfig,
+      Consumer<InterpolatingDoubleTreeMap> feedSpotDistanceToAngle,
+      Consumer<InterpolatingDoubleTreeMap> speakerDistanceToAngle) {}
 
   // TODO: Change this to false during events
   public static final boolean IS_DEVELOPMENT = true;

@@ -7,6 +7,7 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.mechanisms.swerve.utility.PhoenixPIDController;
 import edu.wpi.first.math.filter.Debouncer;
+import frc.robot.config.RobotConfig.ArmConfig;
 import frc.robot.config.RobotConfig.IntakeConfig;
 import frc.robot.config.RobotConfig.QueuerConfig;
 import frc.robot.config.RobotConfig.ShooterConfig;
@@ -71,7 +72,31 @@ class CompConfig {
                       new CurrentLimitsConfigs()
                           .withStatorCurrentLimit(20)
                           .withSupplyCurrentLimit(25)),
-              new Debouncer(3.0 * 0.02)));
+              new Debouncer(3.0 * 0.02)),
+          new ArmConfig(
+              CANIVORE_NAME,
+              999,
+              999,
+              new TalonFXConfiguration()
+                  .withClosedLoopRamps(CLOSED_LOOP_RAMP)
+                  .withOpenLoopRamps(OPEN_LOOP_RAMP)
+                  .withCurrentLimits(
+                      new CurrentLimitsConfigs()
+                          .withStatorCurrentLimit(20)
+                          .withSupplyCurrentLimit(25)),
+              new TalonFXConfiguration()
+                  .withClosedLoopRamps(CLOSED_LOOP_RAMP)
+                  .withOpenLoopRamps(OPEN_LOOP_RAMP)
+                  .withCurrentLimits(
+                      new CurrentLimitsConfigs()
+                          .withStatorCurrentLimit(20)
+                          .withSupplyCurrentLimit(25)),
+              feedSpotDistanceToAngle -> {
+                feedSpotDistanceToAngle.put(123.0, 321.0);
+              },
+              speakerDistanceToAngle -> {
+                speakerDistanceToAngle.put(123.0, 321.0);
+              }));
 
   private CompConfig() {}
 }
