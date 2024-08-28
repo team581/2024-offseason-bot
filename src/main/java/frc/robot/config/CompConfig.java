@@ -96,7 +96,9 @@ class CompConfig {
               },
               speakerDistanceToAngle -> {
                 speakerDistanceToAngle.put(123.0, 321.0);
-              }));
+
+              },
+              0.0));
 
   private CompConfig() {}
 }

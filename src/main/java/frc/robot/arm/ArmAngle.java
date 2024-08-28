@@ -11,5 +11,4 @@ public class ArmAngle {
   public static final Rotation2d CLIMBING_1_LINEUP = Rotation2d.fromDegrees(30);
   public static final Rotation2d CLIMBING_2_HANGING = Rotation2d.fromDegrees(20);
   public static final Rotation2d AMP = Rotation2d.fromDegrees(20);
-
 }

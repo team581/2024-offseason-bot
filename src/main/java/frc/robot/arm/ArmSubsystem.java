@@ -6,6 +6,7 @@ import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.config.RobotConfig;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
@@ -17,6 +18,8 @@ public class ArmSubsystem extends StateMachine<ArmState> {
   private double rightMotorAngle;
   private double distanceToSpeaker;
   private double distanceToFeedSpot;
+  private double lowestSeenAngleLeft = Double.MAX_VALUE;
+  private double lowestSeenAngleRight = Double.MIN_VALUE;
   private InterpolatingDoubleTreeMap speakerDistanceToAngle = new InterpolatingDoubleTreeMap();
   private InterpolatingDoubleTreeMap feedSpotDistanceToAngle = new InterpolatingDoubleTreeMap();
   private final PositionVoltage positionRequest =
@@ -41,14 +44,15 @@ public class ArmSubsystem extends StateMachine<ArmState> {
   }
 
   public void setState(ArmState newState) {
-    setStateFromRequest(newState);
+    if (getState() != ArmState.PRE_MATCH_HOMING) {
+
+      setStateFromRequest(newState);
+    }
   }
 
   public boolean atGoal() {
     return switch (getState()) {
-      case IDLE ->
-          MathUtil.isNear(ArmAngle.IDLE.getDegrees(), leftMotorAngle, 1)
-              && MathUtil.isNear(ArmAngle.IDLE.getDegrees(), rightMotorAngle, 1);
+      case IDLE, PRE_MATCH_HOMING -> true;
       case SPEAKER_SHOT ->
           MathUtil.isNear(speakerDistanceToAngle.get(distanceToSpeaker), leftMotorAngle, 1)
               && MathUtil.isNear(speakerDistanceToAngle.get(distanceToSpeaker), rightMotorAngle, 1);
@@ -68,9 +72,11 @@ public class ArmSubsystem extends StateMachine<ArmState> {
       case CLIMBING_1_LINEUP ->
           MathUtil.isNear(ArmAngle.CLIMBING_1_LINEUP.getDegrees(), leftMotorAngle, 1)
               && MathUtil.isNear(ArmAngle.CLIMBING_1_LINEUP.getDegrees(), rightMotorAngle, 1);
-      case CLIMBING_2_HANGING->MathUtil.isNear(ArmAngle.CLIMBING_2_HANGING.getDegrees(), leftMotorAngle, 1)
+      case CLIMBING_2_HANGING ->
+          MathUtil.isNear(ArmAngle.CLIMBING_2_HANGING.getDegrees(), leftMotorAngle, 1)
               && MathUtil.isNear(ArmAngle.CLIMBING_2_HANGING.getDegrees(), rightMotorAngle, 1);
-      case AMP->MathUtil.isNear(ArmAngle.AMP.getDegrees(), leftMotorAngle, 1)
+      case AMP ->
+          MathUtil.isNear(ArmAngle.AMP.getDegrees(), leftMotorAngle, 1)
               && MathUtil.isNear(ArmAngle.AMP.getDegrees(), rightMotorAngle, 1);
     };
   }
@@ -79,23 +85,31 @@ public class ArmSubsystem extends StateMachine<ArmState> {
   protected void collectInputs() {
     leftMotorAngle = Units.rotationsToDegrees(leftMotor.getPosition().getValueAsDouble());
     rightMotorAngle = Units.rotationsToDegrees(rightMotor.getPosition().getValueAsDouble());
+    if (DriverStation.isDisabled()) {
+      lowestSeenAngleLeft = Math.min(lowestSeenAngleLeft, leftMotorAngle);
+      lowestSeenAngleRight = Math.min(lowestSeenAngleRight, rightMotorAngle);
+    }
   }
 
   @Override
   protected void afterTransition(ArmState newState) {
     switch (newState) {
-      case IDLE -> {
+      case PRE_MATCH_HOMING, IDLE -> {
         leftMotor.disable();
         rightMotor.disable();
       }
 
       case CLIMBING_1_LINEUP -> {
-        leftMotor.setControl(positionRequest.withPosition(ArmAngle.CLIMBING_1_LINEUP.getRotations()));
-        rightMotor.setControl(positionRequest.withPosition(ArmAngle.CLIMBING_1_LINEUP.getRotations()));
+        leftMotor.setControl(
+            positionRequest.withPosition(ArmAngle.CLIMBING_1_LINEUP.getRotations()));
+        rightMotor.setControl(
+            positionRequest.withPosition(ArmAngle.CLIMBING_1_LINEUP.getRotations()));
       }
       case CLIMBING_2_HANGING -> {
-        leftMotor.setControl(positionRequest.withPosition(ArmAngle.CLIMBING_2_HANGING.getRotations()));
-        rightMotor.setControl(positionRequest.withPosition(ArmAngle.CLIMBING_2_HANGING.getRotations()));
+        leftMotor.setControl(
+            positionRequest.withPosition(ArmAngle.CLIMBING_2_HANGING.getRotations()));
+        rightMotor.setControl(
+            positionRequest.withPosition(ArmAngle.CLIMBING_2_HANGING.getRotations()));
       }
       case DROP -> {
         leftMotor.setControl(positionRequest.withPosition(ArmAngle.DROP.getRotations()));
@@ -122,7 +136,7 @@ public class ArmSubsystem extends StateMachine<ArmState> {
         leftMotor.setControl(positionRequest.withPosition(newAngle));
         rightMotor.setControl(positionRequest.withPosition(newAngle));
       }
-      case AMP->{
+      case AMP -> {
         leftMotor.setControl(positionRequest.withPosition(ArmAngle.AMP.getRotations()));
         rightMotor.setControl(positionRequest.withPosition(ArmAngle.AMP.getRotations()));
       }
@@ -142,5 +156,11 @@ public class ArmSubsystem extends StateMachine<ArmState> {
     DogLog.log("Arm/Right/SupplyCurrent", rightMotor.getSupplyCurrent().getValueAsDouble());
     DogLog.log("Arm/Right/ArmAngle", rightMotor.getPosition().getValueAsDouble());
     DogLog.log("Arm/Right/AppliedVoltage", rightMotor.getMotorVoltage().getValueAsDouble());
+
+    if (DriverStation.isEnabled() && getState() == ArmState.PRE_MATCH_HOMING) {
+
+      // We are enabled and still in pre match homing
+      // Reset the motor positions, and then transition to idle state
+    }
   }
 }

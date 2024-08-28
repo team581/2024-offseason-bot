@@ -9,5 +9,7 @@ public enum ArmState {
   PODIUM_SHOT,
   CLIMBING_1_LINEUP,
   CLIMBING_2_HANGING,
-  AMP;
+  AMP,
+
+  PRE_MATCH_HOMING;
 }
