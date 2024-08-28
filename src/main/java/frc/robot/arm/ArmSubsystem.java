@@ -65,9 +65,13 @@ public class ArmSubsystem extends StateMachine<ArmState> {
       case PODIUM_SHOT ->
           MathUtil.isNear(ArmAngle.PODIUM.getDegrees(), leftMotorAngle, 1)
               && MathUtil.isNear(ArmAngle.PODIUM.getDegrees(), rightMotorAngle, 1);
-      case CLIMBING ->
-          MathUtil.isNear(ArmAngle.CLIMBING.getDegrees(), leftMotorAngle, 1)
-              && MathUtil.isNear(ArmAngle.CLIMBING.getDegrees(), rightMotorAngle, 1);
+      case CLIMBING_1_LINEUP ->
+          MathUtil.isNear(ArmAngle.CLIMBING_1_LINEUP.getDegrees(), leftMotorAngle, 1)
+              && MathUtil.isNear(ArmAngle.CLIMBING_1_LINEUP.getDegrees(), rightMotorAngle, 1);
+      case CLIMBING_2_HANGING->MathUtil.isNear(ArmAngle.CLIMBING_2_HANGING.getDegrees(), leftMotorAngle, 1)
+              && MathUtil.isNear(ArmAngle.CLIMBING_2_HANGING.getDegrees(), rightMotorAngle, 1);
+      case AMP->MathUtil.isNear(ArmAngle.AMP.getDegrees(), leftMotorAngle, 1)
+              && MathUtil.isNear(ArmAngle.AMP.getDegrees(), rightMotorAngle, 1);
     };
   }
 
@@ -85,9 +89,13 @@ public class ArmSubsystem extends StateMachine<ArmState> {
         rightMotor.disable();
       }
 
-      case CLIMBING -> {
-        leftMotor.setControl(positionRequest.withPosition(ArmAngle.CLIMBING.getRotations()));
-        rightMotor.setControl(positionRequest.withPosition(ArmAngle.CLIMBING.getRotations()));
+      case CLIMBING_1_LINEUP -> {
+        leftMotor.setControl(positionRequest.withPosition(ArmAngle.CLIMBING_1_LINEUP.getRotations()));
+        rightMotor.setControl(positionRequest.withPosition(ArmAngle.CLIMBING_1_LINEUP.getRotations()));
+      }
+      case CLIMBING_2_HANGING -> {
+        leftMotor.setControl(positionRequest.withPosition(ArmAngle.CLIMBING_2_HANGING.getRotations()));
+        rightMotor.setControl(positionRequest.withPosition(ArmAngle.CLIMBING_2_HANGING.getRotations()));
       }
       case DROP -> {
         leftMotor.setControl(positionRequest.withPosition(ArmAngle.DROP.getRotations()));
@@ -113,6 +121,10 @@ public class ArmSubsystem extends StateMachine<ArmState> {
 
         leftMotor.setControl(positionRequest.withPosition(newAngle));
         rightMotor.setControl(positionRequest.withPosition(newAngle));
+      }
+      case AMP->{
+        leftMotor.setControl(positionRequest.withPosition(ArmAngle.AMP.getRotations()));
+        rightMotor.setControl(positionRequest.withPosition(ArmAngle.AMP.getRotations()));
       }
     }
   }

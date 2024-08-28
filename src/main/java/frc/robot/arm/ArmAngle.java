@@ -8,7 +8,8 @@ public class ArmAngle {
   public static final Rotation2d DROP = Rotation2d.fromDegrees(5);
   public static final Rotation2d PODIUM = Rotation2d.fromDegrees(20);
   public static final Rotation2d IDLE = Rotation2d.fromDegrees(0);
-  public static final Rotation2d CLIMBING = Rotation2d.fromDegrees(30);
-  // TODO: Rename climbing to be CLIMBING_1_LINEUP, and add a new CLIMBING_2_HANGING
-  // TODO: add amping??
+  public static final Rotation2d CLIMBING_1_LINEUP = Rotation2d.fromDegrees(30);
+  public static final Rotation2d CLIMBING_2_HANGING = Rotation2d.fromDegrees(20);
+  public static final Rotation2d AMP = Rotation2d.fromDegrees(20);
+
 }
