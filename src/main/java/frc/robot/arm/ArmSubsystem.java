@@ -4,6 +4,7 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -159,8 +160,13 @@ public class ArmSubsystem extends StateMachine<ArmState> {
 
     if (DriverStation.isEnabled() && getState() == ArmState.PRE_MATCH_HOMING) {
 
+      
+    return Rotation2d.fromDegrees(
+        RobotConfig.get().arm().homingAngle()
+            + (rightMotorAngle - lowestSeenAngleLeft));
+  }
       // We are enabled and still in pre match homing
       // Reset the motor positions, and then transition to idle state
     }
   }
-}
+
