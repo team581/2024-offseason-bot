@@ -4,7 +4,6 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -159,14 +158,33 @@ public class ArmSubsystem extends StateMachine<ArmState> {
     DogLog.log("Arm/Right/AppliedVoltage", rightMotor.getMotorVoltage().getValueAsDouble());
 
     if (DriverStation.isEnabled() && getState() == ArmState.PRE_MATCH_HOMING) {
+      Double homedAngle = getHomeAngleFromLowestSeen();
 
-      
-    return Rotation2d.fromDegrees(
-        RobotConfig.get().arm().homingAngle()
-            + (rightMotorAngle - lowestSeenAngleLeft));
-  }
-      // We are enabled and still in pre match homing
-      // Reset the motor positions, and then transition to idle state
+      leftMotor.setPosition(Units.degreesToRotations(homedAngle));
+      rightMotor.setPosition(Units.degreesToRotations(homedAngle));
+      setState(ArmState.IDLE);
     }
+
+    // We are enabled and still in pre match homing
+    // Reset the motor positions, and then transition to idle state
   }
 
+  private double getHomeAngleFromLowestSeen() {
+    return RobotConfig.get().arm().minAngle() + (getAngle() - lowestSeenAngleLeft);
+  }
+
+  public double getAngle() {
+
+    return Units.rotationsToDegrees(leftMotor.getPosition().getValueAsDouble());
+  }
+
+  private static double clampAngle(double angle) {
+    if (angle < RobotConfig.get().arm().minAngle()) {
+      angle = RobotConfig.get().arm().minAngle();
+
+    } else if (angle > RobotConfig.get().arm().maxAngle()) {
+      angle = RobotConfig.get().arm().maxAngle();
+    }
+    return angle;
+  }
+}
