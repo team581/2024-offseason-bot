@@ -1,6 +1,7 @@
 package frc.robot.arm;
 
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.hardware.TalonFX;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
@@ -23,8 +24,12 @@ public class ArmSubsystem extends StateMachine<ArmState> {
   private InterpolatingDoubleTreeMap speakerDistanceToAngle = new InterpolatingDoubleTreeMap();
   private InterpolatingDoubleTreeMap feedSpotDistanceToAngle = new InterpolatingDoubleTreeMap();
   private final PositionVoltage positionRequest =
-      new PositionVoltage(0).withEnableFOC(false).withLimitReverseMotion(false);
-
+      new PositionVoltage(0).withEnableFOC(false).withLimitReverseMotion(false).withOverrideBrakeDurNeutral(true);
+  //  private final StaticBrake staticBrake =
+  //      new StaticBrake();
+  //IF withOverrideBrakeDurNeutral DOEST WORK
+      
+      
   public void setDistanceToSpeaker(double distance) {
     distanceToSpeaker = distance;
   }
@@ -49,8 +54,13 @@ public class ArmSubsystem extends StateMachine<ArmState> {
       setStateFromRequest(newState);
     }
   }
-
-  public boolean atGoal() {
+    // public void disabledPeriodic()
+    // {
+    //   rightMotor.setControl(staticBrake);
+    //   rightMotor.setControl(staticBrake);
+    // }
+  //IF withOverrideBrakeDurNeutral DOESNT WORK
+    public boolean atGoal() {
     return switch (getState()) {
       case IDLE, PRE_MATCH_HOMING -> true;
       case SPEAKER_SHOT ->
@@ -75,6 +85,7 @@ public class ArmSubsystem extends StateMachine<ArmState> {
       case CLIMBING_2_HANGING ->
           MathUtil.isNear(ArmAngle.CLIMBING_2_HANGING.getDegrees(), leftMotorAngle, 1)
               && MathUtil.isNear(ArmAngle.CLIMBING_2_HANGING.getDegrees(), rightMotorAngle, 1);
+              
       case AMP ->
           MathUtil.isNear(ArmAngle.AMP.getDegrees(), leftMotorAngle, 1)
               && MathUtil.isNear(ArmAngle.AMP.getDegrees(), rightMotorAngle, 1);
@@ -111,6 +122,7 @@ public class ArmSubsystem extends StateMachine<ArmState> {
         rightMotor.setControl(
             positionRequest.withPosition(ArmAngle.CLIMBING_2_HANGING.getRotations()));
       }
+      
       case DROP -> {
         leftMotor.setControl(positionRequest.withPosition(ArmAngle.DROP.getRotations()));
         rightMotor.setControl(positionRequest.withPosition(ArmAngle.DROP.getRotations()));
@@ -142,7 +154,7 @@ public class ArmSubsystem extends StateMachine<ArmState> {
       }
     }
   }
-
+  
   @Override
   public void robotPeriodic() {
     super.robotPeriodic();
@@ -187,4 +199,5 @@ public class ArmSubsystem extends StateMachine<ArmState> {
     }
     return angle;
   }
+  
 }
