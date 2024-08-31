@@ -18,7 +18,7 @@ public class ArmSubsystem extends StateMachine<ArmState> {
   private double rightMotorAngle;
   private double distanceToSpeaker;
   private double distanceToFeedSpot;
-  private double lowestSeenAngleLeft = Double.MAX_VALUE;
+  private double lowestSeenAngleLeft = Double.MIN_VALUE;
   private double lowestSeenAngleRight = Double.MIN_VALUE;
   private InterpolatingDoubleTreeMap speakerDistanceToAngle = new InterpolatingDoubleTreeMap();
   private InterpolatingDoubleTreeMap feedSpotDistanceToAngle = new InterpolatingDoubleTreeMap();
@@ -60,7 +60,7 @@ public class ArmSubsystem extends StateMachine<ArmState> {
   // public void disabledPeriodic()
   // {
   //   rightMotor.setControl(staticBrake);
-  //   rightMotor.setControl(staticBrake);
+  //   leftMotor.setControl(staticBrake);
   // }
   // IF withOverrideBrakeDurNeutral DOESNT WORK
   public boolean atGoal() {
@@ -173,33 +173,17 @@ public class ArmSubsystem extends StateMachine<ArmState> {
     DogLog.log("Arm/Right/AppliedVoltage", rightMotor.getMotorVoltage().getValueAsDouble());
 
     if (DriverStation.isEnabled() && getState() == ArmState.PRE_MATCH_HOMING) {
-      Double homedAngle = getHomeAngleFromLowestSeen();
 
-      leftMotor.setPosition(Units.degreesToRotations(homedAngle));
-      rightMotor.setPosition(Units.degreesToRotations(homedAngle));
-      setState(ArmState.IDLE);
+      leftMotor.setPosition(
+          Units.degreesToRotations(
+              RobotConfig.get().arm().minAngle() + (leftMotorAngle - lowestSeenAngleLeft)));
+      rightMotor.setPosition(
+          Units.degreesToRotations(
+              RobotConfig.get().arm().minAngle() + (rightMotorAngle - lowestSeenAngleRight)));
+      setStateFromRequest(ArmState.IDLE);
     }
 
     // We are enabled and still in pre match homing
     // Reset the motor positions, and then transition to idle state
-  }
-
-  private double getHomeAngleFromLowestSeen() {
-    return RobotConfig.get().arm().minAngle() + (getAngle() - lowestSeenAngleLeft);
-  }
-
-  public double getAngle() {
-
-    return Units.rotationsToDegrees(leftMotor.getPosition().getValueAsDouble());
-  }
-
-  private static double clampAngle(double angle) {
-    if (angle < RobotConfig.get().arm().minAngle()) {
-      angle = RobotConfig.get().arm().minAngle();
-
-    } else if (angle > RobotConfig.get().arm().maxAngle()) {
-      angle = RobotConfig.get().arm().maxAngle();
-    }
-    return angle;
   }
 }
