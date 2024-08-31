@@ -44,8 +44,11 @@ public class VisionSubsystem extends StateMachine<VisionState> {
     } else {
       var rawData = rawVisionResult.get();
       // TODO: We don't do anything with this VisionResult??
-      new VisionResult(VisionUtil.interpolatePose(rawData.pose()), rawData.timestamp());
+    processedVisionResult =  Optional.of(new VisionResult(VisionUtil.interpolatePose(rawData.pose()), rawData.timestamp()));
     }
+  }
+  public Optional<VisionResult> getVisionResult() {
+    return processedVisionResult;
   }
 
   @Override
