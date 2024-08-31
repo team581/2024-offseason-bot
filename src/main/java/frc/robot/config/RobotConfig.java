@@ -12,7 +12,8 @@ public record RobotConfig(
     QueuerConfig queuer,
     ShooterConfig shooter,
     IntakeConfig intake,
-    ArmConfig arm) {
+    ArmConfig arm,
+    VisionConfig vision) {
   public record SwerveConfig(
       PhoenixPIDController snapController,
       boolean invertRotation,
@@ -50,6 +51,11 @@ public record RobotConfig(
       Consumer<InterpolatingDoubleTreeMap> speakerDistanceToAngle,
       double minAngle,
       double maxAngle) {}
+      public record VisionConfig(
+        int translationHistoryArraySize,
+        double xyStdDev,
+        double thetaStdDev,
+        Consumer<InterpolatingDoubleTreeMap> tyToNoteDistance) {}
 
   // TODO: Change this to false during events
   public static final boolean IS_DEVELOPMENT = true;

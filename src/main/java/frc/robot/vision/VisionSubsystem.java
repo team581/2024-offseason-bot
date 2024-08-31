@@ -55,4 +55,5 @@ public class VisionSubsystem extends StateMachine<VisionState> {
   public void robotPeriodic() {
     super.robotPeriodic();
   }
+
 }
