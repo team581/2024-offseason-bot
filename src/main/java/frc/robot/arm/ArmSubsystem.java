@@ -18,8 +18,8 @@ public class ArmSubsystem extends StateMachine<ArmState> {
   private double rightMotorAngle;
   private double distanceToSpeaker;
   private double distanceToFeedSpot;
-  private double lowestSeenAngleLeft = Double.MIN_VALUE;
-  private double lowestSeenAngleRight = Double.MIN_VALUE;
+  private double lowestSeenAngleLeft = Double.MAX_VALUE;
+  private double lowestSeenAngleRight = Double.MAX_VALUE;
   private InterpolatingDoubleTreeMap speakerDistanceToAngle = new InterpolatingDoubleTreeMap();
   private InterpolatingDoubleTreeMap feedSpotDistanceToAngle = new InterpolatingDoubleTreeMap();
   private final PositionVoltage positionRequest =
@@ -166,14 +166,17 @@ public class ArmSubsystem extends StateMachine<ArmState> {
     DogLog.log("Arm/Left/SupplyCurrent", leftMotor.getSupplyCurrent().getValueAsDouble());
     DogLog.log("Arm/Left/ArmAngle", leftMotor.getPosition().getValueAsDouble());
     DogLog.log("Arm/Left/AppliedVoltage", leftMotor.getMotorVoltage().getValueAsDouble());
+    DogLog.log("Arm/Left/LowestSeenAngleLeft", lowestSeenAngleLeft);
 
     DogLog.log("Arm/Right/StatorCurrent", rightMotor.getStatorCurrent().getValueAsDouble());
     DogLog.log("Arm/Right/SupplyCurrent", rightMotor.getSupplyCurrent().getValueAsDouble());
     DogLog.log("Arm/Right/ArmAngle", rightMotor.getPosition().getValueAsDouble());
     DogLog.log("Arm/Right/AppliedVoltage", rightMotor.getMotorVoltage().getValueAsDouble());
+    DogLog.log("Arm/Right/LowestSeenAngleRight", lowestSeenAngleRight);
 
     if (DriverStation.isEnabled() && getState() == ArmState.PRE_MATCH_HOMING) {
-
+      // We are enabled and still in pre match homing
+      // Reset the motor positions, and then transition to idle state
       leftMotor.setPosition(
           Units.degreesToRotations(
               RobotConfig.get().arm().minAngle() + (leftMotorAngle - lowestSeenAngleLeft)));
@@ -182,8 +185,5 @@ public class ArmSubsystem extends StateMachine<ArmState> {
               RobotConfig.get().arm().minAngle() + (rightMotorAngle - lowestSeenAngleRight)));
       setStateFromRequest(ArmState.IDLE);
     }
-
-    // We are enabled and still in pre match homing
-    // Reset the motor positions, and then transition to idle state
   }
 }
