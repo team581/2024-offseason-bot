@@ -166,13 +166,13 @@ public class ArmSubsystem extends StateMachine<ArmState> {
     DogLog.log("Arm/Left/SupplyCurrent", leftMotor.getSupplyCurrent().getValueAsDouble());
     DogLog.log("Arm/Left/ArmAngle", leftMotor.getPosition().getValueAsDouble());
     DogLog.log("Arm/Left/AppliedVoltage", leftMotor.getMotorVoltage().getValueAsDouble());
-    DogLog.log("Arm/Left/LowestSeenAngleLeft", lowestSeenAngleLeft);
+    DogLog.log("Arm/Left/LowestSeenAngle", lowestSeenAngleLeft);
 
     DogLog.log("Arm/Right/StatorCurrent", rightMotor.getStatorCurrent().getValueAsDouble());
     DogLog.log("Arm/Right/SupplyCurrent", rightMotor.getSupplyCurrent().getValueAsDouble());
     DogLog.log("Arm/Right/ArmAngle", rightMotor.getPosition().getValueAsDouble());
     DogLog.log("Arm/Right/AppliedVoltage", rightMotor.getMotorVoltage().getValueAsDouble());
-    DogLog.log("Arm/Right/LowestSeenAngleRight", lowestSeenAngleRight);
+    DogLog.log("Arm/Right/LowestSeenAngle", lowestSeenAngleRight);
 
     if (DriverStation.isEnabled() && getState() == ArmState.PRE_MATCH_HOMING) {
       // We are enabled and still in pre match homing
