@@ -53,9 +53,7 @@ public record RobotConfig(
       double maxAngle) {}
 
   public record VisionConfig(
-      int translationHistoryArraySize,
-      double xyStdDev,
-      double thetaStdDev) {}
+      int translationHistoryArraySize, double xyStdDev, double thetaStdDev) {}
 
   // TODO: Change this to false during events
   public static final boolean IS_DEVELOPMENT = true;

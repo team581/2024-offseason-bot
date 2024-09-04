@@ -3,18 +3,24 @@ package frc.robot.localization;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.config.RobotConfig;
 import frc.robot.imu.ImuSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
-import frc.robot.vision.LimelightHelpers.PoseEstimate;
+import frc.robot.vision.VisionResult;
 import frc.robot.vision.VisionSubsystem;
+import java.util.Optional;
 
 public class LocalizationSubsystem extends StateMachine<LocalizationState> {
   private final ImuSubsystem imu;
   private final VisionSubsystem vision;
   private final SwerveDrivePoseEstimator poseEstimator;
+  private final TimeInterpolatableBuffer<Pose2d> poseHistory =
+      TimeInterpolatableBuffer.createBuffer(1.5);
   private double lastAddedVisionTimestamp = 0;
+  private Optional<VisionResult> latestResult = Optional.empty();
 
   public LocalizationSubsystem(ImuSubsystem imu, VisionSubsystem vision) {
     super(SubsystemPriority.LOCALIZATION, LocalizationState.DEFAULT_STATE);
@@ -25,9 +31,19 @@ public class LocalizationSubsystem extends StateMachine<LocalizationState> {
 
   @Override
   protected void collectInputs() {
-    var maybeResults = vision.getVisionResult();
-    if (maybeResults.isPresent()) {
-      var results = maybeResults.get();
+    latestResult = vision.getVisionResult();
+  }
+
+  public Pose2d getPose() {
+    return poseEstimator.getEstimatedPosition();
+  }
+
+  @Override
+  public void robotPeriodic() {
+    super.robotPeriodic();
+
+    if (latestResult.isPresent()) {
+      var results = latestResult.get();
       Pose2d visionPose = results.pose();
 
       double visionTimestamp = results.timestamp();
@@ -45,12 +61,7 @@ public class LocalizationSubsystem extends StateMachine<LocalizationState> {
         lastAddedVisionTimestamp = visionTimestamp;
       }
     }
-    poseHistory.addSample(Timer.getFPGATimestamp(), poseEstimator.getEstimatedPosition());
-    PoseEstimate mt2Estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
-    vision.setRobotPose(getPose());
-  }
 
-  public Pose2d getPose() {
-    return poseEstimator;
+    poseHistory.addSample(Timer.getFPGATimestamp(), poseEstimator.getEstimatedPosition());
   }
 }
