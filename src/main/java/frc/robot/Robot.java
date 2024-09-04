@@ -11,7 +11,6 @@ import frc.robot.autos.Autos;
 import frc.robot.config.RobotConfig;
 import frc.robot.fms.FmsSubsystem;
 import frc.robot.generated.BuildConstants;
-import frc.robot.queuer.QueuerSubsystem;
 import frc.robot.util.Stopwatch;
 import frc.robot.util.scheduling.LifecycleSubsystemManager;
 
@@ -21,7 +20,7 @@ public class Robot extends TimedRobot {
   private final FmsSubsystem fms = new FmsSubsystem();
   private final Hardware hardware = new Hardware();
   private final Autos autos = new Autos();
-  
+
   public Robot() {
     System.out.println("roboRIO serial number: " + RobotConfig.SERIAL_NUMBER);
 
