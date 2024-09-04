@@ -43,10 +43,12 @@ public class VisionSubsystem extends StateMachine<VisionState> {
       processedVisionResult = Optional.empty();
     } else {
       var rawData = rawVisionResult.get();
-      // TODO: We don't do anything with this VisionResult??
-    processedVisionResult =  Optional.of(new VisionResult(VisionUtil.interpolatePose(rawData.pose()), rawData.timestamp()));
+      processedVisionResult =
+          Optional.of(
+              new VisionResult(VisionUtil.interpolatePose(rawData.pose()), rawData.timestamp()));
     }
   }
+
   public Optional<VisionResult> getVisionResult() {
     return processedVisionResult;
   }
@@ -55,5 +57,4 @@ public class VisionSubsystem extends StateMachine<VisionState> {
   public void robotPeriodic() {
     super.robotPeriodic();
   }
-
 }
