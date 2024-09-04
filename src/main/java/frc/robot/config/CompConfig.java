@@ -99,11 +99,9 @@ class CompConfig {
               },
               0.0,
               30.0),
-              new VisionConfig(
-                4,
-                0.4,
-                0.4));
-               // NOT TUNED
+          new VisionConfig(4, 0.4, 0.4));
+
+  // NOT TUNED
 
   private CompConfig() {}
 }

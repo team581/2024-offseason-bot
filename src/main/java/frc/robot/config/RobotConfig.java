@@ -51,11 +51,11 @@ public record RobotConfig(
       Consumer<InterpolatingDoubleTreeMap> speakerDistanceToAngle,
       double minAngle,
       double maxAngle) {}
-      public record VisionConfig(
-        int translationHistoryArraySize,
-        double xyStdDev,
-        double thetaStdDev,
-        Consumer<InterpolatingDoubleTreeMap> tyToNoteDistance) {}
+
+  public record VisionConfig(
+      int translationHistoryArraySize,
+      double xyStdDev,
+      double thetaStdDev) {}
 
   // TODO: Change this to false during events
   public static final boolean IS_DEVELOPMENT = true;
