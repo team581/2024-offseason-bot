@@ -12,6 +12,7 @@ import frc.robot.config.RobotConfig.IntakeConfig;
 import frc.robot.config.RobotConfig.QueuerConfig;
 import frc.robot.config.RobotConfig.ShooterConfig;
 import frc.robot.config.RobotConfig.SwerveConfig;
+import frc.robot.config.RobotConfig.VisionConfig;
 
 class CompConfig {
   private static final String CANIVORE_NAME = "581CANivore";
@@ -98,7 +99,10 @@ class CompConfig {
                 speakerDistanceToAngle.put(123.0, 321.0);
               },
               0.0,
-              30.0)); // NOT TUNED
+              30.0),
+          new VisionConfig(4, 0.4, 0.4));
+
+  // NOT TUNED
 
   private CompConfig() {}
 }
