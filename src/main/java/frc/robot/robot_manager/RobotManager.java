@@ -43,42 +43,40 @@ public class RobotManager extends StateMachine<RobotState> {
     this.intake = intake;
     this.queuer = queuer;
   }
-  
+
   @Override
   protected void collectInputs() {}
 
-  protected RobotState getNexState(RobotState currentState){
+  protected RobotState getNexState(RobotState currentState) {
     // state transition
     switch (currentState) {
       case SPEAKER_PREPARE_TO_SCORE -> {
-        if (shooter.atGoal()&&arm.atGoal()) {
+        if (shooter.atGoal() && arm.atGoal()) {
           setStateFromRequest(RobotState.SPEAKER_SCORING);
         }
       }
-      case AMP_PREPARE_TO_SCORE->{
-        if (shooter.atGoal()&&arm.atGoal()){
+      case AMP_PREPARE_TO_SCORE -> {
+        if (shooter.atGoal() && arm.atGoal()) {
           setStateFromRequest(RobotState.AMP_SCORING);
         }
       }
-      case FEEDING_PREPARE_TO_SHOOT ->{
-        if (shooter.atGoal()&&arm.atGoal()){
+      case FEEDING_PREPARE_TO_SHOOT -> {
+        if (shooter.atGoal() && arm.atGoal()) {
           setStateFromRequest(RobotState.FEEDING_SHOOTING);
         }
-        
       }
-      case PASS_PREPARE_TO_SHOOT->{
-        if (shooter.atGoal()&&arm.atGoal()){
+      case PASS_PREPARE_TO_SHOOT -> {
+        if (shooter.atGoal() && arm.atGoal()) {
           setStateFromRequest(RobotState.PASS_SHOOTING);
         }
       }
-      
-
     }
     return currentState;
   }
+
   @Override
-  protected void afterTransition(RobotState newState){
-        // on state change
+  protected void afterTransition(RobotState newState) {
+    // on state change
     switch (newState) {
       case SPEAKER_PREPARE_TO_SCORE -> {
         arm.setState(ArmState.SPEAKER_SHOT);
@@ -104,15 +102,12 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.IDLE);
         queuer.seState(QueuerState.IDLE_WITH_GP);
       }
-      
     }
-    }
-  
+  }
 
   @Override
   public void robotPeriodic() {
     super.robotPeriodic();
-    
 
     // continous sate action
     switch (getState()) {
@@ -124,9 +119,7 @@ public class RobotManager extends StateMachine<RobotState> {
         shooter.setDistanceToFeedSpot(distanceToFeedSpot);
         shooter.setDistanceToSpeaker(distanceToSpeaker);
       }
-      case AMP_PREPARE_TO_SCORE,
-       PASS_PREPARE_TO_SHOOT->{}
+      case AMP_PREPARE_TO_SCORE, PASS_PREPARE_TO_SHOOT -> {}
     }
   }
-
 }
