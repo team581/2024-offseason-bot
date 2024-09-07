@@ -19,7 +19,7 @@ public class RobotManager extends StateMachine<RobotState> {
   public final ShooterSubsystem shooter;
   public final LocalizationSubsystem localization;
   public final VisionSubsystem vision;
-  private final ImuSubsystem imu;
+  public final ImuSubsystem imu;
   public final IntakeSubsystem intake;
   public final QueuerSubsystem queuer;
 
@@ -43,36 +43,90 @@ public class RobotManager extends StateMachine<RobotState> {
     this.intake = intake;
     this.queuer = queuer;
   }
-
+  
   @Override
   protected void collectInputs() {}
+
+  protected RobotState getNexState(RobotState currentState){
+    // state transition
+    switch (currentState) {
+      case SPEAKER_PREPARE_TO_SCORE -> {
+        if (shooter.atGoal()&&arm.atGoal()) {
+          setStateFromRequest(RobotState.SPEAKER_SCORING);
+        }
+      }
+      case AMP_PREPARE_TO_SCORE->{
+        if (shooter.atGoal()&&arm.atGoal()){
+          setStateFromRequest(RobotState.AMP_SCORING);
+        }
+      }
+      case FEEDING_PREPARE_TO_SHOOT ->{
+        if (shooter.atGoal()&&arm.atGoal()){
+          setStateFromRequest(RobotState.FEEDING_SHOOTING);
+        }
+        
+      }
+      case PASS_PREPARE_TO_SHOOT->{
+        if (shooter.atGoal()&&arm.atGoal()){
+          setStateFromRequest(RobotState.PASS_SHOOTING);
+        }
+      }
+      
+
+    }
+    return currentState;
+  }
+  @Override
+  protected void afterTransition(RobotState newState){
+        // on state change
+    switch (newState) {
+      case SPEAKER_PREPARE_TO_SCORE -> {
+        arm.setState(ArmState.SPEAKER_SHOT);
+        shooter.setState(ShooterState.SPEAKER_SHOT);
+        intake.setState(IntakeState.IDLE);
+        queuer.seState(QueuerState.IDLE_WITH_GP);
+      }
+      case AMP_PREPARE_TO_SCORE -> {
+        arm.setState(ArmState.AMP);
+        shooter.setState(ShooterState.AMP);
+        intake.setState(IntakeState.IDLE);
+        queuer.seState(QueuerState.IDLE_WITH_GP);
+      }
+      case FEEDING_PREPARE_TO_SHOOT -> {
+        arm.setState(ArmState.FEEDING);
+        shooter.setState(ShooterState.FEEDING);
+        intake.setState(IntakeState.IDLE);
+        queuer.seState(QueuerState.IDLE_WITH_GP);
+      }
+      case PASS_PREPARE_TO_SHOOT -> {
+        arm.setState(ArmState.PASS);
+        shooter.setState(ShooterState.PASS);
+        intake.setState(IntakeState.IDLE);
+        queuer.seState(QueuerState.IDLE_WITH_GP);
+      }
+      
+    }
+    }
+  
 
   @Override
   public void robotPeriodic() {
     super.robotPeriodic();
-    // state transition
-    switch (getState()) {
-      case SPEAKER_PREPARE_TO_SCORE -> {
-        if (shooter.atGoal()) {
-          setStateFromRequest(RobotState.SPEAKER_SCORING);
-        }
-      }
-    }
-    // on state change
-    switch (getState()) {
-      case SPEAKER_PREPARE_TO_SCORE -> {
-        arm.setState(ArmState.SPEAKER_SHOT);
-        shooter.setState(ShooterState.SPEAKER_SHOT);
-        intake.setState(IntakeState.INTAKING);
-        queuer.seState(QueuerState.SHOOTING);
-      }
-    }
+    
+
     // continous sate action
     switch (getState()) {
       case SPEAKER_PREPARE_TO_SCORE -> {
         shooter.setDistanceToFeedSpot(distanceToFeedSpot);
         shooter.setDistanceToSpeaker(distanceToSpeaker);
       }
+      case FEEDING_PREPARE_TO_SHOOT -> {
+        shooter.setDistanceToFeedSpot(distanceToFeedSpot);
+        shooter.setDistanceToSpeaker(distanceToSpeaker);
+      }
+      case AMP_PREPARE_TO_SCORE,
+       PASS_PREPARE_TO_SHOOT->{}
     }
   }
+
 }
