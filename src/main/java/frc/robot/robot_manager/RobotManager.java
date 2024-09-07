@@ -23,8 +23,8 @@ public class RobotManager extends StateMachine<RobotState> {
   public final IntakeSubsystem intake;
   public final QueuerSubsystem queuer;
 
-  private final double distanceToFeedSpot = 0;
-  private final double distanceToSpeaker = 0;
+  private final double distanceToFeedSpot = 0.0;
+  private final double distanceToSpeaker = 0.0;
 
   public RobotManager(
       ArmSubsystem arm,
@@ -50,11 +50,32 @@ public class RobotManager extends StateMachine<RobotState> {
   protected RobotState getNexState(RobotState currentState) {
     // state transition
     switch (currentState) {
+      case SPEAKER_SCORING -> {
+        if (!queuer.hasNote()) {
+          setStateFromRequest(RobotState.IDLE_NO_GP);
+        }
+      }
+      case AMP_SCORING -> {
+        if (!queuer.hasNote()) {
+          setStateFromRequest(RobotState.IDLE_NO_GP);
+        }
+      }
+      case FEEDING_SHOOTING -> {
+        if (!queuer.hasNote()) {
+          setStateFromRequest(RobotState.IDLE_NO_GP);
+        }
+      }
+      case PASS_SHOOTING -> {
+        if (!queuer.hasNote()) {
+          setStateFromRequest(RobotState.IDLE_NO_GP);
+        }
+      }
       case SPEAKER_PREPARE_TO_SCORE -> {
         if (shooter.atGoal() && arm.atGoal()) {
           setStateFromRequest(RobotState.SPEAKER_SCORING);
         }
       }
+
       case AMP_PREPARE_TO_SCORE -> {
         if (shooter.atGoal() && arm.atGoal()) {
           setStateFromRequest(RobotState.AMP_SCORING);
@@ -70,6 +91,33 @@ public class RobotManager extends StateMachine<RobotState> {
           setStateFromRequest(RobotState.PASS_SHOOTING);
         }
       }
+      case UNJAM -> {}
+      case INTAKING -> {
+        if (intake.hasNote() || queuer.hasNote()) {
+          setStateFromRequest(RobotState.IDLE_WITH_GP);
+        }
+      }
+      case OUTTAKING -> {
+        if (!intake.hasNote() && !queuer.hasNote()) {
+          setStateFromRequest(RobotState.IDLE_NO_GP);
+        }
+      }
+      case CLIMBING_1_LINEUP -> {
+        if (arm.atGoal()) {
+          setStateFromRequest(RobotState.CLIMBING_2_HANGING);
+        }
+      }
+      case CLIMBING_2_HANGING -> {}
+      case IDLE_NO_GP -> {
+        if (queuer.hasNote() || intake.hasNote()) {
+          setStateFromRequest(RobotState.IDLE_WITH_GP);
+        }
+      }
+      case IDLE_WITH_GP -> {
+        if (!queuer.hasNote() && !intake.hasNote()) {
+          setStateFromRequest(RobotState.IDLE_NO_GP);
+        }
+      }
     }
     return currentState;
   }
@@ -78,27 +126,69 @@ public class RobotManager extends StateMachine<RobotState> {
   protected void afterTransition(RobotState newState) {
     // on state change
     switch (newState) {
-      case SPEAKER_PREPARE_TO_SCORE -> {
+      case SPEAKER_PREPARE_TO_SCORE, SPEAKER_SCORING -> {
         arm.setState(ArmState.SPEAKER_SHOT);
         shooter.setState(ShooterState.SPEAKER_SHOT);
         intake.setState(IntakeState.IDLE);
         queuer.seState(QueuerState.IDLE_WITH_GP);
       }
-      case AMP_PREPARE_TO_SCORE -> {
+      case AMP_PREPARE_TO_SCORE, AMP_SCORING -> {
         arm.setState(ArmState.AMP);
         shooter.setState(ShooterState.AMP);
         intake.setState(IntakeState.IDLE);
         queuer.seState(QueuerState.IDLE_WITH_GP);
       }
-      case FEEDING_PREPARE_TO_SHOOT -> {
+      case FEEDING_PREPARE_TO_SHOOT, FEEDING_SHOOTING -> {
         arm.setState(ArmState.FEEDING);
         shooter.setState(ShooterState.FEEDING);
         intake.setState(IntakeState.IDLE);
         queuer.seState(QueuerState.IDLE_WITH_GP);
       }
-      case PASS_PREPARE_TO_SHOOT -> {
+      case PASS_PREPARE_TO_SHOOT, PASS_SHOOTING -> {
         arm.setState(ArmState.PASS);
         shooter.setState(ShooterState.PASS);
+        intake.setState(IntakeState.IDLE);
+        queuer.seState(QueuerState.IDLE_WITH_GP);
+      }
+      case UNJAM -> {
+        arm.setState(ArmState.AMP);
+        shooter.setState(ShooterState.DROP);
+        intake.setState(IntakeState.OUTTAKING);
+        queuer.seState(QueuerState.OUTTAKING);
+      }
+      case INTAKING -> {
+        arm.setState(ArmState.IDLE);
+        shooter.setState(ShooterState.IDLE_STOPPED);
+        intake.setState(IntakeState.INTAKING);
+        queuer.seState(QueuerState.INTAKING);
+      }
+      case OUTTAKING -> {
+        arm.setState(ArmState.IDLE);
+        shooter.setState(ShooterState.IDLE_STOPPED);
+        intake.setState(IntakeState.OUTTAKING);
+        queuer.seState(QueuerState.OUTTAKING);
+      }
+      case CLIMBING_1_LINEUP -> {
+        arm.setState(ArmState.CLIMBING_1_LINEUP);
+        shooter.setState(ShooterState.IDLE_STOPPED);
+        intake.setState(IntakeState.IDLE);
+        queuer.seState(QueuerState.IDLE_NO_GP);
+      }
+      case CLIMBING_2_HANGING -> {
+        arm.setState(ArmState.CLIMBING_1_LINEUP);
+        shooter.setState(ShooterState.IDLE_STOPPED);
+        intake.setState(IntakeState.IDLE);
+        queuer.seState(QueuerState.IDLE_NO_GP);
+      }
+      case IDLE_NO_GP -> {
+        arm.setState(ArmState.IDLE);
+        shooter.setState(ShooterState.IDLE_STOPPED);
+        intake.setState(IntakeState.IDLE);
+        queuer.seState(QueuerState.IDLE_NO_GP);
+      }
+      case IDLE_WITH_GP -> {
+        arm.setState(ArmState.IDLE);
+        shooter.setState(ShooterState.IDLE_STOPPED);
         intake.setState(IntakeState.IDLE);
         queuer.seState(QueuerState.IDLE_WITH_GP);
       }
@@ -111,15 +201,26 @@ public class RobotManager extends StateMachine<RobotState> {
 
     // continous sate action
     switch (getState()) {
-      case SPEAKER_PREPARE_TO_SCORE -> {
-        shooter.setDistanceToFeedSpot(distanceToFeedSpot);
+      case SPEAKER_PREPARE_TO_SCORE, SPEAKER_SCORING -> {
         shooter.setDistanceToSpeaker(distanceToSpeaker);
+        arm.setDistanceToSpeaker(distanceToSpeaker);
       }
-      case FEEDING_PREPARE_TO_SHOOT -> {
+      case FEEDING_PREPARE_TO_SHOOT, FEEDING_SHOOTING -> {
         shooter.setDistanceToFeedSpot(distanceToFeedSpot);
-        shooter.setDistanceToSpeaker(distanceToSpeaker);
+        arm.setDistanceToFeedSpot(distanceToFeedSpot);
       }
-      case AMP_PREPARE_TO_SCORE, PASS_PREPARE_TO_SHOOT -> {}
+
+      case AMP_PREPARE_TO_SCORE,
+          PASS_PREPARE_TO_SHOOT,
+          AMP_SCORING,
+          PASS_SHOOTING,
+          UNJAM,
+          INTAKING,
+          OUTTAKING,
+          IDLE_NO_GP,
+          IDLE_WITH_GP,
+          CLIMBING_1_LINEUP,
+          CLIMBING_2_HANGING -> {}
     }
   }
 }
