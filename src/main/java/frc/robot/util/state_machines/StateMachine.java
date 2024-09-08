@@ -21,58 +21,16 @@ public abstract class StateMachine<S extends Enum<S>> extends LifecycleSubsystem
   protected StateMachine(SubsystemPriority priority, S initialState) {
     super(priority);
     state = initialState;
+    // Log the state once on boot
+    DogLog.log(subsystemName + "/State", state);
   }
 
   /** Processes collecting inputs, state transitions, and state actions. */
   @Override
   public void robotPeriodic() {
-    DogLog.log(subsystemName + "/State", state);
-
     collectInputs();
 
     setStateFromRequest(getNextState(state));
-  }
-
-  /**
-   * Called each loop before processing transitions. Used for retrieving sensor values, etc.
-   *
-   * <p>Default behavior is to do nothing.
-   */
-  protected void collectInputs() {}
-
-  /**
-   * Process transitions from one state to another.
-   *
-   * <p>Default behavior is to stay in the current state indefinitely.
-   *
-   * @param currentState The current state.
-   * @return The new state after processing transitions.
-   */
-  protected S getNextState(S currentState) {
-    return currentState;
-  }
-
-  /**
-   * Runs once after entering a new state. This is where you should run state actions.
-   *
-   * @param newState The newly entered state.
-   */
-  protected void afterTransition(S newState) {}
-
-  /**
-   * Used to change to a new state when a request is made.
-   *
-   * @param requestedState The new state to transition to.
-   */
-  protected void setStateFromRequest(S requestedState) {
-    if (state != requestedState) {
-      DogLog.log(subsystemName + "/StateAfterTransition", requestedState);
-      afterTransition(requestedState);
-    } else {
-      DogLog.log(subsystemName + "/StateAfterTransition", "(no change)");
-    }
-
-    state = requestedState;
   }
 
   /**
@@ -102,5 +60,50 @@ public abstract class StateMachine<S extends Enum<S>> extends LifecycleSubsystem
    */
   public Command waitForStates(Set<S> goalStates) {
     return Commands.waitUntil(() -> goalStates.contains(this.state));
+  }
+
+  /**
+   * Called each loop before processing transitions. Used for retrieving sensor values, etc.
+   *
+   * <p>Default behavior is to do nothing.
+   */
+  protected void collectInputs() {}
+
+  /**
+   * Process transitions from one state to another.
+   *
+   * <p>Default behavior is to stay in the current state indefinitely.
+   *
+   * @param currentState The current state.
+   * @return The new state after processing transitions.
+   */
+  protected S getNextState(S currentState) {
+    return currentState;
+  }
+
+  /**
+   * Runs once after entering a new state. This is where you should run state actions.
+   *
+   * @param newState The newly entered state.
+   */
+  protected void afterTransition(S newState) {}
+
+  /**
+   * Used to change to a new state when a request is made. Will also trigger all logic that should
+   * happen when a state transition occurs.
+   *
+   * @param requestedState The new state to transition to.
+   */
+  protected void setStateFromRequest(S requestedState) {
+    if (state == requestedState) {
+      // No change
+      return;
+    }
+
+    state = requestedState;
+
+    DogLog.log(subsystemName + "/State", state);
+
+    afterTransition(requestedState);
   }
 }
