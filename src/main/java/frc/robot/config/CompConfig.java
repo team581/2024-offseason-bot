@@ -66,6 +66,7 @@ class CompConfig {
               999,
               CANIVORE_NAME,
               999,
+              999,
               new TalonFXConfiguration()
                   .withClosedLoopRamps(CLOSED_LOOP_RAMP)
                   .withOpenLoopRamps(OPEN_LOOP_RAMP)
@@ -73,6 +74,10 @@ class CompConfig {
                       new CurrentLimitsConfigs()
                           .withStatorCurrentLimit(20)
                           .withSupplyCurrentLimit(25)),
+              centeringMotor -> {
+                centeringMotor.setSmartCurrentLimit(20);
+                centeringMotor.burnFlash();
+              },
               new Debouncer(3.0 * 0.02)),
           new ArmConfig(
               CANIVORE_NAME,

@@ -2,6 +2,7 @@ package frc.robot.config;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.mechanisms.swerve.utility.PhoenixPIDController;
+import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import java.util.function.Consumer;
@@ -35,10 +36,12 @@ public record RobotConfig(
       Consumer<InterpolatingDoubleTreeMap> speakerDistanceToRpm) {}
 
   public record IntakeConfig(
-      int motorID,
-      String canBusName,
+      int mainMotorID,
+      String mainMotorCanBusName,
+      int centeringMotorID,
       int sensorID,
-      TalonFXConfiguration motorConfig,
+      TalonFXConfiguration mainMotorConfig,
+      Consumer<CANSparkMax> centeringMotorConfig,
       Debouncer debouncer) {}
 
   public record ArmConfig(

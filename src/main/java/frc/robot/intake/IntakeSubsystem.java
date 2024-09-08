@@ -9,18 +9,22 @@ import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
 
 public class IntakeSubsystem extends StateMachine<IntakeState> {
-  private final TalonFX motor;
+  private final TalonFX mainMotor;
   private final DigitalInput sensor;
   private boolean sensorHasNote = false;
   private boolean debouncedSensorHasNote = false;
   private final Debouncer debouncer = RobotConfig.get().intake().debouncer();
 
-  public IntakeSubsystem(TalonFX motor, DigitalInput sensor) {
+  public IntakeSubsystem(TalonFX mainMotor, DigitalInput sensor) {
     super(SubsystemPriority.INTAKE, IntakeState.IDLE);
 
     this.sensor = sensor;
-    this.motor = motor;
-    motor.getConfigurator().apply(RobotConfig.get().intake().motorConfig());
+    this.mainMotor = mainMotor;
+
+    mainMotor.getConfigurator().apply(RobotConfig.get().intake().mainMotorConfig());
+
+    // TODO: Uncomment this once the centeringMotor code is written
+    // RobotConfig.get().intake().centeringMotorConfig().accept(centeringMotor);
   }
 
   public void setState(IntakeState newState) {
@@ -45,18 +49,18 @@ public class IntakeSubsystem extends StateMachine<IntakeState> {
   @Override
   protected void afterTransition(IntakeState newState) {
     switch (newState) {
-      case IDLE -> motor.disable();
-      case INTAKING -> motor.setVoltage(0); // around 10
-      case OUTTAKING -> motor.setVoltage(0); // around -6
+      case IDLE -> mainMotor.disable();
+      case INTAKING -> mainMotor.setVoltage(0); // around 10
+      case OUTTAKING -> mainMotor.setVoltage(0); // around -6
     }
   }
 
   @Override
   public void robotPeriodic() {
     super.robotPeriodic();
-    DogLog.log("Intake/StatorCurrent", motor.getStatorCurrent().getValueAsDouble());
-    DogLog.log("Intake/SupplyCurrent", motor.getSupplyCurrent().getValueAsDouble());
-    DogLog.log("Intake/AppliedVoltage", motor.getMotorVoltage().getValueAsDouble());
+    DogLog.log("Intake/StatorCurrent", mainMotor.getStatorCurrent().getValueAsDouble());
+    DogLog.log("Intake/SupplyCurrent", mainMotor.getSupplyCurrent().getValueAsDouble());
+    DogLog.log("Intake/AppliedVoltage", mainMotor.getMotorVoltage().getValueAsDouble());
     DogLog.log("Intake/RawSensor", sensorHasNote);
     DogLog.log("Intake/DebouncedSensor", hasNote());
   }

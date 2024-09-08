@@ -15,7 +15,9 @@ public class Hardware {
       new TalonFX(RobotConfig.get().queuer().motorID(), RobotConfig.get().queuer().canBusName());
 
   public final TalonFX intake =
-      new TalonFX(RobotConfig.get().intake().motorID(), RobotConfig.get().intake().canBusName());
+      new TalonFX(
+          RobotConfig.get().intake().mainMotorID(),
+          RobotConfig.get().intake().mainMotorCanBusName());
 
   public final TalonFX armLeft =
       new TalonFX(RobotConfig.get().arm().leftMotorID(), RobotConfig.get().arm().canBusName());
