@@ -49,102 +49,90 @@ public class RobotManager extends StateMachine<RobotState> {
 
   @Override
   protected RobotState getNextState(RobotState currentState) {
-    switch (currentState) {
+    return switch (currentState) {
       case SPEAKER_WAITING,
-          AMP_WAITING,
-          FEEDING_WAITING,
-          PASS_WAITING,
-          IDLE_NO_GP,
-          IDLE_WITH_GP,
-          CLIMBING_1_LINEUP,
-          CLIMBING_2_HANGING -> {}
-      case SPEAKER_SCORING -> {
-        if (!queuer.hasNote()) {
-          setStateFromRequest(RobotState.IDLE_NO_GP);
-        }
-      }
-      case AMP_SCORING -> {
-        if (!queuer.hasNote()) {
-          setStateFromRequest(RobotState.IDLE_NO_GP);
-        }
-      }
-      case FEEDING_SHOOTING -> {
-        if (!queuer.hasNote()) {
-          setStateFromRequest(RobotState.IDLE_NO_GP);
-        }
-      }
-      case PASS_SHOOTING -> {
-        if (!queuer.hasNote()) {
-          setStateFromRequest(RobotState.IDLE_NO_GP);
-        }
-      }
-      case SPEAKER_PREPARE_TO_SCORE -> {
-        if (shooter.atGoal() && arm.atGoal()) {
-          setStateFromRequest(RobotState.SPEAKER_SCORING);
-        }
-      }
+              AMP_WAITING,
+              FEEDING_WAITING,
+              PASS_WAITING,
+              IDLE_NO_GP,
+              IDLE_WITH_GP,
+              CLIMBING_1_LINEUP,
+              CLIMBING_2_HANGING ->
+          currentState;
+      case SPEAKER_SCORING, AMP_SCORING, FEEDING_SHOOTING, PASS_SHOOTING ->
+          !queuer.hasNote() ? RobotState.IDLE_NO_GP : currentState;
 
-      case AMP_PREPARE_TO_SCORE -> {
-        if (shooter.atGoal() && arm.atGoal()) {
-          setStateFromRequest(RobotState.AMP_SCORING);
-        }
-      }
-      case FEEDING_PREPARE_TO_SHOOT -> {
-        if (shooter.atGoal() && arm.atGoal()) {
-          setStateFromRequest(RobotState.FEEDING_SHOOTING);
-        }
-      }
-      case PASS_PREPARE_TO_SHOOT -> {
-        if (shooter.atGoal() && arm.atGoal()) {
-          setStateFromRequest(RobotState.PASS_SHOOTING);
-        }
-      }
-      case UNJAM -> {}
-      case INTAKING -> {
-        if (intake.hasNote() || queuer.hasNote()) {
-          setStateFromRequest(RobotState.IDLE_WITH_GP);
-        }
-      }
-      case OUTTAKING -> {
-        if (!intake.hasNote() && !queuer.hasNote()) {
-          setStateFromRequest(RobotState.IDLE_NO_GP);
-        }
-      }
-    }
+      case SPEAKER_PREPARE_TO_SCORE ->
+          shooter.atGoal() && arm.atGoal() ? RobotState.SPEAKER_SCORING : currentState;
 
-    return currentState;
+      case AMP_PREPARE_TO_SCORE ->
+          shooter.atGoal() && arm.atGoal() ? RobotState.AMP_SCORING : currentState;
+
+      case FEEDING_PREPARE_TO_SHOOT ->
+          shooter.atGoal() && arm.atGoal() ? RobotState.FEEDING_SHOOTING : currentState;
+      case PASS_PREPARE_TO_SHOOT ->
+          shooter.atGoal() && arm.atGoal() ? RobotState.PASS_SHOOTING : currentState;
+      case UNJAM -> currentState;
+      case INTAKING -> queuer.hasNote() ? RobotState.IDLE_WITH_GP : currentState;
+      case OUTTAKING ->
+          !queuer.hasNote() || !intake.hasNote() ? RobotState.IDLE_NO_GP : currentState;
+    };
   }
 
   @Override
   protected void afterTransition(RobotState newState) {
     switch (newState) {
-      case SPEAKER_PREPARE_TO_SCORE, SPEAKER_SCORING, SPEAKER_WAITING -> {
+      case SPEAKER_PREPARE_TO_SCORE, SPEAKER_WAITING -> {
         arm.setState(ArmState.SPEAKER_SHOT);
         shooter.setState(ShooterState.SPEAKER_SHOT);
         intake.setState(IntakeState.IDLE);
         queuer.seState(QueuerState.IDLE_WITH_GP);
       }
-      case AMP_PREPARE_TO_SCORE, AMP_SCORING, AMP_WAITING -> {
+      case SPEAKER_SCORING -> {
+        arm.setState(ArmState.SPEAKER_SHOT);
+        shooter.setState(ShooterState.SPEAKER_SHOT);
+        intake.setState(IntakeState.IDLE);
+        queuer.seState(QueuerState.SHOOTING);
+      }
+      case AMP_PREPARE_TO_SCORE, AMP_WAITING -> {
         arm.setState(ArmState.AMP);
         shooter.setState(ShooterState.AMP);
         intake.setState(IntakeState.IDLE);
         queuer.seState(QueuerState.IDLE_WITH_GP);
       }
-      case FEEDING_PREPARE_TO_SHOOT, FEEDING_SHOOTING, FEEDING_WAITING -> {
+      case AMP_SCORING -> {
+        arm.setState(ArmState.AMP);
+        shooter.setState(ShooterState.AMP);
+        intake.setState(IntakeState.IDLE);
+        queuer.seState(QueuerState.SHOOTING);
+      }
+      case FEEDING_PREPARE_TO_SHOOT, FEEDING_WAITING -> {
         arm.setState(ArmState.FEEDING);
         shooter.setState(ShooterState.FEEDING);
         intake.setState(IntakeState.IDLE);
         queuer.seState(QueuerState.IDLE_WITH_GP);
       }
-      case PASS_PREPARE_TO_SHOOT, PASS_SHOOTING, PASS_WAITING -> {
+      case FEEDING_SHOOTING -> {
+        arm.setState(ArmState.FEEDING);
+        shooter.setState(ShooterState.FEEDING);
+        intake.setState(IntakeState.IDLE);
+        queuer.seState(QueuerState.SHOOTING);
+      }
+      case PASS_PREPARE_TO_SHOOT, PASS_WAITING -> {
         arm.setState(ArmState.PASS);
         shooter.setState(ShooterState.PASS);
         intake.setState(IntakeState.IDLE);
         queuer.seState(QueuerState.IDLE_WITH_GP);
       }
+      case PASS_SHOOTING -> {
+        arm.setState(ArmState.PASS);
+        shooter.setState(ShooterState.PASS);
+        intake.setState(IntakeState.IDLE);
+        queuer.seState(QueuerState.SHOOTING);
+      }
       case UNJAM -> {
         arm.setState(ArmState.AMP);
-        shooter.setState(ShooterState.DROP);
+        shooter.setState(ShooterState.PASS);
         intake.setState(IntakeState.OUTTAKING);
         queuer.seState(QueuerState.OUTTAKING);
       }
@@ -167,7 +155,7 @@ public class RobotManager extends StateMachine<RobotState> {
         queuer.seState(QueuerState.IDLE_NO_GP);
       }
       case CLIMBING_2_HANGING -> {
-        arm.setState(ArmState.CLIMBING_1_LINEUP);
+        arm.setState(ArmState.CLIMBING_2_HANGING);
         shooter.setState(ShooterState.IDLE_STOPPED);
         intake.setState(IntakeState.IDLE);
         queuer.seState(QueuerState.IDLE_NO_GP);
@@ -180,7 +168,7 @@ public class RobotManager extends StateMachine<RobotState> {
       }
       case IDLE_WITH_GP -> {
         arm.setState(ArmState.IDLE);
-        shooter.setState(ShooterState.IDLE_STOPPED);
+        shooter.setState(ShooterState.IDLE_WARMUP);
         intake.setState(IntakeState.IDLE);
         queuer.seState(QueuerState.IDLE_WITH_GP);
       }
