@@ -47,8 +47,8 @@ public class RobotManager extends StateMachine<RobotState> {
   @Override
   protected void collectInputs() {}
 
-  protected RobotState getNexState(RobotState currentState) {
-    // state transition
+  @Override
+  protected RobotState getNextState(RobotState currentState) {
     switch (currentState) {
       case SPEAKER_WAITING,
           AMP_WAITING,
@@ -117,7 +117,6 @@ public class RobotManager extends StateMachine<RobotState> {
 
   @Override
   protected void afterTransition(RobotState newState) {
-    // on state change
     switch (newState) {
       case SPEAKER_PREPARE_TO_SCORE, SPEAKER_SCORING, SPEAKER_WAITING -> {
         arm.setState(ArmState.SPEAKER_SHOT);
@@ -192,7 +191,7 @@ public class RobotManager extends StateMachine<RobotState> {
   public void robotPeriodic() {
     super.robotPeriodic();
 
-    // continous sate action
+    // Continuous state actions
     switch (getState()) {
       case SPEAKER_PREPARE_TO_SCORE, SPEAKER_SCORING, SPEAKER_WAITING -> {
         shooter.setDistanceToSpeaker(distanceToSpeaker);
@@ -202,20 +201,7 @@ public class RobotManager extends StateMachine<RobotState> {
         shooter.setDistanceToFeedSpot(distanceToFeedSpot);
         arm.setDistanceToFeedSpot(distanceToFeedSpot);
       }
-
-      case AMP_PREPARE_TO_SCORE,
-          PASS_PREPARE_TO_SHOOT,
-          AMP_SCORING,
-          PASS_SHOOTING,
-          UNJAM,
-          INTAKING,
-          OUTTAKING,
-          IDLE_NO_GP,
-          IDLE_WITH_GP,
-          CLIMBING_1_LINEUP,
-          CLIMBING_2_HANGING,
-          PASS_WAITING,
-          AMP_WAITING -> {}
+      default -> {}
     }
   }
 }
