@@ -3,14 +3,12 @@ package frc.robot.vision;
 import frc.robot.imu.ImuSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
-import frc.robot.vision.LimelightHelpers.PoseEstimate;
 import java.util.Optional;
 
 public class VisionSubsystem extends StateMachine<VisionState> {
   private final ImuSubsystem imu;
   private Optional<VisionResult> rawVisionResult;
   private Optional<VisionResult> processedVisionResult;
-  private PoseEstimate estimatePose;
 
   public VisionSubsystem(ImuSubsystem imu) {
     super(SubsystemPriority.VISION, VisionState.DEFAULT_STATE);
