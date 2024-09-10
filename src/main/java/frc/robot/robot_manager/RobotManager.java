@@ -74,8 +74,7 @@ public class RobotManager extends StateMachine<RobotState> {
           shooter.atGoal() && arm.atGoal() ? RobotState.PASS_SHOOTING : currentState;
       case UNJAM -> currentState;
       case INTAKING -> queuer.hasNote() ? RobotState.IDLE_WITH_GP : currentState;
-      case OUTTAKING ->
-          queuer.hasNote() || intake.hasNote() ? currentState : RobotState.IDLE_NO_GP;
+      case OUTTAKING -> queuer.hasNote() || intake.hasNote() ? currentState : RobotState.IDLE_NO_GP;
     };
   }
 
