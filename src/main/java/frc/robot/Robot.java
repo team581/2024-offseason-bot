@@ -16,6 +16,7 @@ import frc.robot.imu.ImuSubsystem;
 import frc.robot.intake.IntakeSubsystem;
 import frc.robot.queuer.QueuerSubsystem;
 import frc.robot.shooter.ShooterSubsystem;
+import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.Stopwatch;
 import frc.robot.util.scheduling.LifecycleSubsystemManager;
 
@@ -30,7 +31,9 @@ public class Robot extends TimedRobot {
   private final ArmSubsystem arm = new ArmSubsystem(hardware.armLeft, hardware.armRight);
   private final IntakeSubsystem intake =
       new IntakeSubsystem(hardware.intakeMain, hardware.intakeCenteringMotor);
-  private final ImuSubsystem imu = new ImuSubsystem(hardware.imu);
+  // TODO: Add controllers to hardware & use them here
+  private final SwerveSubsystem swerve = new SwerveSubsystem(null);
+  private final ImuSubsystem imu = new ImuSubsystem(swerve.drivetrainPigeon);
   private final Autos autos = new Autos();
 
   public Robot() {

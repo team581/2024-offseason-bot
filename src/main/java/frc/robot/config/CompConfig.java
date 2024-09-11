@@ -8,7 +8,6 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.mechanisms.swerve.utility.PhoenixPIDController;
 import edu.wpi.first.math.filter.Debouncer;
 import frc.robot.config.RobotConfig.ArmConfig;
-import frc.robot.config.RobotConfig.ImuConfig;
 import frc.robot.config.RobotConfig.IntakeConfig;
 import frc.robot.config.RobotConfig.QueuerConfig;
 import frc.robot.config.RobotConfig.ShooterConfig;
@@ -106,8 +105,7 @@ class CompConfig {
               },
               0.0,
               30.0),
-          new VisionConfig(4, 0.4, 0.4),
-          new ImuConfig(999, CANIVORE_NAME));
+          new VisionConfig(4, 0.4, 0.4));
 
   // NOT TUNED
 

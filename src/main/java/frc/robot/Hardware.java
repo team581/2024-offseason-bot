@@ -1,6 +1,5 @@
 package frc.robot;
 
-import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
@@ -30,6 +29,4 @@ public class Hardware {
       new TalonFX(RobotConfig.get().arm().leftMotorID(), RobotConfig.get().arm().canBusName());
   public final TalonFX armRight =
       new TalonFX(RobotConfig.get().arm().rightMotorID(), RobotConfig.get().arm().canBusName());
-  public final Pigeon2 imu =
-      new Pigeon2(RobotConfig.get().imu().pigeonID(), RobotConfig.get().imu().canBusName());
 }
