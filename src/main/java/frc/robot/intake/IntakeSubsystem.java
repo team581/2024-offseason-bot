@@ -10,15 +10,13 @@ import frc.robot.util.state_machines.StateMachine;
 
 public class IntakeSubsystem extends StateMachine<IntakeState> {
   private final TalonFX mainMotor;
-  private final DigitalInput sensor;
   private boolean sensorHasNote = false;
   private boolean debouncedSensorHasNote = false;
   private final Debouncer debouncer = RobotConfig.get().intake().debouncer();
 
-  public IntakeSubsystem(TalonFX mainMotor, DigitalInput sensor) {
+  public IntakeSubsystem(TalonFX mainMotor){
     super(SubsystemPriority.INTAKE, IntakeState.IDLE);
 
-    this.sensor = sensor;
     this.mainMotor = mainMotor;
 
     mainMotor.getConfigurator().apply(RobotConfig.get().intake().mainMotorConfig());
@@ -33,7 +31,6 @@ public class IntakeSubsystem extends StateMachine<IntakeState> {
 
   @Override
   protected void collectInputs() {
-    sensorHasNote = sensor.get();
     debouncedSensorHasNote = debouncer.calculate(sensorHasNote);
   }
 

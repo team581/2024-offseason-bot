@@ -14,7 +14,8 @@ public record RobotConfig(
     ShooterConfig shooter,
     IntakeConfig intake,
     ArmConfig arm,
-    VisionConfig vision) {
+    VisionConfig vision,
+    ImuConfig imu) {
   public record SwerveConfig(
       PhoenixPIDController snapController,
       boolean invertRotation,
@@ -57,6 +58,9 @@ public record RobotConfig(
 
   public record VisionConfig(
       int translationHistoryArraySize, double xyStdDev, double thetaStdDev) {}
+  public record ImuConfig(
+      int pigeonID,
+      String canBusName) {}
 
   // TODO: Change this to false during events
   public static final boolean IS_DEVELOPMENT = true;

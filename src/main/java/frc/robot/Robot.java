@@ -7,10 +7,15 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.arm.ArmSubsystem;
 import frc.robot.autos.Autos;
 import frc.robot.config.RobotConfig;
 import frc.robot.fms.FmsSubsystem;
 import frc.robot.generated.BuildConstants;
+import frc.robot.imu.ImuSubsystem;
+import frc.robot.intake.IntakeSubsystem;
+import frc.robot.queuer.QueuerSubsystem;
+import frc.robot.shooter.ShooterSubsystem;
 import frc.robot.util.Stopwatch;
 import frc.robot.util.scheduling.LifecycleSubsystemManager;
 
@@ -19,6 +24,11 @@ public class Robot extends TimedRobot {
 
   private final FmsSubsystem fms = new FmsSubsystem();
   private final Hardware hardware = new Hardware();
+  private final QueuerSubsystem queuer = new QueuerSubsystem(hardware.queuer, hardware.queuerSensor);
+  private final ShooterSubsystem shooter = new ShooterSubsystem(hardware.shooter);
+  private final ArmSubsystem arm = new ArmSubsystem(hardware.armLeft, hardware.armRight);
+  private final IntakeSubsystem intake = new IntakeSubsystem(hardware.intakeMain);
+  private final ImuSubsystem imu = new ImuSubsystem(hardware.imu);
   private final Autos autos = new Autos();
 
   public Robot() {
