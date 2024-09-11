@@ -3,7 +3,6 @@ package frc.robot.intake;
 import com.ctre.phoenix6.hardware.TalonFX;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.filter.Debouncer;
-import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.config.RobotConfig;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
@@ -14,7 +13,7 @@ public class IntakeSubsystem extends StateMachine<IntakeState> {
   private boolean debouncedSensorHasNote = false;
   private final Debouncer debouncer = RobotConfig.get().intake().debouncer();
 
-  public IntakeSubsystem(TalonFX mainMotor){
+  public IntakeSubsystem(TalonFX mainMotor) {
     super(SubsystemPriority.INTAKE, IntakeState.IDLE);
 
     this.mainMotor = mainMotor;
