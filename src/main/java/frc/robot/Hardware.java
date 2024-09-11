@@ -6,6 +6,7 @@ import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.config.RobotConfig;
 
 public class Hardware {
@@ -29,4 +30,7 @@ public class Hardware {
       new TalonFX(RobotConfig.get().arm().leftMotorID(), RobotConfig.get().arm().canBusName());
   public final TalonFX armRight =
       new TalonFX(RobotConfig.get().arm().rightMotorID(), RobotConfig.get().arm().canBusName());
+
+      public final CommandXboxController driverController = new CommandXboxController(0);
+      public final CommandXboxController operatorController = new CommandXboxController(0);
 }

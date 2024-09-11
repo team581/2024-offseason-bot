@@ -15,6 +15,8 @@ import frc.robot.generated.BuildConstants;
 import frc.robot.imu.ImuSubsystem;
 import frc.robot.intake.IntakeSubsystem;
 import frc.robot.queuer.QueuerSubsystem;
+import frc.robot.robot_manager.RobotCommands;
+import frc.robot.robot_manager.RobotManager;
 import frc.robot.shooter.ShooterSubsystem;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.Stopwatch;
@@ -31,10 +33,10 @@ public class Robot extends TimedRobot {
   private final ArmSubsystem arm = new ArmSubsystem(hardware.armLeft, hardware.armRight);
   private final IntakeSubsystem intake =
       new IntakeSubsystem(hardware.intakeMain, hardware.intakeCenteringMotor);
-  // TODO: Add controllers to hardware & use them here
-  private final SwerveSubsystem swerve = new SwerveSubsystem(null);
+  private final SwerveSubsystem swerve = new SwerveSubsystem(hardware.driverController);
   private final ImuSubsystem imu = new ImuSubsystem(swerve.drivetrainPigeon);
   private final Autos autos = new Autos();
+  private final RobotCommands robotCommands = new RobotCommands(null);
 
   public Robot() {
     System.out.println("roboRIO serial number: " + RobotConfig.SERIAL_NUMBER);
@@ -130,5 +132,14 @@ public class Robot extends TimedRobot {
   @Override
   public void testExit() {}
 
-  private void configureBindings() {}
+  private void configureBindings() {
+    hardware.driverController.rightTrigger().onTrue(robotCommands.confirmShotCommand()).onFalse(robotCommands.stowCommand());
+    hardware.driverController.leftTrigger().onTrue(robotCommands.intakeCommand()).onFalse(robotCommands.stowCommand());
+    hardware.driverController.rightBumper().onTrue(robotCommands.feedingCommand()).onFalse(robotCommands.stowCommand());
+    hardware.driverController.rightBumper().onTrue(robotCommands.passCommand()).onFalse(robotCommands.stowCommand());
+
+    hardware.operatorController.rightTrigger().onTrue(robotCommands.ampCommand()).onFalse(robotCommands.stowCommand());
+    hardware.operatorController.leftTrigger().onTrue(robotCommands.subwooferCommand()).onFalse(robotCommands.stowCommand());
+
+  }
 }
