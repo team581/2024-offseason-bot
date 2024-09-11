@@ -28,7 +28,8 @@ public class Robot extends TimedRobot {
       new QueuerSubsystem(hardware.queuer, hardware.queuerSensor);
   private final ShooterSubsystem shooter = new ShooterSubsystem(hardware.shooter);
   private final ArmSubsystem arm = new ArmSubsystem(hardware.armLeft, hardware.armRight);
-  private final IntakeSubsystem intake = new IntakeSubsystem(hardware.intakeMain);
+  private final IntakeSubsystem intake =
+      new IntakeSubsystem(hardware.intakeMain, hardware.intakeCenteringMotor);
   private final ImuSubsystem imu = new ImuSubsystem(hardware.imu);
   private final Autos autos = new Autos();
 

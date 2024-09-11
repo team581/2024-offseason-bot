@@ -2,6 +2,8 @@ package frc.robot;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
@@ -21,6 +23,8 @@ public class Hardware {
       new TalonFX(
           RobotConfig.get().intake().mainMotorID(),
           RobotConfig.get().intake().mainMotorCanBusName());
+  public final CANSparkMax intakeCenteringMotor =
+      new CANSparkMax(RobotConfig.get().intake().centeringMotorID(), MotorType.kBrushed);
 
   public final TalonFX armLeft =
       new TalonFX(RobotConfig.get().arm().leftMotorID(), RobotConfig.get().arm().canBusName());
