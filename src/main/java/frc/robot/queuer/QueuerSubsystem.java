@@ -24,7 +24,7 @@ public class QueuerSubsystem extends StateMachine<QueuerState> {
     motor.getConfigurator().apply(RobotConfig.get().queuer().motorConfig());
   }
 
-  public void seState(QueuerState newState) {
+  public void setState(QueuerState newState) {
     setStateFromRequest(newState);
   }
 
