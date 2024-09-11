@@ -1,7 +1,5 @@
 package frc.robot.swerve;
 
-import java.util.List;
-
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
@@ -15,10 +13,12 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
+import java.util.List;
 
 public class SwerveSubsystem extends StateMachine<SwerveState> {
   /** Max speed allowed to make a speaker shot and feeding. */
   private static final double MAX_SPEED_SHOOTING = Units.feetToMeters(0.5);
+
   private static final double MAX_FLOOR_SPEED_SHOOTING = Units.feetToMeters(18);
 
   public static final double MaxSpeed = 4.75;
@@ -93,7 +93,7 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
     return slowEnoughToFeed;
   }
 
-  public List<SwerveModulePosition> getModulePositions(){
+  public List<SwerveModulePosition> getModulePositions() {
     return modulePositions;
   }
 
@@ -102,13 +102,11 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
     this.controller = driveController;
   }
 
-
-
   @Override
   protected void collectInputs() {
     modulePositions = calculateModulePositions();
-robotRelativeSpeeds = calculateRobotRelativeSpeeds();
-fieldRelativeSpeeds = calculateFieldRelativeSpeeds();
+    robotRelativeSpeeds = calculateRobotRelativeSpeeds();
+    fieldRelativeSpeeds = calculateFieldRelativeSpeeds();
     slowEnoughToShoot = calculateMovingSlowEnoughForSpeakerShot(robotRelativeSpeeds);
     slowEnoughToFeed = calculateMovingSlowEnoughForFloorShot(robotRelativeSpeeds);
   }
@@ -127,9 +125,9 @@ fieldRelativeSpeeds = calculateFieldRelativeSpeeds();
 
   private ChassisSpeeds calculateFieldRelativeSpeeds() {
     return ChassisSpeeds.fromRobotRelativeSpeeds(
-        robotRelativeSpeeds,
-        Rotation2d.fromDegrees(drivetrainPigeon.getYaw().getValueAsDouble()));
+        robotRelativeSpeeds, Rotation2d.fromDegrees(drivetrainPigeon.getYaw().getValueAsDouble()));
   }
+
   private static boolean calculateMovingSlowEnoughForSpeakerShot(ChassisSpeeds speeds) {
     double linearSpeed =
         Math.sqrt(Math.pow(speeds.vxMetersPerSecond, 2) + Math.pow(speeds.vyMetersPerSecond, 2));

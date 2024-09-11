@@ -2,7 +2,6 @@ package frc.robot;
 
 import dev.doglog.DogLog;
 import dev.doglog.DogLogOptions;
-import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -16,7 +15,6 @@ import frc.robot.imu.ImuSubsystem;
 import frc.robot.intake.IntakeSubsystem;
 import frc.robot.queuer.QueuerSubsystem;
 import frc.robot.robot_manager.RobotCommands;
-import frc.robot.robot_manager.RobotManager;
 import frc.robot.shooter.ShooterSubsystem;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.Stopwatch;
@@ -43,7 +41,7 @@ public class Robot extends TimedRobot {
 
     DogLog.setOptions(
         new DogLogOptions().withCaptureNt(false).withNtPublish(RobotConfig.IS_DEVELOPMENT));
-    DogLog.setPdh(new PowerDistribution());
+    DogLog.setPdh(hardware.pdh);
 
     // Record metadata
     DogLog.log("Metadata/ProjectName", BuildConstants.MAVEN_NAME);
@@ -133,13 +131,37 @@ public class Robot extends TimedRobot {
   public void testExit() {}
 
   private void configureBindings() {
-    hardware.driverController.rightTrigger().onTrue(robotCommands.confirmShotCommand()).onFalse(robotCommands.stowCommand());
-    hardware.driverController.leftTrigger().onTrue(robotCommands.intakeCommand()).onFalse(robotCommands.stowCommand());
-    hardware.driverController.rightBumper().onTrue(robotCommands.feedingCommand()).onFalse(robotCommands.stowCommand());
-    hardware.driverController.rightBumper().onTrue(robotCommands.passCommand()).onFalse(robotCommands.stowCommand());
+    hardware
+        .driverController
+        .rightTrigger()
+        .onTrue(robotCommands.confirmShotCommand())
+        .onFalse(robotCommands.stowCommand());
+    hardware
+        .driverController
+        .leftTrigger()
+        .onTrue(robotCommands.intakeCommand())
+        .onFalse(robotCommands.stowCommand());
+    // TODO: Two of these bindings use right bumper
+    hardware
+        .driverController
+        .rightBumper()
+        .onTrue(robotCommands.feedingCommand())
+        .onFalse(robotCommands.stowCommand());
+    hardware
+        .driverController
+        .rightBumper()
+        .onTrue(robotCommands.passCommand())
+        .onFalse(robotCommands.stowCommand());
 
-    hardware.operatorController.rightTrigger().onTrue(robotCommands.ampCommand()).onFalse(robotCommands.stowCommand());
-    hardware.operatorController.leftTrigger().onTrue(robotCommands.subwooferCommand()).onFalse(robotCommands.stowCommand());
-
+    hardware
+        .operatorController
+        .rightTrigger()
+        .onTrue(robotCommands.ampCommand())
+        .onFalse(robotCommands.stowCommand());
+    hardware
+        .operatorController
+        .leftTrigger()
+        .onTrue(robotCommands.subwooferCommand())
+        .onFalse(robotCommands.stowCommand());
   }
 }

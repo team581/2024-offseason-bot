@@ -252,6 +252,8 @@ public class RobotManager extends StateMachine<RobotState> {
     }
   }
 
+  // TODO: This seems like we ended up not really needing it, can remove it in favor of
+  // stowRequest()
   public void stopIntakingRequest() {
     switch (getState()) {
       case INTAKING -> setStateFromRequest(RobotState.IDLE_NO_GP);
@@ -272,6 +274,7 @@ public class RobotManager extends StateMachine<RobotState> {
 
   public void stowRequest() {
     switch (getState()) {
+        // TODO: Intaking and unjam should not be IDLE_WITH_GP
       case INTAKING,
               AMP_PREPARE_TO_SCORE,
               SPEAKER_PREPARE_TO_SCORE,
@@ -315,41 +318,48 @@ public class RobotManager extends StateMachine<RobotState> {
       default -> setStateFromRequest(RobotState.CLIMBING_1_LINEUP);
     }
   }
-  public void prepareSpeakerRequest(){
+
+  public void prepareSpeakerRequest() {
     switch (getState()) {
-      case CLIMBING_1_LINEUP,CLIMBING_2_HANGING->{}
-        
-      default->setStateFromRequest(RobotState.SPEAKER_PREPARE_TO_SCORE);
-    }
-  }
-  public void prepareAmpRequest(){
-    switch (getState()) {
-      case CLIMBING_1_LINEUP,CLIMBING_2_HANGING->{}
-        
-      default->setStateFromRequest(RobotState.AMP_PREPARE_TO_SCORE);
-    }
-  }
-  public void prepareFeedRequest(){
-    switch (getState()) {
-      case CLIMBING_1_LINEUP,CLIMBING_2_HANGING->{}
-        
-      default->setStateFromRequest(RobotState.FEEDING_PREPARE_TO_SHOOT);
-    }
-  }
-  public void stopShootingRequest(){
-    switch (getState()) {
-      case SPEAKER_SCORING,SUBWOOFER_SCORING,AMP_SCORING,FEEDING_SHOOTING,PASS_SHOOTING,
-      SPEAKER_PREPARE_TO_SCORE,SUBWOOFER_PREPARE_TO_SCORE,AMP_PREPARE_TO_SCORE,FEEDING_PREPARE_TO_SHOOT,PASS_PREPARE_TO_SHOOT->{}
-        
-      default->setStateFromRequest(RobotState.IDLE_WITH_GP);
-    }
-  }
-  public void prepareSubwooferRequest(){
-    switch (getState()) {
-      case CLIMBING_1_LINEUP,CLIMBING_2_HANGING->{}
-        
-      default->setStateFromRequest(RobotState.SUBWOOFER_PREPARE_TO_SCORE);
+      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
+      default -> setStateFromRequest(RobotState.SPEAKER_PREPARE_TO_SCORE);
     }
   }
 
+  public void prepareAmpRequest() {
+    switch (getState()) {
+      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
+      default -> setStateFromRequest(RobotState.AMP_PREPARE_TO_SCORE);
+    }
+  }
+
+  public void prepareFeedRequest() {
+    switch (getState()) {
+      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
+      default -> setStateFromRequest(RobotState.FEEDING_PREPARE_TO_SHOOT);
+    }
+  }
+
+  public void stopShootingRequest() {
+    switch (getState()) {
+      case SPEAKER_SCORING,
+          SUBWOOFER_SCORING,
+          AMP_SCORING,
+          FEEDING_SHOOTING,
+          PASS_SHOOTING,
+          SPEAKER_PREPARE_TO_SCORE,
+          SUBWOOFER_PREPARE_TO_SCORE,
+          AMP_PREPARE_TO_SCORE,
+          FEEDING_PREPARE_TO_SHOOT,
+          PASS_PREPARE_TO_SHOOT -> {}
+      default -> setStateFromRequest(RobotState.IDLE_WITH_GP);
+    }
+  }
+
+  public void prepareSubwooferRequest() {
+    switch (getState()) {
+      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
+      default -> setStateFromRequest(RobotState.SUBWOOFER_PREPARE_TO_SCORE);
+    }
+  }
 }

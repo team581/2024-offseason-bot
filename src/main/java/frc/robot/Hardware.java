@@ -31,6 +31,6 @@ public class Hardware {
   public final TalonFX armRight =
       new TalonFX(RobotConfig.get().arm().rightMotorID(), RobotConfig.get().arm().canBusName());
 
-      public final CommandXboxController driverController = new CommandXboxController(0);
-      public final CommandXboxController operatorController = new CommandXboxController(0);
+  public final CommandXboxController driverController = new CommandXboxController(0);
+  public final CommandXboxController operatorController = new CommandXboxController(1);
 }
