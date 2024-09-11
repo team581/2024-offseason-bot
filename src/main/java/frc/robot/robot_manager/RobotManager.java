@@ -52,14 +52,14 @@ public class RobotManager extends StateMachine<RobotState> {
     return switch (currentState) {
       case SPEAKER_WAITING,
               AMP_WAITING,
+              SUBWOOFER_WAITING,
               FEEDING_WAITING,
-              PASS_WAITING,
               IDLE_NO_GP,
               IDLE_WITH_GP,
               CLIMBING_1_LINEUP,
               CLIMBING_2_HANGING ->
           currentState;
-      case SPEAKER_SCORING, AMP_SCORING, FEEDING_SHOOTING, PASS_SHOOTING ->
+      case SPEAKER_SCORING, AMP_SCORING, FEEDING_SHOOTING, PASS_SHOOTING, SUBWOOFER_SCORING ->
           queuer.hasNote() ? currentState : RobotState.IDLE_NO_GP;
 
       case SPEAKER_PREPARE_TO_SCORE ->
@@ -72,6 +72,8 @@ public class RobotManager extends StateMachine<RobotState> {
           shooter.atGoal() && arm.atGoal() ? RobotState.FEEDING_SHOOTING : currentState;
       case PASS_PREPARE_TO_SHOOT ->
           shooter.atGoal() && arm.atGoal() ? RobotState.PASS_SHOOTING : currentState;
+      case SUBWOOFER_PREPARE_TO_SCORE ->
+          shooter.atGoal() && arm.atGoal() ? RobotState.SUBWOOFER_SCORING : currentState;
       case UNJAM -> currentState;
       case INTAKING -> queuer.hasNote() ? RobotState.IDLE_WITH_GP : currentState;
       case OUTTAKING -> queuer.hasNote() || intake.hasNote() ? currentState : RobotState.IDLE_NO_GP;
@@ -81,6 +83,18 @@ public class RobotManager extends StateMachine<RobotState> {
   @Override
   protected void afterTransition(RobotState newState) {
     switch (newState) {
+      case SUBWOOFER_PREPARE_TO_SCORE, SUBWOOFER_WAITING -> {
+        arm.setState(ArmState.SUBWOOFER_SHOT);
+        shooter.setState(ShooterState.SUBWOOFER_SHOT);
+        intake.setState(IntakeState.IDLE);
+        queuer.setState(QueuerState.IDLE_WITH_GP);
+      }
+      case SUBWOOFER_SCORING -> {
+        arm.setState(ArmState.SUBWOOFER_SHOT);
+        shooter.setState(ShooterState.SUBWOOFER_SHOT);
+        intake.setState(IntakeState.IDLE);
+        queuer.setState(QueuerState.SHOOTING);
+      }
       case SPEAKER_PREPARE_TO_SCORE, SPEAKER_WAITING -> {
         arm.setState(ArmState.SPEAKER_SHOT);
         shooter.setState(ShooterState.SPEAKER_SHOT);
@@ -117,7 +131,7 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.SHOOTING);
       }
-      case PASS_PREPARE_TO_SHOOT, PASS_WAITING -> {
+      case PASS_PREPARE_TO_SHOOT -> {
         arm.setState(ArmState.PASS);
         shooter.setState(ShooterState.PASS);
         intake.setState(IntakeState.IDLE);
@@ -189,6 +203,116 @@ public class RobotManager extends StateMachine<RobotState> {
         arm.setDistanceToFeedSpot(distanceToFeedSpot);
       }
       default -> {}
+    }
+  }
+
+  public void confirmShotRequest() {
+    switch (getState()) {
+      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
+
+      case AMP_WAITING -> setStateFromRequest(RobotState.AMP_PREPARE_TO_SCORE);
+      case SPEAKER_WAITING -> setStateFromRequest(RobotState.SPEAKER_PREPARE_TO_SCORE);
+      case FEEDING_WAITING -> setStateFromRequest(RobotState.FEEDING_PREPARE_TO_SHOOT);
+      default -> setStateFromRequest(RobotState.SPEAKER_PREPARE_TO_SCORE);
+    }
+  }
+
+  public void waitAmpRequest() {
+    switch (getState()) {
+      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING, AMP_SCORING -> {}
+      default -> setStateFromRequest(RobotState.AMP_WAITING);
+    }
+  }
+
+  public void waitSubwooferRequest() {
+    switch (getState()) {
+      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING, SPEAKER_SCORING -> {}
+      default -> setStateFromRequest(RobotState.SUBWOOFER_WAITING);
+    }
+  }
+
+  public void waitSpeakerRequest() {
+    switch (getState()) {
+      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
+      default -> setStateFromRequest(RobotState.SPEAKER_WAITING);
+    }
+  }
+
+  public void unjamRequest() {
+    switch (getState()) {
+      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
+      default -> setStateFromRequest(RobotState.UNJAM);
+    }
+  }
+
+  public void intakeRequest() {
+    switch (getState()) {
+      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
+      default -> setStateFromRequest(RobotState.INTAKING);
+    }
+  }
+
+  public void stopIntakingRequest() {
+    switch (getState()) {
+      case INTAKING -> setStateFromRequest(RobotState.IDLE_NO_GP);
+      default -> {}
+    }
+  }
+
+  public void outtakeRequest() {
+    switch (getState()) {
+      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
+      default -> setStateFromRequest(RobotState.OUTTAKING);
+    }
+  }
+
+  public void idleWithGpRequest() {
+    setStateFromRequest(RobotState.IDLE_WITH_GP);
+  }
+
+  public void stowRequest() {
+    switch (getState()) {
+      case INTAKING,
+              AMP_PREPARE_TO_SCORE,
+              SPEAKER_PREPARE_TO_SCORE,
+              FEEDING_PREPARE_TO_SHOOT,
+              PASS_PREPARE_TO_SHOOT,
+              AMP_WAITING,
+              SPEAKER_WAITING,
+              FEEDING_WAITING,
+              AMP_SCORING,
+              SPEAKER_SCORING,
+              FEEDING_SHOOTING,
+              PASS_SHOOTING,
+              IDLE_WITH_GP,
+              UNJAM ->
+          setStateFromRequest(RobotState.IDLE_WITH_GP);
+      default -> setStateFromRequest(RobotState.IDLE_NO_GP);
+    }
+  }
+
+  public void preparePassRequest() {
+    switch (getState()) {
+      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
+      default -> setStateFromRequest(RobotState.PASS_PREPARE_TO_SHOOT);
+    }
+  }
+
+  public void nextClimbStateRequest() {
+    switch (getState()) {
+      case CLIMBING_1_LINEUP -> setStateFromRequest(RobotState.CLIMBING_2_HANGING);
+      case CLIMBING_2_HANGING -> {}
+      default -> setStateFromRequest(RobotState.CLIMBING_1_LINEUP);
+    }
+  }
+
+  public void previousClimbStateRequest() {
+    switch (getState()) {
+      case CLIMBING_2_HANGING -> setStateFromRequest(RobotState.CLIMBING_1_LINEUP);
+      case CLIMBING_1_LINEUP -> {
+        setStateFromRequest(RobotState.IDLE_WITH_GP);
+      }
+      default -> setStateFromRequest(RobotState.CLIMBING_1_LINEUP);
     }
   }
 }
