@@ -10,6 +10,7 @@ public enum ArmState {
   CLIMBING_1_LINEUP,
   CLIMBING_2_HANGING,
   AMP,
+  PASS,
 
   PRE_MATCH_HOMING;
 }
