@@ -2,6 +2,7 @@ package frc.robot.imu;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import dev.doglog.DogLog;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
@@ -22,6 +23,19 @@ public class ImuSubsystem extends StateMachine<ImuState> {
 
   public Rotation2d getRobotHeading() {
     return robotHeading;
+  }
+  private double getDistanceToSpeaker(double distance){
+    return distance;
+  }
+  public boolean atAngleForSpeaker(){
+    double distanceToSpeaker = ;
+    double angleToSpeaker;
+
+    angleToSpeaker = Math.cos(adjacent/distanceToSpeaker);
+    if(MathUtil.isNear(, getRobotHeading(), 3)){
+      return true;
+    }
+    return false;
   }
 
   @Override

@@ -10,6 +10,7 @@ import frc.robot.queuer.QueuerState;
 import frc.robot.queuer.QueuerSubsystem;
 import frc.robot.shooter.ShooterState;
 import frc.robot.shooter.ShooterSubsystem;
+import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
 import frc.robot.vision.VisionSubsystem;
@@ -22,6 +23,7 @@ public class RobotManager extends StateMachine<RobotState> {
   public final ImuSubsystem imu;
   public final IntakeSubsystem intake;
   public final QueuerSubsystem queuer;
+  public final SwerveSubsystem swerve;
 
   private final double distanceToFeedSpot = 0.0;
   private final double distanceToSpeaker = 0.0;
@@ -33,7 +35,8 @@ public class RobotManager extends StateMachine<RobotState> {
       VisionSubsystem vision,
       ImuSubsystem imu,
       IntakeSubsystem intake,
-      QueuerSubsystem queuer) {
+      QueuerSubsystem queuer,
+      SwerveSubsystem swerve) {
     super(SubsystemPriority.ROBOT_MANAGER, RobotState.IDLE_NO_GP);
     this.arm = arm;
     this.shooter = shooter;
@@ -42,6 +45,7 @@ public class RobotManager extends StateMachine<RobotState> {
     this.imu = imu;
     this.intake = intake;
     this.queuer = queuer;
+    this.swerve = swerve;
   }
 
   @Override
@@ -63,13 +67,13 @@ public class RobotManager extends StateMachine<RobotState> {
           queuer.hasNote() ? currentState : RobotState.IDLE_NO_GP;
 
       case SPEAKER_PREPARE_TO_SCORE ->
-          shooter.atGoal() && arm.atGoal() ? RobotState.SPEAKER_SCORING : currentState;
+          shooter.atGoal() && arm.atGoal()&&swerve.isSlowEnoughToShoot() ? RobotState.SPEAKER_SCORING : currentState;
 
       case AMP_PREPARE_TO_SCORE ->
-          shooter.atGoal() && arm.atGoal() ? RobotState.AMP_SCORING : currentState;
+          shooter.atGoal() && arm.atGoal()? RobotState.AMP_SCORING : currentState;
 
       case FEEDING_PREPARE_TO_SHOOT ->
-          shooter.atGoal() && arm.atGoal() ? RobotState.FEEDING_SHOOTING : currentState;
+          shooter.atGoal() && arm.atGoal()&&swerve.isSlowEnoughToFeed() ? RobotState.FEEDING_SHOOTING : currentState;
       case PASS_PREPARE_TO_SHOOT ->
           shooter.atGoal() && arm.atGoal() ? RobotState.PASS_SHOOTING : currentState;
       case SUBWOOFER_PREPARE_TO_SCORE ->
