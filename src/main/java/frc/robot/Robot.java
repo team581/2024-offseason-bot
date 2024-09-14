@@ -2,6 +2,7 @@ package frc.robot;
 
 import dev.doglog.DogLog;
 import dev.doglog.DogLogOptions;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -31,7 +32,7 @@ public class Robot extends TimedRobot {
   private final ArmSubsystem arm = new ArmSubsystem(hardware.armLeft, hardware.armRight);
   private final IntakeSubsystem intake =
       new IntakeSubsystem(hardware.intakeMain, hardware.intakeCenteringMotor);
-  private final SwerveSubsystem swerve = new SwerveSubsystem(hardware.driverController);
+  private final SwerveSubsystem swerve = new SwerveSubsystem();
   private final ImuSubsystem imu = new ImuSubsystem(swerve.drivetrainPigeon);
   private final Autos autos = new Autos();
   private final RobotCommands robotCommands = new RobotCommands(null);
@@ -131,7 +132,11 @@ public class Robot extends TimedRobot {
   public void testExit() {}
 
   private void configureBindings() {
-    // TODO: Swerve button bindings
+    swerve.setDefaultCommand(swerve.run(() -> {
+      if (DriverStation.isTeleop()) {
+        swerve.driveTeleop(hardware.driverController.getLeftX(),hardware.driverController.getLeftY() , hardware.driverController.getRightX());
+      }
+    }));
 
     hardware
         .driverController

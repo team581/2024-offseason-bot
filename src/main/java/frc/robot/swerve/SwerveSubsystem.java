@@ -52,8 +52,6 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
   public static final SwerveDriveKinematics KINEMATICS =
       new SwerveDriveKinematics(MODULE_LOCATIONS);
 
-  private final CommandXboxController controller;
-
   private final CommandSwerveDrivetrain drivetrain = new CommandSwerveDrivetrain();
 
   public final Pigeon2 drivetrainPigeon = drivetrain.getPigeon2();
@@ -110,9 +108,8 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
     goalSnapAngle = angle;
   }
 
-  public SwerveSubsystem(CommandXboxController driveController) {
+  public SwerveSubsystem() {
     super(SubsystemPriority.SWERVE, SwerveState.TELEOP);
-    this.controller = driveController;
   }
 
   public void setFieldRelativeAutoSpeeds(ChassisSpeeds speeds) {
@@ -124,13 +121,13 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
     double leftY =
         -1.0
             * ControllerHelpers.getExponent(
-                ControllerHelpers.getDeadbanded(controller.getLeftY(), leftYDeadband), 1.5);
+                ControllerHelpers.getDeadbanded(x, leftYDeadband), 1.5);
     double leftX =
         ControllerHelpers.getExponent(
-            ControllerHelpers.getDeadbanded(controller.getLeftX(), leftXDeadband), 1.5);
+            ControllerHelpers.getDeadbanded(y, leftXDeadband), 1.5);
     double rightX =
         ControllerHelpers.getExponent(
-            ControllerHelpers.getDeadbanded(controller.getRightX(), rightXDeadband), 2);
+            ControllerHelpers.getDeadbanded(theta, rightXDeadband), 2);
 
     if (RobotConfig.get().swerve().invertRotation()) {
       rightX *= -1.0;
