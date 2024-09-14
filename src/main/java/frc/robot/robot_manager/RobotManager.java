@@ -341,17 +341,13 @@ public class RobotManager extends StateMachine<RobotState> {
   }
 
   public void stopShootingRequest() {
+    // If we are actively taking a shot, ignore the request to avoid messing up shooting
     switch (getState()) {
       case SPEAKER_SCORING,
           SUBWOOFER_SCORING,
           AMP_SCORING,
           FEEDING_SHOOTING,
-          PASS_SHOOTING,
-          SPEAKER_PREPARE_TO_SCORE,
-          SUBWOOFER_PREPARE_TO_SCORE,
-          AMP_PREPARE_TO_SCORE,
-          FEEDING_PREPARE_TO_SHOOT,
-          PASS_PREPARE_TO_SHOOT -> {}
+          PASS_SHOOTING -> {}
       default -> setStateFromRequest(RobotState.IDLE_WITH_GP);
     }
   }
