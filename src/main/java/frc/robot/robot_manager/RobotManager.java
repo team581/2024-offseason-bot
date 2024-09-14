@@ -165,19 +165,19 @@ public class RobotManager extends StateMachine<RobotState> {
         arm.setState(ArmState.CLIMBING_1_LINEUP);
         shooter.setState(ShooterState.IDLE_STOPPED);
         intake.setState(IntakeState.IDLE);
-        queuer.setState(queuer.setState(QueuerState.IDLE));
+        queuer.setState(QueuerState.IDLE);
       }
       case CLIMBING_2_HANGING -> {
         arm.setState(ArmState.CLIMBING_2_HANGING);
         shooter.setState(ShooterState.IDLE_STOPPED);
         intake.setState(IntakeState.IDLE);
-        queuer.setState(queuer.setState(QueuerState.IDLE));
+        queuer.setState(QueuerState.IDLE);
       }
       case IDLE_NO_GP -> {
         arm.setState(ArmState.IDLE);
         shooter.setState(ShooterState.IDLE_STOPPED);
         intake.setState(IntakeState.IDLE);
-        queuer.setState(queuer.setState(QueuerState.IDLE));
+        queuer.setState(QueuerState.IDLE);
       }
       case IDLE_WITH_GP -> {
         arm.setState(ArmState.IDLE);

@@ -3,7 +3,6 @@ package frc.robot.intake;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkMax;
 import dev.doglog.DogLog;
-import edu.wpi.first.math.filter.Debouncer;
 import frc.robot.config.RobotConfig;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
@@ -11,7 +10,6 @@ import frc.robot.util.state_machines.StateMachine;
 public class IntakeSubsystem extends StateMachine<IntakeState> {
   private final TalonFX mainMotor;
   private final CANSparkMax centeringMotor;
-  private final Debouncer debouncer = RobotConfig.get().intake().debouncer();
 
   public IntakeSubsystem(TalonFX mainMotor, CANSparkMax centeringMotor) {
     super(SubsystemPriority.INTAKE, IntakeState.IDLE);

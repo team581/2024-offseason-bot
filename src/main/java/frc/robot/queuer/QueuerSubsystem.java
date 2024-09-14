@@ -16,7 +16,7 @@ public class QueuerSubsystem extends StateMachine<QueuerState> {
   private final Debouncer debouncer = RobotConfig.get().queuer().debouncer();
 
   public QueuerSubsystem(TalonFX motor, DigitalInput sensor) {
-    super(SubsystemPriority.QUEUER, queuer.setState(QueuerState.IDLE));
+    super(SubsystemPriority.QUEUER, QueuerState.IDLE);
 
     this.sensor = sensor;
     this.motor = motor;
