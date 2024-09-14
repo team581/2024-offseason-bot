@@ -11,8 +11,6 @@ import frc.robot.util.state_machines.StateMachine;
 public class IntakeSubsystem extends StateMachine<IntakeState> {
   private final TalonFX mainMotor;
   private final CANSparkMax centeringMotor;
-  private boolean sensorHasNote = false;
-  private boolean debouncedSensorHasNote = false;
   private final Debouncer debouncer = RobotConfig.get().intake().debouncer();
 
   public IntakeSubsystem(TalonFX mainMotor, CANSparkMax centeringMotor) {
@@ -30,17 +28,8 @@ public class IntakeSubsystem extends StateMachine<IntakeState> {
   }
 
   @Override
-  protected void collectInputs() {
-    debouncedSensorHasNote = debouncer.calculate(sensorHasNote);
-  }
-
-  @Override
   protected IntakeState getNextState(IntakeState currentState) {
     return currentState;
-  }
-
-  public boolean hasNote() {
-    return debouncedSensorHasNote;
   }
 
   @Override
@@ -65,7 +54,5 @@ public class IntakeSubsystem extends StateMachine<IntakeState> {
     DogLog.log("Intake/StatorCurrent", mainMotor.getStatorCurrent().getValueAsDouble());
     DogLog.log("Intake/SupplyCurrent", mainMotor.getSupplyCurrent().getValueAsDouble());
     DogLog.log("Intake/AppliedVoltage", mainMotor.getMotorVoltage().getValueAsDouble());
-    DogLog.log("Intake/RawSensor", sensorHasNote);
-    DogLog.log("Intake/DebouncedSensor", hasNote());
   }
 }

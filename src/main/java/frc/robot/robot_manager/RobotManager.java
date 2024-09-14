@@ -76,7 +76,7 @@ public class RobotManager extends StateMachine<RobotState> {
           shooter.atGoal() && arm.atGoal() ? RobotState.SUBWOOFER_SCORING : currentState;
       case UNJAM -> currentState;
       case INTAKING -> queuer.hasNote() ? RobotState.IDLE_WITH_GP : currentState;
-      case OUTTAKING -> queuer.hasNote() || intake.hasNote() ? currentState : RobotState.IDLE_NO_GP;
+      case OUTTAKING -> queuer.hasNote() ? currentState : RobotState.IDLE_NO_GP;
     };
   }
 
@@ -343,11 +343,7 @@ public class RobotManager extends StateMachine<RobotState> {
   public void stopShootingRequest() {
     // If we are actively taking a shot, ignore the request to avoid messing up shooting
     switch (getState()) {
-      case SPEAKER_SCORING,
-          SUBWOOFER_SCORING,
-          AMP_SCORING,
-          FEEDING_SHOOTING,
-          PASS_SHOOTING -> {}
+      case SPEAKER_SCORING, SUBWOOFER_SCORING, AMP_SCORING, FEEDING_SHOOTING, PASS_SHOOTING -> {}
       default -> setStateFromRequest(RobotState.IDLE_WITH_GP);
     }
   }

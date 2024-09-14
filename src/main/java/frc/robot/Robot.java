@@ -169,28 +169,13 @@ public class Robot extends TimedRobot {
         .x()
         .onTrue(robotCommands.outtakeCommand())
         .onFalse(robotCommands.stowCommand());
-    hardware
-        .operatorController
-        .a()
-        .onTrue(robotCommands.stowCommand());
-    hardware
-        .operatorController
-        .povUp()
-        .onTrue(robotCommands.climbUpCommand());
-    hardware
-        .operatorController
-        .povDown()
-        .onTrue(robotCommands.climbDownCommand());
+    hardware.operatorController.a().onTrue(robotCommands.stowCommand());
+    hardware.operatorController.povUp().onTrue(robotCommands.climbUpCommand());
+    hardware.operatorController.povDown().onTrue(robotCommands.climbDownCommand());
     hardware
         .operatorController
         .povLeft()
         .onTrue(robotCommands.unjamCommand())
         .onFalse(robotCommands.stowCommand());
-
-
-
-        
-
-      
   }
 }

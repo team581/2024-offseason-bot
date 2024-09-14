@@ -39,10 +39,8 @@ public record RobotConfig(
       int mainMotorID,
       String mainMotorCanBusName,
       int centeringMotorID,
-      int sensorID,
       TalonFXConfiguration mainMotorConfig,
-      Consumer<CANSparkMax> centeringMotorConfig,
-      Debouncer debouncer) {}
+      Consumer<CANSparkMax> centeringMotorConfig) {}
 
   public record ArmConfig(
       String canBusName,
