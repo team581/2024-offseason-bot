@@ -87,7 +87,7 @@ public class RobotManager extends StateMachine<RobotState> {
         arm.setState(ArmState.SUBWOOFER_SHOT);
         shooter.setState(ShooterState.SUBWOOFER_SHOT);
         intake.setState(IntakeState.IDLE);
-        queuer.setState(QueuerState.IDLE_WITH_GP);
+        queuer.setState(QueuerState.IDLE);
       }
       case SUBWOOFER_SCORING -> {
         arm.setState(ArmState.SUBWOOFER_SHOT);
@@ -99,7 +99,7 @@ public class RobotManager extends StateMachine<RobotState> {
         arm.setState(ArmState.SPEAKER_SHOT);
         shooter.setState(ShooterState.SPEAKER_SHOT);
         intake.setState(IntakeState.IDLE);
-        queuer.setState(QueuerState.IDLE_WITH_GP);
+        queuer.setState(QueuerState.IDLE);
       }
       case SPEAKER_SCORING -> {
         arm.setState(ArmState.SPEAKER_SHOT);
@@ -111,7 +111,7 @@ public class RobotManager extends StateMachine<RobotState> {
         arm.setState(ArmState.AMP);
         shooter.setState(ShooterState.AMP);
         intake.setState(IntakeState.IDLE);
-        queuer.setState(QueuerState.IDLE_WITH_GP);
+        queuer.setState(QueuerState.IDLE);
       }
       case AMP_SCORING -> {
         arm.setState(ArmState.AMP);
@@ -123,7 +123,7 @@ public class RobotManager extends StateMachine<RobotState> {
         arm.setState(ArmState.FEEDING);
         shooter.setState(ShooterState.FEEDING);
         intake.setState(IntakeState.IDLE);
-        queuer.setState(QueuerState.IDLE_WITH_GP);
+        queuer.setState(QueuerState.IDLE);
       }
       case FEEDING_SHOOTING -> {
         arm.setState(ArmState.FEEDING);
@@ -135,7 +135,7 @@ public class RobotManager extends StateMachine<RobotState> {
         arm.setState(ArmState.PASS);
         shooter.setState(ShooterState.PASS);
         intake.setState(IntakeState.IDLE);
-        queuer.setState(QueuerState.IDLE_WITH_GP);
+        queuer.setState(QueuerState.IDLE);
       }
       case PASS_SHOOTING -> {
         arm.setState(ArmState.PASS);
@@ -165,25 +165,25 @@ public class RobotManager extends StateMachine<RobotState> {
         arm.setState(ArmState.CLIMBING_1_LINEUP);
         shooter.setState(ShooterState.IDLE_STOPPED);
         intake.setState(IntakeState.IDLE);
-        queuer.setState(QueuerState.IDLE_NO_GP);
+        queuer.setState(queuer.setState(QueuerState.IDLE));
       }
       case CLIMBING_2_HANGING -> {
         arm.setState(ArmState.CLIMBING_2_HANGING);
         shooter.setState(ShooterState.IDLE_STOPPED);
         intake.setState(IntakeState.IDLE);
-        queuer.setState(QueuerState.IDLE_NO_GP);
+        queuer.setState(queuer.setState(QueuerState.IDLE));
       }
       case IDLE_NO_GP -> {
         arm.setState(ArmState.IDLE);
         shooter.setState(ShooterState.IDLE_STOPPED);
         intake.setState(IntakeState.IDLE);
-        queuer.setState(QueuerState.IDLE_NO_GP);
+        queuer.setState(queuer.setState(QueuerState.IDLE));
       }
       case IDLE_WITH_GP -> {
         arm.setState(ArmState.IDLE);
         shooter.setState(ShooterState.IDLE_WARMUP);
         intake.setState(IntakeState.IDLE);
-        queuer.setState(QueuerState.IDLE_WITH_GP);
+        queuer.setState(QueuerState.IDLE);
       }
     }
   }
