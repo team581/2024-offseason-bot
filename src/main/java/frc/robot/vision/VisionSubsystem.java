@@ -3,15 +3,14 @@ package frc.robot.vision;
 import frc.robot.imu.ImuSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class VisionSubsystem extends StateMachine<VisionState> {
   private final ImuSubsystem imu;
   private final Limelight leftLimelight;
   private final Limelight rightLimelight;
   private final List<VisionResult> processedVisionResult = new ArrayList<>();
-
 
   public VisionSubsystem(ImuSubsystem imu, Limelight leftLimelight, Limelight rightLimelight) {
     super(SubsystemPriority.VISION, VisionState.DEFAULT_STATE);
@@ -29,10 +28,9 @@ public class VisionSubsystem extends StateMachine<VisionState> {
     if (leftResult.isPresent()) {
       processedVisionResult.add(leftResult.get());
     }
-    if(rightResult.isPresent()) {
+    if (rightResult.isPresent()) {
       processedVisionResult.add(rightResult.get());
     }
-
   }
 
   public List<VisionResult> getVisionResult() {

@@ -11,9 +11,8 @@ import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
 import frc.robot.vision.VisionResult;
 import frc.robot.vision.VisionSubsystem;
-import java.util.Optional;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class LocalizationSubsystem extends StateMachine<LocalizationState> {
   private final ImuSubsystem imu;
@@ -43,8 +42,7 @@ public class LocalizationSubsystem extends StateMachine<LocalizationState> {
   @Override
   public void robotPeriodic() {
     super.robotPeriodic();
-for (int resultnum : latestResult.size())
-       results = latestResult.get(resultnum);
+    for (var results : latestResult) {
       Pose2d visionPose = results.pose();
 
       double visionTimestamp = results.timestamp();
@@ -60,9 +58,9 @@ for (int resultnum : latestResult.size())
                 RobotConfig.get().vision().xyStdDev(),
                 RobotConfig.get().vision().thetaStdDev()));
         lastAddedVisionTimestamp = visionTimestamp;
+      }
 
+      poseHistory.addSample(Timer.getFPGATimestamp(), poseEstimator.getEstimatedPosition());
     }
-
-    poseHistory.addSample(Timer.getFPGATimestamp(), poseEstimator.getEstimatedPosition());
   }
 }
