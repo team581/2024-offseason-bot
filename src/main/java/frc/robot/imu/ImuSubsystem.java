@@ -27,12 +27,16 @@ public class ImuSubsystem extends StateMachine<ImuState> {
   private double getDistanceToSpeaker(double distance){
     return distance;
   }
-  public boolean atAngleForSpeaker(){
-    double distanceToSpeaker = ;
-    double angleToSpeaker;
+  public double angleToSpeaker(){
+    double angle =
+        Units.radiansToDegrees(
+            Math.atan2(target.getY() - current.getY(), target.getX() - current.getX()));
 
-    angleToSpeaker = Math.cos(adjacent/distanceToSpeaker);
-    if(MathUtil.isNear(, getRobotHeading(), 3)){
+  }
+  public boolean atAngleForSpeaker(double angleToSpeaker, double robotHeading){
+    angleToSpeaker = angleToSpeaker();
+    robotHeading=getRobotHeading();
+    if(MathUtil.isNear(angleToSpeaker(), getRobotHeading(), 3)){
       return true;
     }
     return false;
