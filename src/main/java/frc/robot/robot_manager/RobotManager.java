@@ -67,13 +67,13 @@ public class RobotManager extends StateMachine<RobotState> {
           queuer.hasNote() ? currentState : RobotState.IDLE_NO_GP;
 
       case SPEAKER_PREPARE_TO_SCORE ->
-          shooter.atGoal() && arm.atGoal()&&swerve.isSlowEnoughToShoot() ? RobotState.SPEAKER_SCORING : currentState;
+          shooter.atGoal() && arm.atGoal()&&swerve.isSlowEnoughToShoot()&&imu.atAngleForSpeaker()? RobotState.SPEAKER_SCORING : currentState;
 
       case AMP_PREPARE_TO_SCORE ->
           shooter.atGoal() && arm.atGoal()? RobotState.AMP_SCORING : currentState;
 
       case FEEDING_PREPARE_TO_SHOOT ->
-          shooter.atGoal() && arm.atGoal()&&swerve.isSlowEnoughToFeed() ? RobotState.FEEDING_SHOOTING : currentState;
+          shooter.atGoal() && arm.atGoal()&&swerve.isSlowEnoughToFeed()&&imu.atAngleForFeeding() ? RobotState.FEEDING_SHOOTING : currentState;
       case PASS_PREPARE_TO_SHOOT ->
           shooter.atGoal() && arm.atGoal() ? RobotState.PASS_SHOOTING : currentState;
       case SUBWOOFER_PREPARE_TO_SCORE ->

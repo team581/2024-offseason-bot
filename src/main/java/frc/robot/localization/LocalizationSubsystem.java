@@ -1,9 +1,11 @@
 package frc.robot.localization;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
+import edu.wpi.first.units.Distance;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.config.RobotConfig;
 import frc.robot.imu.ImuSubsystem;
@@ -36,6 +38,36 @@ public class LocalizationSubsystem extends StateMachine<LocalizationState> {
 
   public Pose2d getPose() {
     return poseEstimator.getEstimatedPosition();
+  }
+
+  public double angleToSpeaker(){
+
+
+
+    Pose2d speakerPose = vision.getSpeakerPose();
+    double angleToSpeaker = distanceAngleToTarget(speakerPose, getPose());
+
+    return angleToSpeaker;
+
+  }
+  public double angleToFeeding(){
+    double angleToFeeding = 0.0;
+    return angleToFeeding;
+
+  }
+  public boolean atAngleForSpeaker(){
+
+    if(MathUtil.isNear(angleToSpeaker(), imu.getRobotHeading().getDegrees(), 3)){
+      return true;
+    }
+    return false;
+  }
+  public boolean atAngleForFeeding(){
+
+    if(MathUtil.isNear(angleToFeeding(), getRobotHeading().getDegrees(), 3)){
+      return true;
+    }
+    return false;
   }
 
   @Override
