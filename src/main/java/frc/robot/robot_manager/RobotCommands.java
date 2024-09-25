@@ -89,4 +89,19 @@ public class RobotCommands {
     return Commands.runOnce(robot::prepareSubwooferRequest, requirements)
         .andThen(robot.waitForState(RobotState.IDLE_NO_GP));
   }
+
+  public Command climbUpCommand() {
+    return Commands.runOnce(robot::nextClimbStateRequest, requirements)
+        .andThen(robot.waitForState(RobotState.CLIMBING_2_HANGING));
+  }
+
+  public Command climbDownCommand() {
+    return Commands.runOnce(robot::previousClimbStateRequest, requirements)
+        .andThen(robot.waitForState(RobotState.CLIMBING_1_LINEUP));
+  }
+
+  public Command unjamCommand() {
+    return Commands.runOnce(robot::unjamRequest, requirements)
+        .andThen(robot.waitForState(RobotState.IDLE_NO_GP));
+  }
 }

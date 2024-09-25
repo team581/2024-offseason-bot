@@ -11,6 +11,9 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.config.RobotConfig;
+import frc.robot.fms.FmsSubsystem;
+import frc.robot.util.ControllerHelpers;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
 import java.util.List;
@@ -49,8 +52,6 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
   public static final SwerveDriveKinematics KINEMATICS =
       new SwerveDriveKinematics(MODULE_LOCATIONS);
 
-  private final CommandXboxController controller;
-
   private final CommandSwerveDrivetrain drivetrain = new CommandSwerveDrivetrain();
 
   public final Pigeon2 drivetrainPigeon = drivetrain.getPigeon2();
@@ -76,6 +77,12 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
   private ChassisSpeeds robotRelativeSpeeds;
   private ChassisSpeeds fieldRelativeSpeeds;
   private boolean slowEnoughToFeed;
+  private double goalSnapAngle = 0;
+
+  /** The latest requested teleop speeds. */
+  private ChassisSpeeds teleopSpeeds = new ChassisSpeeds();
+
+  private ChassisSpeeds autoSpeeds = new ChassisSpeeds();
 
   public ChassisSpeeds getRobotRelativeSpeeds() {
     return robotRelativeSpeeds;
@@ -97,9 +104,62 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
     return modulePositions;
   }
 
-  public SwerveSubsystem(CommandXboxController driveController) {
+  public void setSnapToAngle(double angle) {
+    goalSnapAngle = angle;
+  }
+
+  public SwerveSubsystem() {
     super(SubsystemPriority.SWERVE, SwerveState.TELEOP);
-    this.controller = driveController;
+  }
+
+  public void setFieldRelativeAutoSpeeds(ChassisSpeeds speeds) {
+    autoSpeeds = speeds;
+    sendSwerveRequest();
+  }
+
+  public void driveTeleop(double x, double y, double theta) {
+    double leftY =
+        -1.0
+            * ControllerHelpers.getExponent(
+                ControllerHelpers.getDeadbanded(x, leftYDeadband), 1.5);
+    double leftX =
+        ControllerHelpers.getExponent(
+            ControllerHelpers.getDeadbanded(y, leftXDeadband), 1.5);
+    double rightX =
+        ControllerHelpers.getExponent(
+            ControllerHelpers.getDeadbanded(theta, rightXDeadband), 2);
+
+    if (RobotConfig.get().swerve().invertRotation()) {
+      rightX *= -1.0;
+    }
+
+    if (RobotConfig.get().swerve().invertX()) {
+      leftX *= -1.0;
+    }
+
+    if (RobotConfig.get().swerve().invertY()) {
+      leftY *= -1.0;
+    }
+
+    if (FmsSubsystem.isRedAlliance()) {
+      leftX *= -1.0;
+      leftY *= -1.0;
+    }
+
+    teleopSpeeds =
+        new ChassisSpeeds(
+            -1.0 * leftY * MaxSpeed,
+            leftX * MaxSpeed,
+            rightX * TELEOP_MAX_ANGULAR_RATE.getRadians());
+
+    sendSwerveRequest();
+  }
+
+  @Override
+  public void robotPeriodic() {
+    super.robotPeriodic();
+    // Once per loop send a swerve request to ensure data is fresh
+    sendSwerveRequest();
   }
 
   @Override
@@ -140,5 +200,38 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
         Math.sqrt(Math.pow(speeds.vxMetersPerSecond, 2) + Math.pow(speeds.vyMetersPerSecond, 2));
 
     return linearSpeed < MAX_FLOOR_SPEED_SHOOTING;
+  }
+
+  private void sendSwerveRequest() {
+    switch (getState()) {
+      case TELEOP ->
+          drivetrain.setControl(
+              drive
+                  .withVelocityX(teleopSpeeds.vxMetersPerSecond)
+                  .withVelocityY(teleopSpeeds.vyMetersPerSecond)
+                  .withRotationalRate(teleopSpeeds.omegaRadiansPerSecond)
+                  .withDriveRequestType(DriveRequestType.OpenLoopVoltage));
+      case TELEOP_SNAPS ->
+          drivetrain.setControl(
+              driveToAngle
+                  .withVelocityX(teleopSpeeds.vxMetersPerSecond)
+                  .withVelocityY(teleopSpeeds.vyMetersPerSecond)
+                  .withTargetDirection(Rotation2d.fromDegrees(goalSnapAngle))
+                  .withDriveRequestType(DriveRequestType.OpenLoopVoltage));
+      case AUTO ->
+          drivetrain.setControl(
+              drive
+                  .withVelocityX(autoSpeeds.vxMetersPerSecond)
+                  .withVelocityY(autoSpeeds.vyMetersPerSecond)
+                  .withRotationalRate(autoSpeeds.omegaRadiansPerSecond)
+                  .withDriveRequestType(DriveRequestType.Velocity));
+      case AUTO_SNAPS ->
+          drivetrain.setControl(
+              driveToAngle
+                  .withVelocityX(autoSpeeds.vxMetersPerSecond)
+                  .withVelocityY(autoSpeeds.vyMetersPerSecond)
+                  .withTargetDirection(Rotation2d.fromDegrees(goalSnapAngle))
+                  .withDriveRequestType(DriveRequestType.Velocity));
+    }
   }
 }
