@@ -133,11 +133,16 @@ public class Robot extends TimedRobot {
   public void testExit() {}
 
   private void configureBindings() {
-    swerve.setDefaultCommand(swerve.run(() -> {
-      if (DriverStation.isTeleop()) {
-        swerve.driveTeleop(hardware.driverController.getLeftX(),hardware.driverController.getLeftY() , hardware.driverController.getRightX());
-      }
-    }));
+    swerve.setDefaultCommand(
+        swerve.run(
+            () -> {
+              if (DriverStation.isTeleop()) {
+                swerve.driveTeleop(
+                    hardware.driverController.getLeftX(),
+                    hardware.driverController.getLeftY(),
+                    hardware.driverController.getRightX());
+              }
+            }));
 
     hardware
         .driverController

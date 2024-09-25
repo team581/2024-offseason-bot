@@ -10,7 +10,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.config.RobotConfig;
 import frc.robot.fms.FmsSubsystem;
 import frc.robot.util.ControllerHelpers;
@@ -120,14 +119,11 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
   public void driveTeleop(double x, double y, double theta) {
     double leftY =
         -1.0
-            * ControllerHelpers.getExponent(
-                ControllerHelpers.getDeadbanded(x, leftYDeadband), 1.5);
+            * ControllerHelpers.getExponent(ControllerHelpers.getDeadbanded(x, leftYDeadband), 1.5);
     double leftX =
-        ControllerHelpers.getExponent(
-            ControllerHelpers.getDeadbanded(y, leftXDeadband), 1.5);
+        ControllerHelpers.getExponent(ControllerHelpers.getDeadbanded(y, leftXDeadband), 1.5);
     double rightX =
-        ControllerHelpers.getExponent(
-            ControllerHelpers.getDeadbanded(theta, rightXDeadband), 2);
+        ControllerHelpers.getExponent(ControllerHelpers.getDeadbanded(theta, rightXDeadband), 2);
 
     if (RobotConfig.get().swerve().invertRotation()) {
       rightX *= -1.0;
