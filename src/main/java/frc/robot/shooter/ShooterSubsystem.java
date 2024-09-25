@@ -10,8 +10,10 @@ import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
 
 public class ShooterSubsystem extends StateMachine<ShooterState> {
-  private final TalonFX motor;
-  private double shooterRPM;
+  private final TalonFX topMotor;
+  private final TalonFX bottomMotor;
+  private double topMotorRpm;
+  private double bottomMotorRpm;
   private final VelocityVoltage velocityRequest =
       new VelocityVoltage(0).withEnableFOC(false).withLimitReverseMotion(true);
   private double distanceToSpeaker;
@@ -27,10 +29,12 @@ public class ShooterSubsystem extends StateMachine<ShooterState> {
     distanceToFeedSpot = distance;
   }
 
-  public ShooterSubsystem(TalonFX motor) {
+  public ShooterSubsystem(TalonFX topMotor, TalonFX bottomMotor) {
     super(SubsystemPriority.SHOOTER, ShooterState.IDLE_STOPPED);
-    this.motor = motor;
-    motor.getConfigurator().apply(RobotConfig.get().shooter().motorConfig());
+    this.topMotor = topMotor;
+    this.bottomMotor = bottomMotor;
+    topMotor.getConfigurator().apply(RobotConfig.get().shooter().topMotorConfig());
+    bottomMotor.getConfigurator().apply(RobotConfig.get().shooter().bottomMotorConfig());
 
     RobotConfig.get().shooter().feedSpotDistanceToRpm().accept(feedSpotDistanceToRpm);
     RobotConfig.get().shooter().speakerDistanceToRpm().accept(speakerDistanceToRpm);
@@ -38,16 +42,28 @@ public class ShooterSubsystem extends StateMachine<ShooterState> {
 
   public boolean atGoal() {
     return switch (getState()) {
-      case SUBWOOFER_SHOT -> MathUtil.isNear(ShooterRpms.SUBWOOFER, shooterRPM, 50);
+      case SUBWOOFER_SHOT ->
+          MathUtil.isNear(ShooterRpms.SUBWOOFER, topMotorRpm, 50)
+              && MathUtil.isNear(ShooterRpms.SUBWOOFER, bottomMotorRpm, 50);
       case IDLE_WARMUP, IDLE_STOPPED -> true;
-      case PODIUM_SHOT -> MathUtil.isNear(ShooterRpms.PODIUM, shooterRPM, 50);
-      case DROP -> MathUtil.isNear(ShooterRpms.DROP, shooterRPM, 50);
+      case PODIUM_SHOT ->
+          MathUtil.isNear(ShooterRpms.PODIUM, topMotorRpm, 50)
+              && MathUtil.isNear(ShooterRpms.PODIUM, bottomMotorRpm, 50);
+      case DROP ->
+          MathUtil.isNear(ShooterRpms.DROP, topMotorRpm, 50)
+              && MathUtil.isNear(ShooterRpms.DROP, bottomMotorRpm, 50);
       case FEEDING ->
-          MathUtil.isNear(feedSpotDistanceToRpm.get(distanceToFeedSpot), shooterRPM, 50);
+          MathUtil.isNear(feedSpotDistanceToRpm.get(distanceToFeedSpot), bottomMotorRpm, 50)
+              && MathUtil.isNear(feedSpotDistanceToRpm.get(distanceToFeedSpot), topMotorRpm, 50);
       case SPEAKER_SHOT ->
-          MathUtil.isNear(speakerDistanceToRpm.get(distanceToSpeaker), shooterRPM, 50);
-      case AMP -> MathUtil.isNear(ShooterRpms.AMP, shooterRPM, 50);
-      case PASS -> MathUtil.isNear(ShooterRpms.PASS, shooterRPM, 50);
+          MathUtil.isNear(speakerDistanceToRpm.get(distanceToSpeaker), bottomMotorRpm, 50)
+              && MathUtil.isNear(speakerDistanceToRpm.get(distanceToSpeaker), topMotorRpm, 50);
+      case AMP ->
+          MathUtil.isNear(ShooterRpms.AMP, bottomMotorRpm, 50)
+              && MathUtil.isNear(ShooterRpms.AMP, topMotorRpm, 50);
+      case PASS ->
+          MathUtil.isNear(ShooterRpms.PASS, bottomMotorRpm, 50)
+              && MathUtil.isNear(ShooterRpms.PASS, topMotorRpm, 50);
     };
   }
 
@@ -57,38 +73,63 @@ public class ShooterSubsystem extends StateMachine<ShooterState> {
 
   @Override
   protected void collectInputs() {
-    shooterRPM = motor.getVelocity().getValueAsDouble() * 60.0;
+    topMotorRpm = topMotor.getVelocity().getValueAsDouble() * 60.0;
+    bottomMotorRpm = bottomMotor.getVelocity().getValueAsDouble() * 60.0;
   }
 
   @Override
   protected void afterTransition(ShooterState newState) {
     switch (newState) {
-      case IDLE_STOPPED -> motor.disable();
-      case IDLE_WARMUP ->
-          motor.setControl(velocityRequest.withVelocity(ShooterRpms.IDLE_WARMUP / 60.0));
-      case SPEAKER_SHOT ->
-          motor.setControl(
-              velocityRequest.withVelocity(speakerDistanceToRpm.get(distanceToSpeaker) / 60.0));
-      case SUBWOOFER_SHOT ->
-          motor.setControl(velocityRequest.withVelocity(ShooterRpms.SUBWOOFER / 60.0));
-      case FEEDING ->
-          motor.setControl(
-              velocityRequest.withVelocity(speakerDistanceToRpm.get(distanceToFeedSpot) / 60.0));
-      case DROP -> motor.setControl(velocityRequest.withVelocity(ShooterRpms.DROP / 60.0));
-      case PODIUM_SHOT -> motor.setControl(velocityRequest.withVelocity(ShooterRpms.PODIUM / 60.0));
-      case AMP -> motor.setControl(velocityRequest.withVelocity(ShooterRpms.AMP / 60.0));
-      case PASS -> motor.setControl(velocityRequest.withVelocity(ShooterRpms.PASS / 60.0));
+      case IDLE_STOPPED -> topMotor.disable();
+      case IDLE_WARMUP -> {
+        topMotor.setControl(velocityRequest.withVelocity(ShooterRpms.IDLE_WARMUP / 60.0));
+        bottomMotor.setControl(velocityRequest.withVelocity(ShooterRpms.IDLE_WARMUP / 60.0));
+      }
+      case SPEAKER_SHOT -> {
+        var goalRpm = speakerDistanceToRpm.get(distanceToSpeaker);
+        topMotor.setControl(velocityRequest.withVelocity(goalRpm / 60.0));
+        bottomMotor.setControl(velocityRequest.withVelocity(goalRpm / 60.0));
+      }
+      case SUBWOOFER_SHOT -> {
+        topMotor.setControl(velocityRequest.withVelocity(ShooterRpms.SUBWOOFER / 60.0));
+        bottomMotor.setControl(velocityRequest.withVelocity(ShooterRpms.SUBWOOFER / 60.0));
+      }
+      case FEEDING -> {
+        var goalRpm = speakerDistanceToRpm.get(distanceToFeedSpot);
+        topMotor.setControl(velocityRequest.withVelocity(goalRpm / 60.0));
+        bottomMotor.setControl(velocityRequest.withVelocity(goalRpm / 60.0));
+      }
+      case DROP -> {
+        topMotor.setControl(velocityRequest.withVelocity(ShooterRpms.DROP / 60.0));
+        bottomMotor.setControl(velocityRequest.withVelocity(ShooterRpms.DROP / 60.0));
+      }
+      case PODIUM_SHOT -> {
+        topMotor.setControl(velocityRequest.withVelocity(ShooterRpms.PODIUM / 60.0));
+        bottomMotor.setControl(velocityRequest.withVelocity(ShooterRpms.PODIUM / 60.0));
+      }
+      case AMP -> {
+        topMotor.setControl(velocityRequest.withVelocity(ShooterRpms.AMP / 60.0));
+        bottomMotor.setControl(velocityRequest.withVelocity(ShooterRpms.AMP / 60.0));
+      }
+      case PASS -> {
+        topMotor.setControl(velocityRequest.withVelocity(ShooterRpms.PASS / 60.0));
+        bottomMotor.setControl(velocityRequest.withVelocity(ShooterRpms.PASS / 60.0));
+      }
     }
   }
 
   @Override
   public void robotPeriodic() {
-
     super.robotPeriodic();
 
-    DogLog.log("Shooter/StatorCurrent", motor.getStatorCurrent().getValueAsDouble());
-    DogLog.log("Shooter/SupplyCurrent", motor.getSupplyCurrent().getValueAsDouble());
-    DogLog.log("Shooter/RPM", motor.getVelocity().getValueAsDouble() * 60.0);
-    DogLog.log("Shooter/AppliedVoltage", motor.getMotorVoltage().getValueAsDouble());
+    DogLog.log("Shooter/Top/StatorCurrent", topMotor.getStatorCurrent().getValueAsDouble());
+    DogLog.log("Shooter/Top/SupplyCurrent", topMotor.getSupplyCurrent().getValueAsDouble());
+    DogLog.log("Shooter/Top/RPM", topMotor.getVelocity().getValueAsDouble() * 60.0);
+    DogLog.log("Shooter/Top/AppliedVoltage", topMotor.getMotorVoltage().getValueAsDouble());
+
+    DogLog.log("Shooter/Bottom/StatorCurrent", bottomMotor.getStatorCurrent().getValueAsDouble());
+    DogLog.log("Shooter/Bottom/SupplyCurrent", bottomMotor.getSupplyCurrent().getValueAsDouble());
+    DogLog.log("Shooter/Bottom/RPM", bottomMotor.getVelocity().getValueAsDouble() * 60.0);
+    DogLog.log("Shooter/Bottom/AppliedVoltage", bottomMotor.getMotorVoltage().getValueAsDouble());
   }
 }

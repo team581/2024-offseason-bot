@@ -34,9 +34,9 @@ class CompConfig {
           "competition",
           new SwerveConfig(new PhoenixPIDController(20, 0, 2), true, true, true),
           new QueuerConfig(
-              999,
+              20,
               CANIVORE_NAME,
-              999,
+              0,
               new TalonFXConfiguration()
                   .withClosedLoopRamps(CLOSED_LOOP_RAMP)
                   .withOpenLoopRamps(OPEN_LOOP_RAMP)
@@ -46,8 +46,17 @@ class CompConfig {
                           .withStatorCurrentLimit(20)),
               new Debouncer(3.0 * 0.02)),
           new ShooterConfig(
-              999,
+              18,
+              17,
               CANIVORE_NAME,
+              new TalonFXConfiguration()
+                  .withClosedLoopRamps(CLOSED_LOOP_RAMP)
+                  .withOpenLoopRamps(OPEN_LOOP_RAMP)
+                  .withCurrentLimits(
+                      new CurrentLimitsConfigs()
+                          .withStatorCurrentLimit(40)
+                          .withSupplyCurrentLimit(45))
+                  .withSlot0(new Slot0Configs().withKV(0).withKP(0).withKI(0).withKD(0)),
               new TalonFXConfiguration()
                   .withClosedLoopRamps(CLOSED_LOOP_RAMP)
                   .withOpenLoopRamps(OPEN_LOOP_RAMP)
@@ -82,7 +91,7 @@ class CompConfig {
           new ArmConfig(
               CANIVORE_NAME,
               999,
-              999,
+              14,
               new TalonFXConfiguration()
                   .withClosedLoopRamps(CLOSED_LOOP_RAMP)
                   .withOpenLoopRamps(OPEN_LOOP_RAMP)

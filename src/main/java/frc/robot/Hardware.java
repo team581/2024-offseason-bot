@@ -12,8 +12,12 @@ import frc.robot.config.RobotConfig;
 public class Hardware {
   public final PowerDistribution pdh = new PowerDistribution(1, ModuleType.kRev);
 
-  public final TalonFX shooter =
-      new TalonFX(RobotConfig.get().shooter().motorID(), RobotConfig.get().shooter().canBusName());
+  public final TalonFX shooterTop =
+      new TalonFX(
+          RobotConfig.get().shooter().topMotorID(), RobotConfig.get().shooter().canBusName());
+  public final TalonFX shooterBottom =
+      new TalonFX(
+          RobotConfig.get().shooter().bottomMotorID(), RobotConfig.get().shooter().canBusName());
 
   public final TalonFX queuer =
       new TalonFX(RobotConfig.get().queuer().motorID(), RobotConfig.get().queuer().canBusName());

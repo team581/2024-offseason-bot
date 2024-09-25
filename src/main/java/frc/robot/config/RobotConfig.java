@@ -29,9 +29,11 @@ public record RobotConfig(
       Debouncer debouncer) {}
 
   public record ShooterConfig(
-      int motorID,
+      int topMotorID,
+      int bottomMotorID,
       String canBusName,
-      TalonFXConfiguration motorConfig,
+      TalonFXConfiguration topMotorConfig,
+      TalonFXConfiguration bottomMotorConfig,
       Consumer<InterpolatingDoubleTreeMap> feedSpotDistanceToRpm,
       Consumer<InterpolatingDoubleTreeMap> speakerDistanceToRpm) {}
 
