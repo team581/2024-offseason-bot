@@ -72,9 +72,9 @@ class CompConfig {
                 speakerDistanceToRpm.put(123.0, 321.0);
               }),
           new IntakeConfig(
-              999,
+              19,
               CANIVORE_NAME,
-              999,
+              2,
               new TalonFXConfiguration()
                   .withClosedLoopRamps(CLOSED_LOOP_RAMP)
                   .withOpenLoopRamps(OPEN_LOOP_RAMP)
@@ -88,7 +88,7 @@ class CompConfig {
               }),
           new ArmConfig(
               CANIVORE_NAME,
-              999,
+              16,
               14,
               new TalonFXConfiguration()
                   .withClosedLoopRamps(CLOSED_LOOP_RAMP)
