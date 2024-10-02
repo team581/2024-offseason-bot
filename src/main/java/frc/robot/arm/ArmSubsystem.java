@@ -195,9 +195,9 @@ public class ArmSubsystem extends StateMachine<ArmState> {
   public void robotPeriodic() {
     super.robotPeriodic();
 
-     switch (getState()) {
-      case SPEAKER_SHOT-> {
-       var newAngle =
+    switch (getState()) {
+      case SPEAKER_SHOT -> {
+        var newAngle =
             Units.degreesToRotations(clamp(speakerDistanceToAngle.get(distanceToSpeaker)));
         leftMotor.setControl(positionRequest.withPosition(newAngle));
         rightMotor.setControl(positionRequest.withPosition(newAngle));
