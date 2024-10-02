@@ -33,16 +33,20 @@ public class IntakeSubsystem extends StateMachine<IntakeState> {
   @Override
   protected void afterTransition(IntakeState newState) {
     switch (newState) {
-      case IDLE:
+      case IDLE -> {
         mainMotor.disable();
         centeringMotor.disable();
-        break;
-      case INTAKING:
+      }
+
+      case INTAKING -> {
         mainMotor.setVoltage(0); // around 10
         centeringMotor.setVoltage(0);
-      case OUTTAKING:
+      }
+
+      case OUTTAKING -> {
         mainMotor.setVoltage(0); // around -6
         centeringMotor.setVoltage(0);
+      }
     }
   }
 
