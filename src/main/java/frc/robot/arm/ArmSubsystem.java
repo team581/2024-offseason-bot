@@ -159,19 +159,6 @@ public class ArmSubsystem extends StateMachine<ArmState> {
                 Units.degreesToRotations(clamp(ArmAngle.SUBWOOFER.getDegrees()))));
       }
 
-      case FEEDING -> {
-        double newAngle =
-            Units.degreesToRotations(clamp(feedSpotDistanceToAngle.get(distanceToFeedSpot)));
-        leftMotor.setControl(positionRequest.withPosition(newAngle));
-        rightMotor.setControl(positionRequest.withPosition(newAngle));
-      }
-      case SPEAKER_SHOT -> {
-        var newAngle =
-            Units.degreesToRotations(clamp(speakerDistanceToAngle.get(distanceToSpeaker)));
-
-        leftMotor.setControl(positionRequest.withPosition(newAngle));
-        rightMotor.setControl(positionRequest.withPosition(newAngle));
-      }
       case AMP -> {
         leftMotor.setControl(
             positionRequest.withPosition(
@@ -188,12 +175,29 @@ public class ArmSubsystem extends StateMachine<ArmState> {
             positionRequest.withPosition(
                 Units.degreesToRotations(clamp(ArmAngle.PASS.getDegrees()))));
       }
+      default -> {}
     }
   }
 
   @Override
   public void robotPeriodic() {
     super.robotPeriodic();
+
+    switch (getState()) {
+      case SPEAKER_SHOT -> {
+        var newAngle =
+            Units.degreesToRotations(clamp(speakerDistanceToAngle.get(distanceToSpeaker)));
+        leftMotor.setControl(positionRequest.withPosition(newAngle));
+        rightMotor.setControl(positionRequest.withPosition(newAngle));
+      }
+      case FEEDING -> {
+        double newAngle =
+            Units.degreesToRotations(clamp(feedSpotDistanceToAngle.get(distanceToFeedSpot)));
+        leftMotor.setControl(positionRequest.withPosition(newAngle));
+        rightMotor.setControl(positionRequest.withPosition(newAngle));
+      }
+      default -> {}
+    }
 
     DogLog.log("Arm/Left/StatorCurrent", leftMotor.getStatorCurrent().getValueAsDouble());
     DogLog.log("Arm/Left/SupplyCurrent", leftMotor.getSupplyCurrent().getValueAsDouble());
