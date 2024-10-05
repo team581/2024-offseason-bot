@@ -109,6 +109,7 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
 
   public SwerveSubsystem() {
     super(SubsystemPriority.SWERVE, SwerveState.TELEOP);
+    modulePositions = calculateModulePositions();
   }
 
   public void setFieldRelativeAutoSpeeds(ChassisSpeeds speeds) {

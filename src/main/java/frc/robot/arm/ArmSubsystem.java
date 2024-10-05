@@ -1,5 +1,6 @@
 package frc.robot.arm;
 
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import dev.doglog.DogLog;
@@ -22,8 +23,8 @@ public class ArmSubsystem extends StateMachine<ArmState> {
   private double lowestSeenAngleRight = Double.MAX_VALUE;
   private InterpolatingDoubleTreeMap speakerDistanceToAngle = new InterpolatingDoubleTreeMap();
   private InterpolatingDoubleTreeMap feedSpotDistanceToAngle = new InterpolatingDoubleTreeMap();
-  private final PositionVoltage positionRequest =
-      new PositionVoltage(0)
+  private final MotionMagicVoltage positionRequest =
+      new MotionMagicVoltage(0)
           .withEnableFOC(false)
           .withLimitReverseMotion(false)
           .withOverrideBrakeDurNeutral(true);
@@ -41,7 +42,7 @@ public class ArmSubsystem extends StateMachine<ArmState> {
   }
 
   public ArmSubsystem(TalonFX leftMotor, TalonFX rightMotor) {
-    super(SubsystemPriority.ARM, ArmState.IDLE);
+    super(SubsystemPriority.ARM, ArmState.PRE_MATCH_HOMING);
     this.leftMotor = leftMotor;
     this.rightMotor = rightMotor;
     leftMotor.getConfigurator().apply(RobotConfig.get().arm().leftMotorConfig());
@@ -201,19 +202,24 @@ public class ArmSubsystem extends StateMachine<ArmState> {
 
     DogLog.log("Arm/Left/StatorCurrent", leftMotor.getStatorCurrent().getValueAsDouble());
     DogLog.log("Arm/Left/SupplyCurrent", leftMotor.getSupplyCurrent().getValueAsDouble());
-    DogLog.log("Arm/Left/ArmAngle", leftMotor.getPosition().getValueAsDouble());
+    DogLog.log(
+        "Arm/Left/ArmAngle", Units.rotationsToDegrees(leftMotor.getPosition().getValueAsDouble()));
     DogLog.log("Arm/Left/AppliedVoltage", leftMotor.getMotorVoltage().getValueAsDouble());
     DogLog.log("Arm/Left/LowestSeenAngle", lowestSeenAngleLeft);
 
     DogLog.log("Arm/Right/StatorCurrent", rightMotor.getStatorCurrent().getValueAsDouble());
     DogLog.log("Arm/Right/SupplyCurrent", rightMotor.getSupplyCurrent().getValueAsDouble());
-    DogLog.log("Arm/Right/ArmAngle", rightMotor.getPosition().getValueAsDouble());
+    DogLog.log(
+        "Arm/Right/ArmAngle",
+        Units.rotationsToDegrees(rightMotor.getPosition().getValueAsDouble()));
     DogLog.log("Arm/Right/AppliedVoltage", rightMotor.getMotorVoltage().getValueAsDouble());
     DogLog.log("Arm/Right/LowestSeenAngle", lowestSeenAngleRight);
+    DogLog.log("Arm/ArmState", getState());
 
     if (DriverStation.isEnabled() && getState() == ArmState.PRE_MATCH_HOMING) {
       // We are enabled and still in pre match homing
       // Reset the motor positions, and then transition to idle state
+
       leftMotor.setPosition(
           Units.degreesToRotations(
               RobotConfig.get().arm().minAngle() + (leftMotorAngle - lowestSeenAngleLeft)));

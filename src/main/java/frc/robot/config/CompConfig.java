@@ -2,10 +2,15 @@ package frc.robot.config;
 
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.mechanisms.swerve.utility.PhoenixPIDController;
+import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.math.filter.Debouncer;
 import frc.robot.config.RobotConfig.ArmConfig;
 import frc.robot.config.RobotConfig.IntakeConfig;
@@ -95,23 +100,60 @@ class CompConfig {
                   .withOpenLoopRamps(OPEN_LOOP_RAMP)
                   .withCurrentLimits(
                       new CurrentLimitsConfigs()
-                          .withStatorCurrentLimit(20)
-                          .withSupplyCurrentLimit(25)),
+                          .withStatorCurrentLimit(40)
+                          .withSupplyCurrentLimit(40))
+                  .withSlot0(
+                      new Slot0Configs()
+                          .withKV(0)
+                          .withKP(300.0)
+                          .withKI(0)
+                          .withKD(0)
+                          .withKG(0.2)
+                          .withGravityType(GravityTypeValue.Arm_Cosine))
+                  .withFeedback(
+                      new FeedbackConfigs()
+                          .withSensorToMechanismRatio((84 * 84 * 24) / (8 * 20 * 9)))
+                  .withMotorOutput(
+                      new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive))
+                  .withMotionMagic(
+                      new MotionMagicConfigs()
+                          .withMotionMagicAcceleration(3.0)
+                          .withMotionMagicCruiseVelocity(3.0)
+                          .withMotionMagicJerk(100)),
               new TalonFXConfiguration()
                   .withClosedLoopRamps(CLOSED_LOOP_RAMP)
                   .withOpenLoopRamps(OPEN_LOOP_RAMP)
                   .withCurrentLimits(
                       new CurrentLimitsConfigs()
-                          .withStatorCurrentLimit(20)
-                          .withSupplyCurrentLimit(25)),
+                          .withStatorCurrentLimit(40)
+                          .withSupplyCurrentLimit(40))
+                  .withSlot0(
+                      new Slot0Configs()
+                          .withKV(0)
+                          .withKP(300.0)
+                          .withKI(0)
+                          .withKD(0)
+                          .withKG(0.2)
+                          .withGravityType(GravityTypeValue.Arm_Cosine))
+                  .withFeedback(
+                      new FeedbackConfigs()
+                          .withSensorToMechanismRatio((84 * 84 * 24) / (8 * 20 * 9)))
+                  .withMotorOutput(
+                      new MotorOutputConfigs()
+                          .withInverted(InvertedValue.CounterClockwise_Positive))
+                  .withMotionMagic(
+                      new MotionMagicConfigs()
+                          .withMotionMagicAcceleration(3.0)
+                          .withMotionMagicCruiseVelocity(3.0)
+                          .withMotionMagicJerk(100)),
               feedSpotDistanceToAngle -> {
                 feedSpotDistanceToAngle.put(123.0, 321.0);
               },
               speakerDistanceToAngle -> {
                 speakerDistanceToAngle.put(123.0, 321.0);
               },
-              0.0,
-              30.0),
+              -76.5,
+              80.0),
           new VisionConfig(4, 0.4, 0.4));
 
   // NOT TUNED
