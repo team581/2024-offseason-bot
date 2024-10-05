@@ -14,12 +14,15 @@ import frc.robot.fms.FmsSubsystem;
 import frc.robot.generated.BuildConstants;
 import frc.robot.imu.ImuSubsystem;
 import frc.robot.intake.IntakeSubsystem;
+import frc.robot.localization.LocalizationSubsystem;
 import frc.robot.queuer.QueuerSubsystem;
 import frc.robot.robot_manager.RobotCommands;
+import frc.robot.robot_manager.RobotManager;
 import frc.robot.shooter.ShooterSubsystem;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.Stopwatch;
 import frc.robot.util.scheduling.LifecycleSubsystemManager;
+import frc.robot.vision.VisionSubsystem;
 
 public class Robot extends TimedRobot {
   private Command autonomousCommand;
@@ -35,8 +38,14 @@ public class Robot extends TimedRobot {
       new IntakeSubsystem(hardware.intakeMain, hardware.intakeCenteringMotor);
   private final SwerveSubsystem swerve = new SwerveSubsystem();
   private final ImuSubsystem imu = new ImuSubsystem(swerve.drivetrainPigeon);
+
+  private final VisionSubsystem vision = new VisionSubsystem(imu);
+  private final LocalizationSubsystem localization = new LocalizationSubsystem(imu, vision);
   private final Autos autos = new Autos();
-  private final RobotCommands robotCommands = new RobotCommands(null);
+  private final RobotManager robotManager =
+      new RobotManager(arm, shooter, localization, vision, imu, intake, queuer);
+
+  private final RobotCommands robotCommands = new RobotCommands(robotManager);
 
   public Robot() {
     System.out.println("roboRIO serial number: " + RobotConfig.SERIAL_NUMBER);
