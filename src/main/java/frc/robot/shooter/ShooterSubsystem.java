@@ -85,20 +85,12 @@ public class ShooterSubsystem extends StateMachine<ShooterState> {
         topMotor.setControl(velocityRequest.withVelocity(ShooterRpms.IDLE_WARMUP / 60.0));
         bottomMotor.setControl(velocityRequest.withVelocity(ShooterRpms.IDLE_WARMUP / 60.0));
       }
-      case SPEAKER_SHOT -> {
-        var goalRpm = speakerDistanceToRpm.get(distanceToSpeaker);
-        topMotor.setControl(velocityRequest.withVelocity(goalRpm / 60.0));
-        bottomMotor.setControl(velocityRequest.withVelocity(goalRpm / 60.0));
-      }
+
       case SUBWOOFER_SHOT -> {
         topMotor.setControl(velocityRequest.withVelocity(ShooterRpms.SUBWOOFER / 60.0));
         bottomMotor.setControl(velocityRequest.withVelocity(ShooterRpms.SUBWOOFER / 60.0));
       }
-      case FEEDING -> {
-        var goalRpm = speakerDistanceToRpm.get(distanceToFeedSpot);
-        topMotor.setControl(velocityRequest.withVelocity(goalRpm / 60.0));
-        bottomMotor.setControl(velocityRequest.withVelocity(goalRpm / 60.0));
-      }
+
       case DROP -> {
         topMotor.setControl(velocityRequest.withVelocity(ShooterRpms.DROP / 60.0));
         bottomMotor.setControl(velocityRequest.withVelocity(ShooterRpms.DROP / 60.0));
@@ -115,12 +107,27 @@ public class ShooterSubsystem extends StateMachine<ShooterState> {
         topMotor.setControl(velocityRequest.withVelocity(ShooterRpms.PASS / 60.0));
         bottomMotor.setControl(velocityRequest.withVelocity(ShooterRpms.PASS / 60.0));
       }
+      default -> {}
     }
   }
 
   @Override
   public void robotPeriodic() {
     super.robotPeriodic();
+
+    switch (getState()) {
+      case SPEAKER_SHOT -> {
+        var goalRpm = speakerDistanceToRpm.get(distanceToSpeaker);
+        topMotor.setControl(velocityRequest.withVelocity(goalRpm / 60.0));
+        bottomMotor.setControl(velocityRequest.withVelocity(goalRpm / 60.0));
+      }
+      case FEEDING -> {
+        var goalRpm = speakerDistanceToRpm.get(distanceToFeedSpot);
+        topMotor.setControl(velocityRequest.withVelocity(goalRpm / 60.0));
+        bottomMotor.setControl(velocityRequest.withVelocity(goalRpm / 60.0));
+      }
+      default -> {}
+    }
 
     DogLog.log("Shooter/Top/StatorCurrent", topMotor.getStatorCurrent().getValueAsDouble());
     DogLog.log("Shooter/Top/SupplyCurrent", topMotor.getSupplyCurrent().getValueAsDouble());
