@@ -40,7 +40,7 @@ public class Robot extends TimedRobot {
   private final ImuSubsystem imu = new ImuSubsystem(swerve.drivetrainPigeon);
 
   private final VisionSubsystem vision = new VisionSubsystem(imu);
-  private final LocalizationSubsystem localization = new LocalizationSubsystem(imu, vision);
+  private final LocalizationSubsystem localization = new LocalizationSubsystem(imu, vision, swerve);
   private final Autos autos = new Autos();
   private final RobotManager robotManager =
       new RobotManager(arm, shooter, localization, vision, imu, intake, queuer);

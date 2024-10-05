@@ -4,9 +4,11 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.config.RobotConfig;
 import frc.robot.imu.ImuSubsystem;
+import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
 import frc.robot.vision.VisionResult;
@@ -16,17 +18,24 @@ import java.util.Optional;
 public class LocalizationSubsystem extends StateMachine<LocalizationState> {
   private final ImuSubsystem imu;
   private final VisionSubsystem vision;
+  private final SwerveSubsystem swerve;
   private final SwerveDrivePoseEstimator poseEstimator;
   private final TimeInterpolatableBuffer<Pose2d> poseHistory =
       TimeInterpolatableBuffer.createBuffer(1.5);
   private double lastAddedVisionTimestamp = 0;
   private Optional<VisionResult> latestResult = Optional.empty();
 
-  public LocalizationSubsystem(ImuSubsystem imu, VisionSubsystem vision) {
+  public LocalizationSubsystem(ImuSubsystem imu, VisionSubsystem vision, SwerveSubsystem swerve) {
     super(SubsystemPriority.LOCALIZATION, LocalizationState.DEFAULT_STATE);
+    this.swerve = swerve;
     this.imu = imu;
     this.vision = vision;
-    poseEstimator = new SwerveDrivePoseEstimator(null, imu.getRobotHeading(), null, new Pose2d());
+    poseEstimator =
+        new SwerveDrivePoseEstimator(
+            SwerveSubsystem.KINEMATICS,
+            imu.getRobotHeading(),
+            swerve.getModulePositions().toArray(new SwerveModulePosition[4]),
+            new Pose2d());
   }
 
   @Override
