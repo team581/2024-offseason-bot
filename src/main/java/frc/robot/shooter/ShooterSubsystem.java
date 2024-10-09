@@ -1,5 +1,6 @@
 package frc.robot.shooter;
 
+import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import dev.doglog.DogLog;
@@ -14,8 +15,8 @@ public class ShooterSubsystem extends StateMachine<ShooterState> {
   private final TalonFX bottomMotor;
   private double topMotorRpm;
   private double bottomMotorRpm;
-  private final VelocityVoltage velocityRequest =
-      new VelocityVoltage(0).withEnableFOC(false).withLimitReverseMotion(true);
+  private final VelocityTorqueCurrentFOC velocityRequest =
+      new VelocityTorqueCurrentFOC(0).withSlot(0).withLimitReverseMotion(true);
   private double distanceToSpeaker;
   private double distanceToFeedSpot;
   private InterpolatingDoubleTreeMap speakerDistanceToRpm = new InterpolatingDoubleTreeMap();
@@ -138,5 +139,10 @@ public class ShooterSubsystem extends StateMachine<ShooterState> {
     DogLog.log("Shooter/Bottom/SupplyCurrent", bottomMotor.getSupplyCurrent().getValueAsDouble());
     DogLog.log("Shooter/Bottom/RPM", bottomMotor.getVelocity().getValueAsDouble() * 60.0);
     DogLog.log("Shooter/Bottom/AppliedVoltage", bottomMotor.getMotorVoltage().getValueAsDouble());
+
+    var goalRpm = topMotor.getClosedLoopReference().getValueAsDouble() * 60.0;
+
+
+    DogLog.log("Shooter/GoalRPM", goalRpm);
   }
 }

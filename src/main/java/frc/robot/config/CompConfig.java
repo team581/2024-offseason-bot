@@ -61,7 +61,7 @@ class CompConfig {
                       new CurrentLimitsConfigs()
                           .withStatorCurrentLimit(40)
                           .withSupplyCurrentLimit(45))
-                  .withSlot0(new Slot0Configs().withKV(0).withKP(0).withKI(0).withKD(0)),
+                  .withSlot0(new Slot0Configs().withKV(0.15).withKP(3.5).withKI(0).withKD(0)),
               new TalonFXConfiguration()
                   .withClosedLoopRamps(CLOSED_LOOP_RAMP)
                   .withOpenLoopRamps(OPEN_LOOP_RAMP)
@@ -69,7 +69,7 @@ class CompConfig {
                       new CurrentLimitsConfigs()
                           .withStatorCurrentLimit(40)
                           .withSupplyCurrentLimit(45))
-                  .withSlot0(new Slot0Configs().withKV(0).withKP(0).withKI(0).withKD(0)),
+                  .withSlot0(new Slot0Configs().withKV(0.15).withKP(3.5).withKI(0).withKD(0)),
               feedSpotDistanceToRpm -> {
                 feedSpotDistanceToRpm.put(123.0, 321.0);
               },
