@@ -153,13 +153,6 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
   }
 
   @Override
-  public void robotPeriodic() {
-    super.robotPeriodic();
-    // Once per loop send a swerve request to ensure data is fresh
-    sendSwerveRequest();
-  }
-
-  @Override
   protected void collectInputs() {
     modulePositions = calculateModulePositions();
     robotRelativeSpeeds = calculateRobotRelativeSpeeds();
