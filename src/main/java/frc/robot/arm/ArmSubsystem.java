@@ -70,31 +70,31 @@ public class ArmSubsystem extends StateMachine<ArmState> {
           MathUtil.isNear(speakerDistanceToAngle.get(distanceToSpeaker), leftMotorAngle, 1)
               && MathUtil.isNear(speakerDistanceToAngle.get(distanceToSpeaker), rightMotorAngle, 1);
       case DROP ->
-          MathUtil.isNear(ArmAngle.DROP.getDegrees(), leftMotorAngle, 1)
-              && MathUtil.isNear(ArmAngle.DROP.getDegrees(), rightMotorAngle, 1);
+          MathUtil.isNear(ArmAngle.DROP, leftMotorAngle, 1)
+              && MathUtil.isNear(ArmAngle.DROP, rightMotorAngle, 1);
       case SUBWOOFER_SHOT ->
-          MathUtil.isNear(ArmAngle.SUBWOOFER.getDegrees(), leftMotorAngle, 1)
-              && MathUtil.isNear(ArmAngle.SUBWOOFER.getDegrees(), rightMotorAngle, 1);
+          MathUtil.isNear(ArmAngle.SUBWOOFER, leftMotorAngle, 1)
+              && MathUtil.isNear(ArmAngle.SUBWOOFER, rightMotorAngle, 1);
       case FEEDING ->
           MathUtil.isNear(feedSpotDistanceToAngle.get(distanceToFeedSpot), leftMotorAngle, 1)
               && MathUtil.isNear(
                   feedSpotDistanceToAngle.get(distanceToFeedSpot), rightMotorAngle, 1);
       case PODIUM_SHOT ->
-          MathUtil.isNear(ArmAngle.PODIUM.getDegrees(), leftMotorAngle, 1)
-              && MathUtil.isNear(ArmAngle.PODIUM.getDegrees(), rightMotorAngle, 1);
+          MathUtil.isNear(ArmAngle.PODIUM, leftMotorAngle, 1)
+              && MathUtil.isNear(ArmAngle.PODIUM, rightMotorAngle, 1);
       case CLIMBING_1_LINEUP ->
-          MathUtil.isNear(ArmAngle.CLIMBING_1_LINEUP.getDegrees(), leftMotorAngle, 1)
-              && MathUtil.isNear(ArmAngle.CLIMBING_1_LINEUP.getDegrees(), rightMotorAngle, 1);
+          MathUtil.isNear(ArmAngle.CLIMBING_1_LINEUP, leftMotorAngle, 1)
+              && MathUtil.isNear(ArmAngle.CLIMBING_1_LINEUP, rightMotorAngle, 1);
       case CLIMBING_2_HANGING ->
-          MathUtil.isNear(ArmAngle.CLIMBING_2_HANGING.getDegrees(), leftMotorAngle, 1)
-              && MathUtil.isNear(ArmAngle.CLIMBING_2_HANGING.getDegrees(), rightMotorAngle, 1);
+          MathUtil.isNear(ArmAngle.CLIMBING_2_HANGING, leftMotorAngle, 1)
+              && MathUtil.isNear(ArmAngle.CLIMBING_2_HANGING, rightMotorAngle, 1);
 
       case AMP ->
-          MathUtil.isNear(ArmAngle.AMP.getDegrees(), leftMotorAngle, 1)
-              && MathUtil.isNear(ArmAngle.AMP.getDegrees(), rightMotorAngle, 1);
+          MathUtil.isNear(ArmAngle.AMP, leftMotorAngle, 1)
+              && MathUtil.isNear(ArmAngle.AMP, rightMotorAngle, 1);
       case PASS ->
-          MathUtil.isNear(ArmAngle.PASS.getDegrees(), leftMotorAngle, 1)
-              && MathUtil.isNear(ArmAngle.PASS.getDegrees(), rightMotorAngle, 1);
+          MathUtil.isNear(ArmAngle.PASS, leftMotorAngle, 1)
+              && MathUtil.isNear(ArmAngle.PASS, rightMotorAngle, 1);
     };
   }
 
@@ -119,55 +119,51 @@ public class ArmSubsystem extends StateMachine<ArmState> {
       case CLIMBING_1_LINEUP -> {
         leftMotor.setControl(
             motionMagicRequest.withPosition(
-                Units.degreesToRotations(clamp(ArmAngle.CLIMBING_1_LINEUP.getDegrees()))));
+                Units.degreesToRotations(clamp(ArmAngle.CLIMBING_1_LINEUP))));
         rightMotor.setControl(
             motionMagicRequest.withPosition(
-                Units.degreesToRotations(clamp(ArmAngle.CLIMBING_1_LINEUP.getDegrees()))));
+                Units.degreesToRotations(clamp(ArmAngle.CLIMBING_1_LINEUP))));
       }
       case CLIMBING_2_HANGING -> {
         leftMotor.setControl(
             motionMagicRequest.withPosition(
-                Units.degreesToRotations(clamp(ArmAngle.CLIMBING_2_HANGING.getDegrees()))));
+                Units.degreesToRotations(clamp(ArmAngle.CLIMBING_2_HANGING))));
         rightMotor.setControl(
             motionMagicRequest.withPosition(
-                Units.degreesToRotations(clamp(ArmAngle.CLIMBING_2_HANGING.getDegrees()))));
+                Units.degreesToRotations(clamp(ArmAngle.CLIMBING_2_HANGING))));
       }
 
       case DROP -> {
         leftMotor.setControl(
-            pidRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.DROP.getDegrees()))));
+            pidRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.DROP))));
         rightMotor.setControl(
-            pidRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.DROP.getDegrees()))));
+            pidRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.DROP))));
       }
 
       case PODIUM_SHOT -> {
         leftMotor.setControl(
-            pidRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.PODIUM.getDegrees()))));
+            pidRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.PODIUM))));
         rightMotor.setControl(
-            pidRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.PODIUM.getDegrees()))));
+            pidRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.PODIUM))));
       }
       case SUBWOOFER_SHOT -> {
         leftMotor.setControl(
-            pidRequest.withPosition(
-                Units.degreesToRotations(clamp(ArmAngle.SUBWOOFER.getDegrees()))));
+            pidRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.SUBWOOFER))));
         rightMotor.setControl(
-            pidRequest.withPosition(
-                Units.degreesToRotations(clamp(ArmAngle.SUBWOOFER.getDegrees()))));
+            pidRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.SUBWOOFER))));
       }
 
       case AMP -> {
         leftMotor.setControl(
-            motionMagicRequest.withPosition(
-                Units.degreesToRotations(clamp(ArmAngle.AMP.getDegrees()))));
+            motionMagicRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.AMP))));
         rightMotor.setControl(
-            motionMagicRequest.withPosition(
-                Units.degreesToRotations(clamp(ArmAngle.AMP.getDegrees()))));
+            motionMagicRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.AMP))));
       }
       case PASS -> {
         leftMotor.setControl(
-            pidRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.PASS.getDegrees()))));
+            pidRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.PASS))));
         rightMotor.setControl(
-            pidRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.PASS.getDegrees()))));
+            pidRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.PASS))));
       }
       default -> {}
     }
