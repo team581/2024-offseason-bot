@@ -39,13 +39,13 @@ public class IntakeSubsystem extends StateMachine<IntakeState> {
       }
 
       case INTAKING -> {
-        mainMotor.setVoltage(0); // around 10
-        centeringMotor.setVoltage(0);
+        mainMotor.setVoltage(12);
+        centeringMotor.setVoltage(8);
       }
 
       case OUTTAKING -> {
-        mainMotor.setVoltage(0); // around -6
-        centeringMotor.setVoltage(0);
+        mainMotor.setVoltage(-6); 
+        centeringMotor.setVoltage(-10);
       }
     }
   }
@@ -56,5 +56,5 @@ public class IntakeSubsystem extends StateMachine<IntakeState> {
     DogLog.log("Intake/StatorCurrent", mainMotor.getStatorCurrent().getValueAsDouble());
     DogLog.log("Intake/SupplyCurrent", mainMotor.getSupplyCurrent().getValueAsDouble());
     DogLog.log("Intake/AppliedVoltage", mainMotor.getMotorVoltage().getValueAsDouble());
-  }
+      }
 }
