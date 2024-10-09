@@ -1,7 +1,6 @@
 package frc.robot.shooter;
 
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
@@ -141,7 +140,6 @@ public class ShooterSubsystem extends StateMachine<ShooterState> {
     DogLog.log("Shooter/Bottom/AppliedVoltage", bottomMotor.getMotorVoltage().getValueAsDouble());
 
     var goalRpm = topMotor.getClosedLoopReference().getValueAsDouble() * 60.0;
-
 
     DogLog.log("Shooter/GoalRPM", goalRpm);
   }

@@ -153,13 +153,6 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
   }
 
   @Override
-  public void robotPeriodic() {
-    super.robotPeriodic();
-    // Once per loop send a swerve request to ensure data is fresh
-    sendSwerveRequest();
-  }
-
-  @Override
   protected void collectInputs() {
     modulePositions = calculateModulePositions();
     robotRelativeSpeeds = calculateRobotRelativeSpeeds();
@@ -208,13 +201,23 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
                   .withVelocityY(teleopSpeeds.vyMetersPerSecond)
                   .withRotationalRate(teleopSpeeds.omegaRadiansPerSecond)
                   .withDriveRequestType(DriveRequestType.OpenLoopVoltage));
-      case TELEOP_SNAPS ->
+      case TELEOP_SNAPS -> {
+        if (teleopSpeeds.omegaRadiansPerSecond == 0) {
           drivetrain.setControl(
               driveToAngle
                   .withVelocityX(teleopSpeeds.vxMetersPerSecond)
                   .withVelocityY(teleopSpeeds.vyMetersPerSecond)
                   .withTargetDirection(Rotation2d.fromDegrees(goalSnapAngle))
                   .withDriveRequestType(DriveRequestType.OpenLoopVoltage));
+        } else {
+          drivetrain.setControl(
+              drive
+                  .withVelocityX(teleopSpeeds.vxMetersPerSecond)
+                  .withVelocityY(teleopSpeeds.vyMetersPerSecond)
+                  .withRotationalRate(teleopSpeeds.omegaRadiansPerSecond)
+                  .withDriveRequestType(DriveRequestType.OpenLoopVoltage));
+        }
+      }
       case AUTO ->
           drivetrain.setControl(
               drive
