@@ -82,11 +82,13 @@ public class RobotCommands {
 
   public Command feedingCommand() {
     return Commands.runOnce(robot::prepareFeedRequest, requirements)
+        .andThen(robot::confirmShotRequest)
         .andThen(robot.waitForState(RobotState.IDLE_NO_GP));
   }
 
   public Command subwooferCommand() {
     return Commands.runOnce(robot::prepareSubwooferRequest, requirements)
+        .andThen(robot::confirmShotRequest)
         .andThen(robot.waitForState(RobotState.IDLE_NO_GP));
   }
 
@@ -103,5 +105,15 @@ public class RobotCommands {
   public Command unjamCommand() {
     return Commands.runOnce(robot::unjamRequest, requirements)
         .andThen(robot.waitForState(RobotState.IDLE_NO_GP));
+  }
+
+  public Command speakerOrAmpCommand() {
+    if (robot.getState() != RobotState.AMP_PREPARE_TO_SCORE) {
+      return Commands.runOnce(robot::prepareSpeakerRequest, requirements)
+          .andThen(robot.waitForState(RobotState.IDLE_NO_GP));
+    } else {
+      return Commands.runOnce(robot::confirmShotRequest, requirements)
+          .andThen(robot.waitForState(RobotState.IDLE_NO_GP));
+    }
   }
 }

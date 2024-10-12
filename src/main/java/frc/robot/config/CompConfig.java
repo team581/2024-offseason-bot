@@ -49,7 +49,8 @@ class CompConfig {
                       new CurrentLimitsConfigs()
                           .withSupplyCurrentLimit(25)
                           .withStatorCurrentLimit(20))
-                          .withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive)),
+                  .withMotorOutput(
+                      new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive)),
               new Debouncer(3.0 * 0.02)),
           new ShooterConfig(
               18,

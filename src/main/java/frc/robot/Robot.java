@@ -156,7 +156,7 @@ public class Robot extends TimedRobot {
     hardware
         .driverController
         .rightTrigger()
-        .onTrue(robotCommands.confirmShotCommand())
+        .onTrue(robotCommands.speakerOrAmpCommand())
         .onFalse(robotCommands.stopShootingCommand());
     hardware
         .driverController
@@ -166,36 +166,27 @@ public class Robot extends TimedRobot {
     hardware
         .driverController
         .rightBumper()
-        .onTrue(robotCommands.passCommand())
+        .onTrue(robotCommands.feedingCommand())
         .onFalse(robotCommands.stopShootingCommand());
     hardware
         .driverController
         .leftBumper()
-        .onTrue(robotCommands.feedingCommand())
-        .onFalse(robotCommands.stopShootingCommand());
-
-    hardware
-        .operatorController
-        .rightTrigger()
-        .onTrue(robotCommands.ampCommand())
-        .onFalse(robotCommands.stopShootingCommand());
-    hardware
-        .operatorController
-        .leftTrigger()
-        .onTrue(robotCommands.subwooferCommand())
-        .onFalse(robotCommands.stowCommand());
-    hardware
-        .operatorController
-        .x()
         .onTrue(robotCommands.outtakeCommand())
-        .onFalse(robotCommands.stowCommand());
-    hardware.operatorController.a().onTrue(robotCommands.stowCommand());
-    hardware.operatorController.povUp().onTrue(robotCommands.climbUpCommand());
-    hardware.operatorController.povDown().onTrue(robotCommands.climbDownCommand());
+        .onFalse(robotCommands.stopShootingCommand());
+    // TODO: Podium command?
     hardware
-        .operatorController
-        .povLeft()
-        .onTrue(robotCommands.unjamCommand())
+        .driverController
+        .x()
+        .onTrue(robotCommands.subwooferCommand())
+        .onFalse(robotCommands.stopShootingCommand());
+    hardware
+        .driverController
+        .b()
+        .onTrue(robotCommands.waitAmpCommand())
         .onFalse(robotCommands.stowCommand());
+    hardware.driverController.a().onTrue(robotCommands.stowCommand());
+    hardware.driverController.povDown().onTrue(robotCommands.climbDownCommand());
+    hardware.driverController.povLeft().onTrue(robotCommands.unjamCommand());
+    hardware.driverController.povUp().onTrue(robotCommands.climbUpCommand());
   }
 }
