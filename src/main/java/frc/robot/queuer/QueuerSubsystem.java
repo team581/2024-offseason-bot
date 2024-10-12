@@ -51,6 +51,7 @@ public class QueuerSubsystem extends StateMachine<QueuerState> {
       case SHOOTING -> motor.setVoltage(10);
       case INTAKING -> motor.setVoltage(2);
       case OUTTAKING -> motor.setVoltage(-4);
+      case AMPING -> motor.setVoltage(-10);
     }
   }
 

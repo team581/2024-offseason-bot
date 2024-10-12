@@ -49,7 +49,8 @@ class CompConfig {
                       new CurrentLimitsConfigs()
                           .withSupplyCurrentLimit(25)
                           .withStatorCurrentLimit(20))
-                          .withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive)),
+                  .withMotorOutput(
+                      new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive)),
               new Debouncer(3.0 * 0.02)),
           new ShooterConfig(
               18,
@@ -118,7 +119,7 @@ class CompConfig {
                       new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive))
                   .withMotionMagic(
                       new MotionMagicConfigs()
-                          .withMotionMagicAcceleration(3.0)
+                          .withMotionMagicAcceleration(2.0)
                           .withMotionMagicCruiseVelocity(3.0)
                           .withMotionMagicJerk(100)),
               new TalonFXConfiguration()
@@ -144,7 +145,7 @@ class CompConfig {
                           .withInverted(InvertedValue.CounterClockwise_Positive))
                   .withMotionMagic(
                       new MotionMagicConfigs()
-                          .withMotionMagicAcceleration(3.0)
+                          .withMotionMagicAcceleration(2.0)
                           .withMotionMagicCruiseVelocity(3.0)
                           .withMotionMagicJerk(100)),
               feedSpotDistanceToAngle -> {
@@ -153,8 +154,8 @@ class CompConfig {
               speakerDistanceToAngle -> {
                 speakerDistanceToAngle.put(123.0, 321.0);
               },
-              -76.5,
-              80.0),
+              -77.0,
+              90.0),
           new VisionConfig(4, 0.4, 0.4));
 
   // NOT TUNED
