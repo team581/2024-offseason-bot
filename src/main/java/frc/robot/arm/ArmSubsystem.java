@@ -111,11 +111,16 @@ public class ArmSubsystem extends StateMachine<ArmState> {
   @Override
   protected void afterTransition(ArmState newState) {
     switch (newState) {
-      case PRE_MATCH_HOMING, IDLE -> {
+      case PRE_MATCH_HOMING -> {
         leftMotor.disable();
         rightMotor.disable();
       }
-
+      case IDLE -> {
+        leftMotor.setControl(
+            motionMagicRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.IDLE))));
+        rightMotor.setControl(
+            motionMagicRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.IDLE))));
+      }
       case CLIMBING_1_LINEUP -> {
         leftMotor.setControl(
             motionMagicRequest.withPosition(
