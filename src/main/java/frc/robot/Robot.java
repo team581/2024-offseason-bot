@@ -42,8 +42,6 @@ public class Robot extends TimedRobot {
   private final Limelight leftLimelight = new Limelight();
   private final Limelight rightLimelight = new Limelight();
 
-
-
   private final VisionSubsystem vision = new VisionSubsystem(imu, leftLimelight, rightLimelight);
   private final LocalizationSubsystem localization = new LocalizationSubsystem(imu, vision, swerve);
   private final Autos autos = new Autos();

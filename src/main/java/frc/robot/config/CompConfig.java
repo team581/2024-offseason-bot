@@ -18,6 +18,7 @@ import frc.robot.config.RobotConfig.QueuerConfig;
 import frc.robot.config.RobotConfig.ShooterConfig;
 import frc.robot.config.RobotConfig.SwerveConfig;
 import frc.robot.config.RobotConfig.VisionConfig;
+import frc.robot.vision.interpolation.InterpolatedVisionDataset;
 
 class CompConfig {
   private static final String CANIVORE_NAME = "581CANivore";
@@ -49,7 +50,8 @@ class CompConfig {
                       new CurrentLimitsConfigs()
                           .withSupplyCurrentLimit(25)
                           .withStatorCurrentLimit(20))
-                          .withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive)),
+                  .withMotorOutput(
+                      new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive)),
               new Debouncer(3.0 * 0.02)),
           new ShooterConfig(
               18,
@@ -155,7 +157,7 @@ class CompConfig {
               },
               -76.5,
               80.0),
-          new VisionConfig(4, 0.4, 0.4));
+          new VisionConfig(4, 0.4, 0.4, InterpolatedVisionDataset.HOME));
 
   // NOT TUNED
 

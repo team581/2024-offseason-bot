@@ -11,6 +11,7 @@ public class VisionSubsystem extends StateMachine<VisionState> {
   private final Limelight leftLimelight;
   private final Limelight rightLimelight;
   private final List<VisionResult> processedVisionResult = new ArrayList<>();
+  private final List<VisionResult> interpolatedVisionResult = new ArrayList<>();
 
   public VisionSubsystem(ImuSubsystem imu, Limelight leftLimelight, Limelight rightLimelight) {
     super(SubsystemPriority.VISION, VisionState.DEFAULT_STATE);
@@ -23,6 +24,9 @@ public class VisionSubsystem extends StateMachine<VisionState> {
   protected void collectInputs() {
     var leftResult = leftLimelight.getRawVisionResult();
     var rightResult = rightLimelight.getRawVisionResult();
+    var leftInterpolatedVisionResult = leftLimelight.getInterpolatedVisionResult();
+    var rightInterpolatedVisionResult = rightLimelight.getInterpolatedVisionResult();
+
     processedVisionResult.clear();
 
     if (leftResult.isPresent()) {
@@ -31,10 +35,20 @@ public class VisionSubsystem extends StateMachine<VisionState> {
     if (rightResult.isPresent()) {
       processedVisionResult.add(rightResult.get());
     }
+    if (leftInterpolatedVisionResult.isPresent()) {
+      interpolatedVisionResult.add(leftInterpolatedVisionResult.get());
+    }
+    if (rightInterpolatedVisionResult.isPresent()) {
+      interpolatedVisionResult.add(rightInterpolatedVisionResult.get());
+    }
   }
 
   public List<VisionResult> getVisionResult() {
     return processedVisionResult;
+  }
+
+  public List<VisionResult> getInterpolatedVisionResult() {
+    return interpolatedVisionResult;
   }
 
   @Override
