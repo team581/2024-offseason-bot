@@ -5,8 +5,6 @@ import frc.robot.vision.interpolation.InterpolatedVision;
 import java.util.Optional;
 
 public class Limelight {
-  private Optional<VisionResult> rawVisionResult;
-  private Optional<VisionResult> processedVisionResult;
   public String limeLightName = "";
 
   public Optional<VisionResult> getRawVisionResult() {
@@ -43,7 +41,7 @@ public class Limelight {
     if (estimatePose.pose.getX() == 0.0 && estimatePose.pose.getY() == 0.0) {
       return Optional.empty();
     }
-    Pose2d interpolatedPose = InterpolatedVision.interpolatePose(estimatePose.pose);
+    Pose2d interpolatedPose = InterpolatedVision.leftInterpolatePose(estimatePose.pose);
     return Optional.of(new VisionResult(interpolatedPose, estimatePose.timestampSeconds));
   }
 }

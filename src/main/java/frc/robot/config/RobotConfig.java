@@ -5,7 +5,9 @@ import com.ctre.phoenix6.mechanisms.swerve.utility.PhoenixPIDController;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
-import frc.robot.vision.interpolation.InterpolatedVisionDataset;
+import frc.robot.vision.interpolation.LeftInterpolatedVisionDataset;
+import frc.robot.vision.interpolation.RightInterpolatedVisionDataset;
+
 import java.util.function.Consumer;
 
 public record RobotConfig(
@@ -60,7 +62,8 @@ public record RobotConfig(
       int translationHistoryArraySize,
       double xyStdDev,
       double thetaStdDev,
-      InterpolatedVisionDataset interpolatedVisionSet) {}
+      LeftInterpolatedVisionDataset leftinterpolatedVisionSet,
+      RightInterpolatedVisionDataset rightinterpolatedVisionSet) {}
 
   // TODO: Change this to false during events
   public static final boolean IS_DEVELOPMENT = true;

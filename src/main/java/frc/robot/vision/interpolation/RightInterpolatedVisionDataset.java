@@ -3,7 +3,7 @@ package frc.robot.vision.interpolation;
 import edu.wpi.first.math.geometry.Translation2d;
 import java.util.List;
 
-public enum InterpolatedVisionDataset {
+public enum RightInterpolatedVisionDataset {
   //ALL POINTS ARE NOT TESTED OR VALIDATED
   HOME(
       List.of(
@@ -74,7 +74,7 @@ public enum InterpolatedVisionDataset {
   public final List<VisionInterpolationData> redSet;
   public final List<VisionInterpolationData> blueSet;
 
-  InterpolatedVisionDataset(List<VisionInterpolationData> red, List<VisionInterpolationData> blue) {
+  RightInterpolatedVisionDataset(List<VisionInterpolationData> red, List<VisionInterpolationData> blue) {
     this.redSet = red;
     this.blueSet = blue;
   }
