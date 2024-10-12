@@ -29,6 +29,7 @@ public class LocalizationSubsystem extends StateMachine<LocalizationState> {
       TimeInterpolatableBuffer.createBuffer(1.5);
   private double lastAddedVisionTimestamp = 0;
   private List<VisionResult> latestResult = new ArrayList<>();
+  private List<VisionResult> latestInterpolatedResult = new ArrayList<>();
 
   public LocalizationSubsystem(ImuSubsystem imu, VisionSubsystem vision, SwerveSubsystem swerve) {
     super(SubsystemPriority.LOCALIZATION, LocalizationState.DEFAULT_STATE);
@@ -45,7 +46,7 @@ public class LocalizationSubsystem extends StateMachine<LocalizationState> {
 
   @Override
   protected void collectInputs() {
-    latestResult = vision.getVisionResult();
+    latestResult = vision.getInterpolatedVisionResult();
   }
 
   public Pose2d getPose() {

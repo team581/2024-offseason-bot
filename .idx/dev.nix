@@ -19,6 +19,12 @@
       "vscjava.vscode-java-pack"
       "vscjava.vscode-java-test"
       "vscjava.vscode-maven"
+      "vscjava.vscode-gradle"
+      "wpilibsuite.vscode-wpilib"
+      "EditorConfig.EditorConfig"
+      "ms-python.black-formatter"
+      "ms-python.debugpy"
+      "ms-python.python"
     ];
     # Enable previews
     previews = {
