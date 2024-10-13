@@ -156,34 +156,33 @@ public class Robot extends TimedRobot {
     hardware
         .driverController
         .rightTrigger()
-        .onTrue(robotCommands.speakerOrAmpCommand())
+        .onTrue(robotCommands.confirmShotCommand())
+        .onTrue(robotCommands.waitSpeakerCommand())
         .onFalse(robotCommands.stopShootingCommand());
-    hardware
-        .driverController
-        .leftTrigger()
-        .onTrue(robotCommands.intakeCommand())
-        .onFalse(robotCommands.stowCommand());
+    hardware.driverController.leftTrigger().onTrue(robotCommands.intakeCommand());
+
     hardware
         .driverController
         .rightBumper()
-        .onTrue(robotCommands.feedingCommand())
-        .onFalse(robotCommands.stopShootingCommand());
+        .onTrue(robotCommands.waitFeedingCommand())
+        .onFalse(robotCommands.feedingCommand());
     hardware
         .driverController
         .leftBumper()
         .onTrue(robotCommands.outtakeCommand())
         .onFalse(robotCommands.stopShootingCommand());
-    // TODO: Podium command?
+    hardware
+        .driverController
+        .y()
+        .onTrue(robotCommands.podiumCommand())
+        .onFalse(robotCommands.stopShootingCommand());
     hardware
         .driverController
         .x()
         .onTrue(robotCommands.subwooferCommand())
         .onFalse(robotCommands.stopShootingCommand());
-    hardware
-        .driverController
-        .b()
-        .onTrue(robotCommands.waitAmpCommand())
-        .onFalse(robotCommands.stowCommand());
+    hardware.driverController.b().onTrue(robotCommands.waitAmpCommand());
+
     hardware.driverController.a().onTrue(robotCommands.stowCommand());
     hardware.driverController.povDown().onTrue(robotCommands.climbDownCommand());
     hardware.driverController.povLeft().onTrue(robotCommands.unjamCommand());
