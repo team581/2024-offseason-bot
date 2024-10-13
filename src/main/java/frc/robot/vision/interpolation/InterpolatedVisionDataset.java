@@ -4,7 +4,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import java.util.List;
 
 public enum InterpolatedVisionDataset {
-  //ALL POINTS ARE NOT TESTED OR VALIDATED
+  // ALL POINTS ARE NOT TESTED OR VALIDATED
   HOME(
       List.of(
           new VisionInterpolationData(
