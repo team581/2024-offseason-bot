@@ -24,7 +24,7 @@ public enum SubsystemPriority {
   // Robot manager runs last so that all sensor data is fresh before processing state transitions
   ROBOT_MANAGER(0),
   AUTOS(0),
-  NOTE_ASSIST_MANAGER(0);
+  INTAKE_ASSIST_MANAGER(0);
 
   final int value;
 
