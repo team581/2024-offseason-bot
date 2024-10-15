@@ -138,7 +138,7 @@ public class RobotManager extends StateMachine<RobotState> {
         arm.setState(ArmState.AMP);
         shooter.setState(ShooterState.AMP);
         intake.setState(IntakeState.IDLE);
-        queuer.setState(QueuerState.SHOOTING);
+        queuer.setState(QueuerState.AMPING);
       }
       case FEEDING_PREPARE_TO_SHOOT, FEEDING_WAITING -> {
         arm.setState(ArmState.FEEDING);
@@ -234,6 +234,7 @@ public class RobotManager extends StateMachine<RobotState> {
       case AMP_WAITING -> setStateFromRequest(RobotState.AMP_PREPARE_TO_SCORE);
       case SPEAKER_WAITING -> setStateFromRequest(RobotState.SPEAKER_PREPARE_TO_SCORE);
       case FEEDING_WAITING -> setStateFromRequest(RobotState.FEEDING_PREPARE_TO_SHOOT);
+      case SUBWOOFER_WAITING -> setStateFromRequest(RobotState.SUBWOOFER_PREPARE_TO_SCORE);
       default -> setStateFromRequest(RobotState.SPEAKER_PREPARE_TO_SCORE);
     }
   }
@@ -371,7 +372,13 @@ public class RobotManager extends StateMachine<RobotState> {
   public void stopShootingRequest() {
     // If we are actively taking a shot, ignore the request to avoid messing up shooting
     switch (getState()) {
-      case SPEAKER_SCORING, SUBWOOFER_SCORING, AMP_SCORING, FEEDING_SHOOTING, PASS_SHOOTING -> {}
+      case SPEAKER_SCORING,
+          SUBWOOFER_SCORING,
+          AMP_SCORING,
+          AMP_WAITING,
+          FEEDING_SHOOTING,
+          PASS_SHOOTING -> {}
+
       default -> setStateFromRequest(RobotState.IDLE_WITH_GP);
     }
   }

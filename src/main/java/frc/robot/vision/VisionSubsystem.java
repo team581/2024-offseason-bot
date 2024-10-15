@@ -3,52 +3,52 @@ package frc.robot.vision;
 import frc.robot.imu.ImuSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
 public class VisionSubsystem extends StateMachine<VisionState> {
   private final ImuSubsystem imu;
-  private Optional<VisionResult> rawVisionResult;
-  private Optional<VisionResult> processedVisionResult;
+  private final Limelight leftLimelight;
+  private final Limelight rightLimelight;
+  private final List<VisionResult> processedVisionResult = new ArrayList<>();
+  private final List<VisionResult> interpolatedVisionResult = new ArrayList<>();
 
-  public VisionSubsystem(ImuSubsystem imu) {
+  public VisionSubsystem(ImuSubsystem imu, Limelight leftLimelight, Limelight rightLimelight) {
     super(SubsystemPriority.VISION, VisionState.DEFAULT_STATE);
     this.imu = imu;
-  }
-
-  private Optional<VisionResult> getRawVisionResult() {
-    var estimatePose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
-
-    if (estimatePose == null) {
-      return Optional.empty();
-    }
-
-    if (estimatePose.tagCount == 0) {
-      return Optional.empty();
-    }
-
-    // This prevents pose estimator from having crazy poses if the Limelight loses power
-    if (estimatePose.pose.getX() == 0.0 && estimatePose.pose.getY() == 0.0) {
-      return Optional.empty();
-    }
-
-    return Optional.of(new VisionResult(estimatePose.pose, estimatePose.timestampSeconds));
+    this.leftLimelight = leftLimelight;
+    this.rightLimelight = rightLimelight;
   }
 
   @Override
   protected void collectInputs() {
-    rawVisionResult = getRawVisionResult();
-    if (rawVisionResult.isEmpty()) {
-      processedVisionResult = Optional.empty();
-    } else {
-      var rawData = rawVisionResult.get();
-      processedVisionResult =
-          Optional.of(
-              new VisionResult(VisionUtil.interpolatePose(rawData.pose()), rawData.timestamp()));
+    var leftResult = leftLimelight.getRawVisionResult();
+    var rightResult = rightLimelight.getRawVisionResult();
+    var leftInterpolatedVisionResult = leftLimelight.getInterpolatedVisionResult();
+    var rightInterpolatedVisionResult = rightLimelight.getInterpolatedVisionResult();
+
+    processedVisionResult.clear();
+
+    if (leftResult.isPresent()) {
+      processedVisionResult.add(leftResult.get());
+    }
+    if (rightResult.isPresent()) {
+      processedVisionResult.add(rightResult.get());
+    }
+    if (leftInterpolatedVisionResult.isPresent()) {
+      interpolatedVisionResult.add(leftInterpolatedVisionResult.get());
+    }
+    if (rightInterpolatedVisionResult.isPresent()) {
+      interpolatedVisionResult.add(rightInterpolatedVisionResult.get());
     }
   }
 
-  public Optional<VisionResult> getVisionResult() {
+  public List<VisionResult> getVisionResult() {
     return processedVisionResult;
+  }
+
+  public List<VisionResult> getInterpolatedVisionResult() {
+    return interpolatedVisionResult;
   }
 
   @Override

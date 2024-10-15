@@ -71,8 +71,7 @@ public class RobotCommands {
   }
 
   public Command ampCommand() {
-    return Commands.runOnce(robot::prepareAmpRequest, requirements)
-        .andThen(robot.waitForState(RobotState.IDLE_NO_GP));
+    return Commands.runOnce(robot::prepareAmpRequest, requirements);
   }
 
   public Command stopShootingCommand() {
@@ -101,13 +100,11 @@ public class RobotCommands {
   }
 
   public Command climbUpCommand() {
-    return Commands.runOnce(robot::nextClimbStateRequest, requirements)
-        .andThen(robot.waitForState(RobotState.CLIMBING_2_HANGING));
+    return Commands.runOnce(robot::nextClimbStateRequest, requirements);
   }
 
   public Command climbDownCommand() {
-    return Commands.runOnce(robot::previousClimbStateRequest, requirements)
-        .andThen(robot.waitForState(RobotState.CLIMBING_1_LINEUP));
+    return Commands.runOnce(robot::previousClimbStateRequest, requirements);
   }
 
   public Command unjamCommand() {

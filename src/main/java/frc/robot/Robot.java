@@ -22,6 +22,7 @@ import frc.robot.shooter.ShooterSubsystem;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.Stopwatch;
 import frc.robot.util.scheduling.LifecycleSubsystemManager;
+import frc.robot.vision.Limelight;
 import frc.robot.vision.VisionSubsystem;
 
 public class Robot extends TimedRobot {
@@ -38,8 +39,10 @@ public class Robot extends TimedRobot {
       new IntakeSubsystem(hardware.intakeMain, hardware.intakeCenteringMotor);
   private final SwerveSubsystem swerve = new SwerveSubsystem();
   private final ImuSubsystem imu = new ImuSubsystem(swerve.drivetrainPigeon);
+  private final Limelight leftLimelight = new Limelight();
+  private final Limelight rightLimelight = new Limelight();
 
-  private final VisionSubsystem vision = new VisionSubsystem(imu);
+  private final VisionSubsystem vision = new VisionSubsystem(imu, leftLimelight, rightLimelight);
   private final LocalizationSubsystem localization = new LocalizationSubsystem(imu, vision, swerve);
   private final Autos autos = new Autos();
   private final RobotManager robotManager =
@@ -186,5 +189,6 @@ public class Robot extends TimedRobot {
     hardware.driverController.povDown().onTrue(robotCommands.climbDownCommand());
     hardware.driverController.povLeft().onTrue(robotCommands.unjamCommand());
     hardware.driverController.povUp().onTrue(robotCommands.climbUpCommand());
+    hardware.driverController.back().onTrue(localization.getZeroCommand());
   }
 }
