@@ -52,17 +52,17 @@ public class RobotCommands {
 
   public Command waitSubwooferCommand() {
     return Commands.runOnce(robot::waitSubwooferRequest, requirements)
-        .andThen(robot.waitForState(RobotState.IDLE_NO_GP));
+        .andThen(robot.waitForState(RobotState.SUBWOOFER_WAITING));
   }
 
   public Command waitAmpCommand() {
     return Commands.runOnce(robot::waitAmpRequest, requirements)
-        .andThen(robot.waitForState(RobotState.IDLE_NO_GP));
+        .andThen(robot.waitForState(RobotState.AMP_WAITING));
   }
 
   public Command waitSpeakerCommand() {
     return Commands.runOnce(robot::waitSpeakerRequest, requirements)
-        .andThen(robot.waitForState(RobotState.IDLE_NO_GP));
+        .andThen(robot.waitForState(RobotState.SPEAKER_WAITING));
   }
 
   public Command confirmShotCommand() {
@@ -97,7 +97,7 @@ public class RobotCommands {
 
   public Command podiumCommand() {
     return Commands.runOnce(robot::preparePodiumRequest, requirements)
-        .andThen(robot.waitForState(RobotState.PODIUM_WAITING));
+        .andThen(robot.waitForState(RobotState.IDLE_NO_GP));
   }
 
   public Command climbUpCommand() {
