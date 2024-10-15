@@ -156,8 +156,8 @@ public class Robot extends TimedRobot {
     hardware
         .driverController
         .rightTrigger()
-        .onTrue(robotCommands.confirmShotCommand().alongWith(robotCommands.waitSpeakerCommand()))
-        .onFalse(robotCommands.stopShootingCommand());
+        .onTrue(robotCommands.confirmShotCommand())
+        .onFalse(robotCommands.waitSpeakerCommand());
     hardware.driverController.leftTrigger().onTrue(robotCommands.intakeCommand());
 
     hardware
