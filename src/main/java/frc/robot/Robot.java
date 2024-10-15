@@ -157,7 +157,7 @@ public class Robot extends TimedRobot {
         .driverController
         .rightTrigger()
         .onTrue(robotCommands.confirmShotCommand())
-        .onTrue(robotCommands.waitSpeakerCommand())
+        
         .onFalse(robotCommands.stopShootingCommand());
     hardware.driverController.leftTrigger().onTrue(robotCommands.intakeCommand());
 
@@ -175,7 +175,7 @@ public class Robot extends TimedRobot {
         .driverController
         .y()
         .onTrue(robotCommands.podiumCommand())
-        .onFalse(robotCommands.stopShootingCommand());
+        .onFalse(robotCommands.stowCommand());
     hardware
         .driverController
         .x()

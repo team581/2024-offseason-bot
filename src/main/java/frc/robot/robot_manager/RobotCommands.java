@@ -87,7 +87,7 @@ public class RobotCommands {
 
   public Command waitFeedingCommand() {
     return Commands.runOnce(robot::waitFeedRequest, requirements)
-        .andThen(robot.waitForState(RobotState.IDLE_NO_GP));
+        .andThen(robot.waitForState(RobotState.FEEDING_WAITING));
   }
 
   public Command subwooferCommand() {
@@ -97,7 +97,7 @@ public class RobotCommands {
 
   public Command podiumCommand() {
     return Commands.runOnce(robot::preparePodiumRequest, requirements)
-        .andThen(robot.waitForState(RobotState.IDLE_NO_GP));
+        .andThen(robot.waitForState(RobotState.PODIUM_WAITING));
   }
 
   public Command climbUpCommand() {
