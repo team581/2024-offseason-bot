@@ -8,6 +8,7 @@ import java.util.List;
 public class RobotCommands {
   private final RobotManager robot;
   private final Subsystem[] requirements;
+  
 
   public RobotCommands(RobotManager robot) {
     this.robot = robot;
@@ -66,8 +67,10 @@ public class RobotCommands {
   }
 
   public Command confirmShotCommand() {
+    
     return Commands.runOnce(robot::confirmShotRequest, requirements)
         .andThen(robot.waitForState(RobotState.IDLE_NO_GP));
+        
   }
 
   public Command ampCommand() {

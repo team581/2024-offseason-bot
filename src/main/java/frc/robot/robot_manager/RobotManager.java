@@ -1,5 +1,6 @@
 package frc.robot.robot_manager;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.arm.ArmState;
 import frc.robot.arm.ArmSubsystem;
 import frc.robot.imu.ImuSubsystem;
@@ -25,6 +26,8 @@ public class RobotManager extends StateMachine<RobotState> {
 
   private final double distanceToFeedSpot = 0.0;
   private final double distanceToSpeaker = 0.0;
+
+  private boolean confirmShotActive = false;
 
   public RobotManager(
       ArmSubsystem arm,
@@ -58,7 +61,8 @@ public class RobotManager extends StateMachine<RobotState> {
               IDLE_WITH_GP,
               CLIMBING_1_LINEUP,
               CLIMBING_2_HANGING,
-              PODIUM_WAITING ->
+              PODIUM_WAITING,
+              OUTTAKING ->
           currentState;
       case SPEAKER_SCORING,
               AMP_SCORING,
@@ -69,7 +73,7 @@ public class RobotManager extends StateMachine<RobotState> {
           queuer.hasNote() ? currentState : RobotState.IDLE_NO_GP;
 
       case SPEAKER_PREPARE_TO_SCORE ->
-          shooter.atGoal() && arm.atGoal() ? RobotState.SPEAKER_SCORING : currentState;
+          shooter.atGoal() && arm.atGoal() && if(DriverStation.isTeleop()){getConfirmShotActive()==true} ? RobotState.SPEAKER_SCORING : currentState;
 
       case AMP_PREPARE_TO_SCORE ->
           shooter.atGoal() && arm.atGoal() ? RobotState.AMP_SCORING : currentState;
@@ -85,7 +89,6 @@ public class RobotManager extends StateMachine<RobotState> {
 
       case UNJAM -> currentState;
       case INTAKING -> queuer.hasNote() ? RobotState.IDLE_WITH_GP : currentState;
-      case OUTTAKING -> queuer.hasNote() ? currentState : RobotState.IDLE_NO_GP;
     };
   }
 
@@ -227,8 +230,18 @@ public class RobotManager extends StateMachine<RobotState> {
     }
   }
 
+  public void setConfirmShotActive(boolean newValue) {
+    confirmShotActive = newValue;
+    
+  }
+  public boolean getConfirmShotActive(){
+    return confirmShotActive;
+    
+  }
+
   public void confirmShotRequest() {
     switch (getState()) {
+      
       case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
 
       case AMP_WAITING -> setStateFromRequest(RobotState.AMP_PREPARE_TO_SCORE);
@@ -270,6 +283,9 @@ public class RobotManager extends StateMachine<RobotState> {
   public void intakeRequest() {
     switch (getState()) {
       case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
+      case IDLE_WITH_GP->{if(!queuer.hasNote()){
+        setStateFromRequest(RobotState.INTAKING);
+      }}
       default -> setStateFromRequest(RobotState.INTAKING);
     }
   }
