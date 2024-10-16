@@ -73,7 +73,7 @@ public class RobotManager extends StateMachine<RobotState> {
           queuer.hasNote() ? currentState : RobotState.IDLE_NO_GP;
 
       case SPEAKER_PREPARE_TO_SCORE ->
-          shooter.atGoal() && arm.atGoal() && if(DriverStation.isTeleop()){getConfirmShotActive()==true} ? RobotState.SPEAKER_SCORING : currentState;
+          shooter.atGoal() && arm.atGoal() && (DriverStation.isTeleop() && confirmShotActive==true) ? RobotState.SPEAKER_SCORING : currentState;
 
       case AMP_PREPARE_TO_SCORE ->
           shooter.atGoal() && arm.atGoal() ? RobotState.AMP_SCORING : currentState;
@@ -232,16 +232,13 @@ public class RobotManager extends StateMachine<RobotState> {
 
   public void setConfirmShotActive(boolean newValue) {
     confirmShotActive = newValue;
-    
+
   }
-  public boolean getConfirmShotActive(){
-    return confirmShotActive;
-    
-  }
+
 
   public void confirmShotRequest() {
     switch (getState()) {
-      
+
       case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
 
       case AMP_WAITING -> setStateFromRequest(RobotState.AMP_PREPARE_TO_SCORE);
