@@ -6,11 +6,12 @@ import frc.robot.util.state_machines.StateMachine;
 import java.util.ArrayList;
 import java.util.List;
 
+import dev.doglog.DogLog;
+
 public class VisionSubsystem extends StateMachine<VisionState> {
   private final ImuSubsystem imu;
   private final Limelight leftLimelight;
   private final Limelight rightLimelight;
-  private final List<VisionResult> processedVisionResult = new ArrayList<>();
   private final List<VisionResult> interpolatedVisionResult = new ArrayList<>();
 
   public VisionSubsystem(ImuSubsystem imu, Limelight leftLimelight, Limelight rightLimelight) {
@@ -22,19 +23,13 @@ public class VisionSubsystem extends StateMachine<VisionState> {
 
   @Override
   protected void collectInputs() {
-    var leftResult = leftLimelight.getRawVisionResult();
-    var rightResult = rightLimelight.getRawVisionResult();
     var leftInterpolatedVisionResult = leftLimelight.getInterpolatedVisionResult();
     var rightInterpolatedVisionResult = rightLimelight.getInterpolatedVisionResult();
 
-    processedVisionResult.clear();
 
-    if (leftResult.isPresent()) {
-      processedVisionResult.add(leftResult.get());
-    }
-    if (rightResult.isPresent()) {
-      processedVisionResult.add(rightResult.get());
-    }
+
+    interpolatedVisionResult.clear();
+
     if (leftInterpolatedVisionResult.isPresent()) {
       interpolatedVisionResult.add(leftInterpolatedVisionResult.get());
     }
@@ -43,16 +38,7 @@ public class VisionSubsystem extends StateMachine<VisionState> {
     }
   }
 
-  public List<VisionResult> getVisionResult() {
-    return processedVisionResult;
-  }
-
   public List<VisionResult> getInterpolatedVisionResult() {
     return interpolatedVisionResult;
-  }
-
-  @Override
-  public void robotPeriodic() {
-    super.robotPeriodic();
   }
 }
