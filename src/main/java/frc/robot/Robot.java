@@ -156,50 +156,35 @@ public class Robot extends TimedRobot {
               }
             }));
 
-    hardware
-        .driverController
-        .rightTrigger()
-        .onTrue(robotCommands.confirmShotCommand())
-        .onFalse(robotCommands.stopShootingCommand());
-    hardware
-        .driverController
-        .leftTrigger()
-        .onTrue(robotCommands.intakeCommand())
-        .onFalse(robotCommands.stowCommand());
+    hardware.driverController.rightTrigger().onTrue(robotCommands.confirmShotCommand());
+    hardware.driverController.leftTrigger().onTrue(robotCommands.intakeCommand());
+
     hardware
         .driverController
         .rightBumper()
-        .onTrue(robotCommands.passCommand())
-        .onFalse(robotCommands.stopShootingCommand());
+        .onTrue(robotCommands.waitFeedingCommand())
+        .onFalse(robotCommands.feedingCommand());
     hardware
         .driverController
         .leftBumper()
-        .onTrue(robotCommands.feedingCommand())
-        .onFalse(robotCommands.stopShootingCommand());
-
-    hardware
-        .operatorController
-        .rightTrigger()
-        .onTrue(robotCommands.waitAmpCommand())
-        .onFalse(robotCommands.stopShootingCommand());
-    hardware
-        .operatorController
-        .leftTrigger()
-        .onTrue(robotCommands.waitSubwooferCommand())
-        .onFalse(robotCommands.stowCommand());
-    hardware
-        .operatorController
-        .x()
         .onTrue(robotCommands.outtakeCommand())
-        .onFalse(robotCommands.stowCommand());
-    hardware.operatorController.a().onTrue(robotCommands.stowCommand());
-    hardware.operatorController.povUp().onTrue(robotCommands.climbUpCommand());
-    hardware.operatorController.povDown().onTrue(robotCommands.climbDownCommand());
+        .onFalse(robotCommands.stopShootingCommand());
     hardware
-        .operatorController
-        .povLeft()
-        .onTrue(robotCommands.unjamCommand())
+        .driverController
+        .y()
+        .onTrue(robotCommands.podiumCommand())
         .onFalse(robotCommands.stowCommand());
+    hardware
+        .driverController
+        .x()
+        // TODO:snap
+        .onFalse(robotCommands.waitSubwooferCommand());
+    hardware.driverController.b().onTrue(robotCommands.waitAmpCommand());
+
+    hardware.driverController.a().onTrue(robotCommands.stowCommand());
+    hardware.driverController.povDown().onTrue(robotCommands.climbDownCommand());
+    hardware.driverController.povLeft().onTrue(robotCommands.unjamCommand());
+    hardware.driverController.povUp().onTrue(robotCommands.climbUpCommand());
     hardware.driverController.back().onTrue(localization.getZeroCommand());
   }
 }
