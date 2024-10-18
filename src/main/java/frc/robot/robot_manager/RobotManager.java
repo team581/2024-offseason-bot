@@ -1,5 +1,6 @@
 package frc.robot.robot_manager;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.arm.ArmState;
 import frc.robot.arm.ArmSubsystem;
 import frc.robot.imu.ImuSubsystem;
@@ -25,6 +26,8 @@ public class RobotManager extends StateMachine<RobotState> {
 
   private final double distanceToFeedSpot = 0.0;
   private final double distanceToSpeaker = 0.0;
+
+  private boolean confirmShotActive = false;
 
   public RobotManager(
       ArmSubsystem arm,
@@ -57,14 +60,26 @@ public class RobotManager extends StateMachine<RobotState> {
               IDLE_NO_GP,
               IDLE_WITH_GP,
               CLIMBING_1_LINEUP,
-              CLIMBING_2_HANGING ->
+              CLIMBING_2_HANGING,
+              PODIUM_WAITING,
+              OUTTAKING ->
           currentState;
-      case SPEAKER_SCORING, FEEDING_SHOOTING, PASS_SHOOTING, SUBWOOFER_SCORING ->
+      case SPEAKER_SCORING,
+              AMP_SCORING,
+              FEEDING_SHOOTING,
+              PASS_SHOOTING,
+              SUBWOOFER_SCORING,
+              PODIUM_SCORING ->
           queuer.hasNote() ? currentState : RobotState.IDLE_NO_GP;
-      case AMP_SCORING -> queuer.hasNote() ? currentState : RobotState.AMP_WAITING;
 
       case SPEAKER_PREPARE_TO_SCORE ->
-          shooter.atGoal() && arm.atGoal() ? RobotState.SPEAKER_SCORING : currentState;
+          (shooter.atGoal() && arm.atGoal() && DriverStation.isTeleop() == false)
+                  || (DriverStation.isTeleop()
+                      && confirmShotActive == true
+                      && shooter.atGoal()
+                      && arm.atGoal())
+              ? RobotState.SPEAKER_SCORING
+              : currentState;
 
       case AMP_PREPARE_TO_SCORE ->
           shooter.atGoal() && arm.atGoal() ? RobotState.AMP_SCORING : currentState;
@@ -75,9 +90,11 @@ public class RobotManager extends StateMachine<RobotState> {
           shooter.atGoal() && arm.atGoal() ? RobotState.PASS_SHOOTING : currentState;
       case SUBWOOFER_PREPARE_TO_SCORE ->
           shooter.atGoal() && arm.atGoal() ? RobotState.SUBWOOFER_SCORING : currentState;
+      case PODIUM_PREPARE_TO_SCORE ->
+          shooter.atGoal() && arm.atGoal() ? RobotState.PODIUM_SCORING : currentState;
+
       case UNJAM -> currentState;
       case INTAKING -> queuer.hasNote() ? RobotState.IDLE_WITH_GP : currentState;
-      case OUTTAKING -> queuer.hasNote() ? currentState : RobotState.IDLE_NO_GP;
     };
   }
 
@@ -89,6 +106,18 @@ public class RobotManager extends StateMachine<RobotState> {
         shooter.setState(ShooterState.SUBWOOFER_SHOT);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
+      }
+      case PODIUM_PREPARE_TO_SCORE, PODIUM_WAITING -> {
+        arm.setState(ArmState.PODIUM_SHOT);
+        shooter.setState(ShooterState.PODIUM_SHOT);
+        intake.setState(IntakeState.IDLE);
+        queuer.setState(QueuerState.IDLE);
+      }
+      case PODIUM_SCORING -> {
+        arm.setState(ArmState.PODIUM_SHOT);
+        shooter.setState(ShooterState.PODIUM_SHOT);
+        intake.setState(IntakeState.IDLE);
+        queuer.setState(QueuerState.SHOOTING);
       }
       case SUBWOOFER_SCORING -> {
         arm.setState(ArmState.SUBWOOFER_SHOT);
@@ -207,6 +236,10 @@ public class RobotManager extends StateMachine<RobotState> {
     }
   }
 
+  public void setConfirmShotActive(boolean newValue) {
+    confirmShotActive = newValue;
+  }
+
   public void confirmShotRequest() {
     switch (getState()) {
       case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
@@ -250,6 +283,11 @@ public class RobotManager extends StateMachine<RobotState> {
   public void intakeRequest() {
     switch (getState()) {
       case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
+      case IDLE_WITH_GP -> {
+        if (!queuer.hasNote()) {
+          setStateFromRequest(RobotState.INTAKING);
+        }
+      }
       default -> setStateFromRequest(RobotState.INTAKING);
     }
   }
@@ -342,6 +380,13 @@ public class RobotManager extends StateMachine<RobotState> {
     }
   }
 
+  public void waitFeedRequest() {
+    switch (getState()) {
+      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
+      default -> setStateFromRequest(RobotState.FEEDING_WAITING);
+    }
+  }
+
   public void stopShootingRequest() {
     // If we are actively taking a shot, ignore the request to avoid messing up shooting
     switch (getState()) {
@@ -360,6 +405,13 @@ public class RobotManager extends StateMachine<RobotState> {
     switch (getState()) {
       case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
       default -> setStateFromRequest(RobotState.SUBWOOFER_PREPARE_TO_SCORE);
+    }
+  }
+
+  public void preparePodiumRequest() {
+    switch (getState()) {
+      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
+      default -> setStateFromRequest(RobotState.PODIUM_PREPARE_TO_SCORE);
     }
   }
 }

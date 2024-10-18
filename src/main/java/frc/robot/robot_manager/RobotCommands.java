@@ -52,20 +52,21 @@ public class RobotCommands {
 
   public Command waitSubwooferCommand() {
     return Commands.runOnce(robot::waitSubwooferRequest, requirements)
-        .andThen(robot.waitForState(RobotState.IDLE_NO_GP));
+        .andThen(robot.waitForState(RobotState.SUBWOOFER_WAITING));
   }
 
   public Command waitAmpCommand() {
     return Commands.runOnce(robot::waitAmpRequest, requirements)
-        .andThen(robot.waitForState(RobotState.IDLE_NO_GP));
+        .andThen(robot.waitForState(RobotState.AMP_WAITING));
   }
 
   public Command waitSpeakerCommand() {
     return Commands.runOnce(robot::waitSpeakerRequest, requirements)
-        .andThen(robot.waitForState(RobotState.IDLE_NO_GP));
+        .andThen(robot.waitForState(RobotState.SPEAKER_WAITING));
   }
 
   public Command confirmShotCommand() {
+
     return Commands.runOnce(robot::confirmShotRequest, requirements)
         .andThen(robot.waitForState(RobotState.IDLE_NO_GP));
   }
@@ -84,8 +85,18 @@ public class RobotCommands {
         .andThen(robot.waitForState(RobotState.IDLE_NO_GP));
   }
 
+  public Command waitFeedingCommand() {
+    return Commands.runOnce(robot::waitFeedRequest, requirements)
+        .andThen(robot.waitForState(RobotState.FEEDING_WAITING));
+  }
+
   public Command subwooferCommand() {
     return Commands.runOnce(robot::prepareSubwooferRequest, requirements)
+        .andThen(robot.waitForState(RobotState.IDLE_NO_GP));
+  }
+
+  public Command podiumCommand() {
+    return Commands.runOnce(robot::preparePodiumRequest, requirements)
         .andThen(robot.waitForState(RobotState.IDLE_NO_GP));
   }
 

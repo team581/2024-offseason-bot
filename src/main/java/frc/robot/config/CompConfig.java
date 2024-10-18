@@ -156,7 +156,7 @@ class CompConfig {
                 speakerDistanceToAngle.put(123.0, 321.0);
               },
               -77.0,
-              90.0),
+              87.0),
           new VisionConfig(4, 0.4, 0.4, InterpolatedVisionDataset.HOME));
 
   // NOT TUNED
