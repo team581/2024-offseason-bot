@@ -236,7 +236,13 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
   }
 
   public void setState(SwerveState newState) {
-
     setStateFromRequest(newState);
+  }
+
+  public void setSnapsEnabled(boolean newValue) {
+    switch (getState()) {
+      case TELEOP, TELEOP_SNAPS ->
+          setStateFromRequest(newValue ? SwerveState.TELEOP_SNAPS : SwerveState.TELEOP);
+    }
   }
 }

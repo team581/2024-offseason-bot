@@ -1,8 +1,13 @@
 package frc.robot.intake;
 
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkMax;
 import dev.doglog.DogLog;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
+import frc.robot.arm.ArmAngle;
 import frc.robot.config.RobotConfig;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
@@ -10,6 +15,9 @@ import frc.robot.util.state_machines.StateMachine;
 public class IntakeSubsystem extends StateMachine<IntakeState> {
   private final TalonFX mainMotor;
   private final CANSparkMax centeringMotor;
+
+  
+ 
 
   public IntakeSubsystem(TalonFX mainMotor, CANSparkMax centeringMotor) {
     super(SubsystemPriority.INTAKE, IntakeState.IDLE);
@@ -23,6 +31,9 @@ public class IntakeSubsystem extends StateMachine<IntakeState> {
 
   public void setState(IntakeState newState) {
     setStateFromRequest(newState);
+  }
+  public double getIntakeRotations(){
+    return mainMotor.getRotorPosition().getValueAsDouble();
   }
 
   @Override
@@ -46,6 +57,12 @@ public class IntakeSubsystem extends StateMachine<IntakeState> {
       case OUTTAKING -> {
         mainMotor.setVoltage(-6);
         centeringMotor.setVoltage(-10);
+      }
+      case INTAKING_BACK->{
+        mainMotor.setVoltage(0.5);
+      }
+      case INTAKING_FORWARD_PUSH->{
+        mainMotor.setVoltage(0.5);
       }
     }
   }
