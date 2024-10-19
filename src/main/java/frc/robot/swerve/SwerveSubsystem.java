@@ -234,10 +234,9 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
                   .withDriveRequestType(DriveRequestType.Velocity));
     }
   }
-  public void setState(SwerveState newState) {
-    
 
-      setStateFromRequest(newState);
-    
+  public void setState(SwerveState newState) {
+
+    setStateFromRequest(newState);
   }
 }

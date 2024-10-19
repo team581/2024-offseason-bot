@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.arm.ArmSubsystem;
 import frc.robot.autos.Autos;
 import frc.robot.config.RobotConfig;
@@ -46,7 +47,7 @@ public class Robot extends TimedRobot {
   private final LocalizationSubsystem localization = new LocalizationSubsystem(imu, vision, swerve);
   private final Autos autos = new Autos();
   private final RobotManager robotManager =
-      new RobotManager(arm, shooter, localization, vision, imu, intake, queuer,swerve);
+      new RobotManager(arm, shooter, localization, vision, imu, intake, queuer, swerve);
 
   private final RobotCommands robotCommands = new RobotCommands(robotManager);
 
@@ -159,8 +160,19 @@ public class Robot extends TimedRobot {
     hardware
         .driverController
         .rightTrigger()
-        .onTrue(robotCommands.confirmShotCommand())
-        .onFalse(robotCommands.stopShootingCommand());
+        .onTrue(
+            robotCommands
+                .confirmShotCommand()
+                .alongWith(
+                    Commands.runOnce(
+                        () -> {
+                          robotManager.setConfirmShotActive(true);
+                        })))
+        .onFalse(
+            Commands.runOnce(
+                () -> {
+                  robotManager.setConfirmShotActive(false);
+                }));
     hardware.driverController.leftTrigger().onTrue(robotCommands.intakeCommand());
 
     hardware

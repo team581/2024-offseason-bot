@@ -123,7 +123,6 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.SHOOTING);
         swerve.setState(SwerveState.TELEOP_SNAPS);
-      
       }
       case SUBWOOFER_SCORING -> {
         arm.setState(ArmState.SUBWOOFER_SHOT);
@@ -262,7 +261,7 @@ public class RobotManager extends StateMachine<RobotState> {
   }
 
   public void confirmShotRequest() {
-    setConfirmShotActive(true);
+
     switch (getState()) {
       case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
 
@@ -352,7 +351,6 @@ public class RobotManager extends StateMachine<RobotState> {
           setStateFromRequest(RobotState.IDLE_WITH_GP);
       default -> setStateFromRequest(RobotState.IDLE_NO_GP);
     }
-    setConfirmShotActive(false);
   }
 
   public void preparePassRequest() {
@@ -420,7 +418,6 @@ public class RobotManager extends StateMachine<RobotState> {
 
       default -> setStateFromRequest(RobotState.IDLE_WITH_GP);
     }
-    setConfirmShotActive(false);
   }
 
   public void prepareSubwooferRequest() {
