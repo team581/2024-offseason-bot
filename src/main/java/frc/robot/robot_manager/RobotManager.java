@@ -11,6 +11,8 @@ import frc.robot.queuer.QueuerState;
 import frc.robot.queuer.QueuerSubsystem;
 import frc.robot.shooter.ShooterState;
 import frc.robot.shooter.ShooterSubsystem;
+import frc.robot.swerve.SwerveState;
+import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
 import frc.robot.vision.VisionSubsystem;
@@ -23,6 +25,7 @@ public class RobotManager extends StateMachine<RobotState> {
   public final ImuSubsystem imu;
   public final IntakeSubsystem intake;
   public final QueuerSubsystem queuer;
+  public final SwerveSubsystem swerve;
 
   private final double distanceToFeedSpot = 0.0;
   private final double distanceToSpeaker = 0.0;
@@ -36,7 +39,8 @@ public class RobotManager extends StateMachine<RobotState> {
       VisionSubsystem vision,
       ImuSubsystem imu,
       IntakeSubsystem intake,
-      QueuerSubsystem queuer) {
+      QueuerSubsystem queuer,
+      SwerveSubsystem swerve) {
     super(SubsystemPriority.ROBOT_MANAGER, RobotState.IDLE_NO_GP);
     this.arm = arm;
     this.shooter = shooter;
@@ -45,6 +49,7 @@ public class RobotManager extends StateMachine<RobotState> {
     this.imu = imu;
     this.intake = intake;
     this.queuer = queuer;
+    this.swerve = swerve;
   }
 
   @Override
@@ -103,102 +108,121 @@ public class RobotManager extends StateMachine<RobotState> {
         shooter.setState(ShooterState.SUBWOOFER_SHOT);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
+        swerve.setState(SwerveState.TELEOP_SNAPS);
       }
       case PODIUM_PREPARE_TO_SCORE, PODIUM_WAITING -> {
         arm.setState(ArmState.PODIUM_SHOT);
         shooter.setState(ShooterState.PODIUM_SHOT);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
+        swerve.setState(SwerveState.TELEOP_SNAPS);
       }
       case PODIUM_SCORING -> {
         arm.setState(ArmState.PODIUM_SHOT);
         shooter.setState(ShooterState.PODIUM_SHOT);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.SHOOTING);
+        swerve.setState(SwerveState.TELEOP_SNAPS);
+      
       }
       case SUBWOOFER_SCORING -> {
         arm.setState(ArmState.SUBWOOFER_SHOT);
         shooter.setState(ShooterState.SUBWOOFER_SHOT);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.SHOOTING);
+        swerve.setState(SwerveState.TELEOP_SNAPS);
       }
       case SPEAKER_PREPARE_TO_SCORE, SPEAKER_WAITING -> {
         arm.setState(ArmState.SPEAKER_SHOT);
         shooter.setState(ShooterState.SPEAKER_SHOT);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
+        swerve.setState(SwerveState.TELEOP_SNAPS);
       }
       case SPEAKER_SCORING -> {
         arm.setState(ArmState.SPEAKER_SHOT);
         shooter.setState(ShooterState.SPEAKER_SHOT);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.SHOOTING);
+        swerve.setState(SwerveState.TELEOP_SNAPS);
       }
       case AMP_PREPARE_TO_SCORE, AMP_WAITING -> {
         arm.setState(ArmState.AMP);
         shooter.setState(ShooterState.AMP);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
+        swerve.setState(SwerveState.TELEOP_SNAPS);
       }
       case AMP_SCORING -> {
         arm.setState(ArmState.AMP);
         shooter.setState(ShooterState.AMP);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.AMPING);
+        swerve.setState(SwerveState.TELEOP_SNAPS);
       }
       case FEEDING_PREPARE_TO_SHOOT, FEEDING_WAITING -> {
         arm.setState(ArmState.FEEDING);
         shooter.setState(ShooterState.FEEDING);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
+        swerve.setState(SwerveState.TELEOP_SNAPS);
       }
       case FEEDING_SHOOTING -> {
         arm.setState(ArmState.FEEDING);
         shooter.setState(ShooterState.FEEDING);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.SHOOTING);
+
+        swerve.setState(SwerveState.TELEOP_SNAPS);
       }
       case PASS_PREPARE_TO_SHOOT -> {
         arm.setState(ArmState.PASS);
         shooter.setState(ShooterState.PASS);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
+        swerve.setState(SwerveState.TELEOP_SNAPS);
       }
       case PASS_SHOOTING -> {
         arm.setState(ArmState.PASS);
         shooter.setState(ShooterState.PASS);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.SHOOTING);
+        swerve.setState(SwerveState.TELEOP_SNAPS);
       }
       case UNJAM -> {
         arm.setState(ArmState.AMP);
         shooter.setState(ShooterState.PASS);
         intake.setState(IntakeState.OUTTAKING);
         queuer.setState(QueuerState.OUTTAKING);
+        swerve.setState(SwerveState.TELEOP);
       }
       case INTAKING -> {
         arm.setState(ArmState.IDLE);
         shooter.setState(ShooterState.IDLE_STOPPED);
         intake.setState(IntakeState.INTAKING);
         queuer.setState(QueuerState.INTAKING);
+        swerve.setState(SwerveState.TELEOP);
       }
       case OUTTAKING -> {
         arm.setState(ArmState.IDLE);
         shooter.setState(ShooterState.IDLE_STOPPED);
         intake.setState(IntakeState.OUTTAKING);
         queuer.setState(QueuerState.OUTTAKING);
+        swerve.setState(SwerveState.TELEOP);
       }
       case CLIMBING_1_LINEUP -> {
         arm.setState(ArmState.CLIMBING_1_LINEUP);
         shooter.setState(ShooterState.IDLE_STOPPED);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
+        swerve.setState(SwerveState.TELEOP_SNAPS);
       }
       case CLIMBING_2_HANGING -> {
         arm.setState(ArmState.CLIMBING_2_HANGING);
         shooter.setState(ShooterState.IDLE_STOPPED);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
+        swerve.setState(SwerveState.TELEOP);
       }
       case IDLE_NO_GP -> {
         arm.setState(ArmState.IDLE);

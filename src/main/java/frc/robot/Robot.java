@@ -46,7 +46,7 @@ public class Robot extends TimedRobot {
   private final LocalizationSubsystem localization = new LocalizationSubsystem(imu, vision, swerve);
   private final Autos autos = new Autos();
   private final RobotManager robotManager =
-      new RobotManager(arm, shooter, localization, vision, imu, intake, queuer);
+      new RobotManager(arm, shooter, localization, vision, imu, intake, queuer,swerve);
 
   private final RobotCommands robotCommands = new RobotCommands(robotManager);
 
