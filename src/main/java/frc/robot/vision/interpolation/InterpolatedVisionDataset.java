@@ -5,6 +5,7 @@ import java.util.List;
 
 /** A interpolated vision data set for each field, for all cameras. */
 public enum InterpolatedVisionDataset {
+  // ALL POINTS ARE NOT TESTED OR VALIDATED
   HOME(
       new CameraDataset(
           List.of(

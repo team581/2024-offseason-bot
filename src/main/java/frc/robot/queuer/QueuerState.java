@@ -4,5 +4,6 @@ public enum QueuerState {
   IDLE,
   SHOOTING,
   INTAKING,
-  OUTTAKING;
+  OUTTAKING,
+  AMPING;
 }

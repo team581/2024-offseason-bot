@@ -24,6 +24,10 @@ public class ImuSubsystem extends StateMachine<ImuState> {
     return robotHeading;
   }
 
+  public void setAngle(double zeroAngle) {
+    this.imu.setYaw(zeroAngle);
+  }
+
   @Override
   public void robotPeriodic() {
     super.robotPeriodic();

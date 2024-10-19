@@ -120,7 +120,7 @@ class CompConfig {
                       new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive))
                   .withMotionMagic(
                       new MotionMagicConfigs()
-                          .withMotionMagicAcceleration(3.0)
+                          .withMotionMagicAcceleration(2.0)
                           .withMotionMagicCruiseVelocity(3.0)
                           .withMotionMagicJerk(100)),
               new TalonFXConfiguration()
@@ -146,7 +146,7 @@ class CompConfig {
                           .withInverted(InvertedValue.CounterClockwise_Positive))
                   .withMotionMagic(
                       new MotionMagicConfigs()
-                          .withMotionMagicAcceleration(3.0)
+                          .withMotionMagicAcceleration(2.0)
                           .withMotionMagicCruiseVelocity(3.0)
                           .withMotionMagicJerk(100)),
               feedSpotDistanceToAngle -> {
@@ -155,8 +155,8 @@ class CompConfig {
               speakerDistanceToAngle -> {
                 speakerDistanceToAngle.put(123.0, 321.0);
               },
-              -76.5,
-              80.0),
+              -77.0,
+              90.0),
           new VisionConfig(4, 0.4, 0.4, InterpolatedVisionDataset.HOME));
 
   // NOT TUNED

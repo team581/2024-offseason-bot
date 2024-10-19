@@ -39,8 +39,8 @@ public class Robot extends TimedRobot {
       new IntakeSubsystem(hardware.intakeMain, hardware.intakeCenteringMotor);
   private final SwerveSubsystem swerve = new SwerveSubsystem();
   private final ImuSubsystem imu = new ImuSubsystem(swerve.drivetrainPigeon);
-  private final Limelight leftLimelight = new Limelight();
-  private final Limelight rightLimelight = new Limelight();
+  private final Limelight leftLimelight = new Limelight("left");
+  private final Limelight rightLimelight = new Limelight("right");
 
   private final VisionSubsystem vision = new VisionSubsystem(imu, leftLimelight, rightLimelight);
   private final LocalizationSubsystem localization = new LocalizationSubsystem(imu, vision, swerve);
@@ -180,12 +180,12 @@ public class Robot extends TimedRobot {
     hardware
         .operatorController
         .rightTrigger()
-        .onTrue(robotCommands.ampCommand())
+        .onTrue(robotCommands.waitAmpCommand())
         .onFalse(robotCommands.stopShootingCommand());
     hardware
         .operatorController
         .leftTrigger()
-        .onTrue(robotCommands.subwooferCommand())
+        .onTrue(robotCommands.waitSubwooferCommand())
         .onFalse(robotCommands.stowCommand());
     hardware
         .operatorController
@@ -200,5 +200,6 @@ public class Robot extends TimedRobot {
         .povLeft()
         .onTrue(robotCommands.unjamCommand())
         .onFalse(robotCommands.stowCommand());
+    hardware.driverController.back().onTrue(localization.getZeroCommand());
   }
 }

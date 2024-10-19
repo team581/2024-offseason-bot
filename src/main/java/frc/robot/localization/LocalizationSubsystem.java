@@ -3,10 +3,14 @@ package frc.robot.localization;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.config.RobotConfig;
+import frc.robot.fms.FmsSubsystem;
 import frc.robot.imu.ImuSubsystem;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
@@ -72,5 +76,23 @@ public class LocalizationSubsystem extends StateMachine<LocalizationState> {
 
       poseHistory.addSample(Timer.getFPGATimestamp(), poseEstimator.getEstimatedPosition());
     }
+  }
+
+  private void resetGyro(double gyroAngle) {
+    Pose2d estimatedPose =
+        new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(gyroAngle));
+    resetPose(estimatedPose);
+  }
+
+  public void resetPose(Pose2d estimatedPose) {
+    imu.setAngle(estimatedPose.getRotation().getDegrees());
+    poseEstimator.resetPosition(
+        estimatedPose.getRotation(),
+        swerve.getModulePositions().toArray(new SwerveModulePosition[4]),
+        estimatedPose);
+  }
+
+  public Command getZeroCommand() {
+    return Commands.runOnce(() -> resetGyro(FmsSubsystem.isRedAlliance() ? 0 : 180));
   }
 }
