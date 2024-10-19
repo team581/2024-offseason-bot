@@ -1,7 +1,6 @@
 package frc.robot.vision.interpolation;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import frc.robot.config.RobotConfig;
 import frc.robot.fms.FmsSubsystem;
 
 public class InterpolatedVision {

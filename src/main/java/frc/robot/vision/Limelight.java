@@ -1,23 +1,31 @@
 package frc.robot.vision;
 
+import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
 import frc.robot.vision.interpolation.CameraDataset;
 import frc.robot.vision.interpolation.InterpolatedVision;
-
 import java.util.Optional;
-
-import dev.doglog.DogLog;
 
 public class Limelight {
   private final String limelightTableName;
   private final String name;
   private CameraDataset interpolationData;
-;
 
   public Limelight(String name, CameraDataset interpolationData) {
     limelightTableName = "limelight-" + name;
     this.name = name;
     this.interpolationData = interpolationData;
+  }
+
+  public void sendImuData(
+      double robotHeading,
+      double angularVelocity,
+      double pitch,
+      double pitchRate,
+      double roll,
+      double rollRate) {
+    LimelightHelpers.SetRobotOrientation(
+        limelightTableName, robotHeading, angularVelocity, pitch, pitchRate, roll, rollRate);
   }
 
   public Optional<VisionResult> getInterpolatedVisionResult() {
@@ -26,8 +34,9 @@ public class Limelight {
     if (rawResult.isEmpty()) {
       return Optional.empty();
     }
-    
-    Pose2d interpolatedPose = InterpolatedVision.interpolatePose(rawResult.get().pose(), interpolationData);
+
+    Pose2d interpolatedPose =
+        InterpolatedVision.interpolatePose(rawResult.get().pose(), interpolationData);
     return Optional.of(new VisionResult(interpolatedPose, rawResult.get().timestamp()));
   }
 
