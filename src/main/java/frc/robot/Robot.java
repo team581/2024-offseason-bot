@@ -156,7 +156,11 @@ public class Robot extends TimedRobot {
               }
             }));
 
-    hardware.driverController.rightTrigger().onTrue(robotCommands.confirmShotCommand());
+    hardware
+        .driverController
+        .rightTrigger()
+        .onTrue(robotCommands.confirmShotCommand())
+        .onFalse(robotCommands.stopShootingCommand());
     hardware.driverController.leftTrigger().onTrue(robotCommands.intakeCommand());
 
     hardware
@@ -178,7 +182,7 @@ public class Robot extends TimedRobot {
         .driverController
         .x()
         // TODO:snap
-        .onFalse(robotCommands.waitSubwooferCommand());
+        .onTrue(robotCommands.waitSubwooferCommand());
     hardware.driverController.b().onTrue(robotCommands.waitAmpCommand());
 
     hardware.driverController.a().onTrue(robotCommands.stowCommand());

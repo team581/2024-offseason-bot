@@ -51,18 +51,15 @@ public class RobotCommands {
   }
 
   public Command waitSubwooferCommand() {
-    return Commands.runOnce(robot::waitSubwooferRequest, requirements)
-        .andThen(robot.waitForState(RobotState.SUBWOOFER_WAITING));
+    return Commands.runOnce(robot::waitSubwooferRequest, requirements);
   }
 
   public Command waitAmpCommand() {
-    return Commands.runOnce(robot::waitAmpRequest, requirements)
-        .andThen(robot.waitForState(RobotState.AMP_WAITING));
+    return Commands.runOnce(robot::waitAmpRequest, requirements);
   }
 
   public Command waitSpeakerCommand() {
-    return Commands.runOnce(robot::waitSpeakerRequest, requirements)
-        .andThen(robot.waitForState(RobotState.SPEAKER_WAITING));
+    return Commands.runOnce(robot::waitSpeakerRequest, requirements);
   }
 
   public Command confirmShotCommand() {
@@ -86,8 +83,7 @@ public class RobotCommands {
   }
 
   public Command waitFeedingCommand() {
-    return Commands.runOnce(robot::waitFeedRequest, requirements)
-        .andThen(robot.waitForState(RobotState.FEEDING_WAITING));
+    return Commands.runOnce(robot::waitFeedRequest, requirements);
   }
 
   public Command subwooferCommand() {

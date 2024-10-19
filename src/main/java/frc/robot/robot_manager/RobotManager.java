@@ -73,11 +73,8 @@ public class RobotManager extends StateMachine<RobotState> {
           queuer.hasNote() ? currentState : RobotState.IDLE_NO_GP;
 
       case SPEAKER_PREPARE_TO_SCORE ->
-          (shooter.atGoal() && arm.atGoal() && DriverStation.isTeleop() == false)
-                  || (DriverStation.isTeleop()
-                      && confirmShotActive == true
-                      && shooter.atGoal()
-                      && arm.atGoal())
+          (shooter.atGoal() && arm.atGoal())
+                  && (DriverStation.isAutonomous() || confirmShotActive == true)
               ? RobotState.SPEAKER_SCORING
               : currentState;
 
@@ -241,6 +238,7 @@ public class RobotManager extends StateMachine<RobotState> {
   }
 
   public void confirmShotRequest() {
+    setConfirmShotActive(true);
     switch (getState()) {
       case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
 
@@ -284,9 +282,7 @@ public class RobotManager extends StateMachine<RobotState> {
     switch (getState()) {
       case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
       case IDLE_WITH_GP -> {
-        if (!queuer.hasNote()) {
-          setStateFromRequest(RobotState.INTAKING);
-        }
+        setStateFromRequest(RobotState.INTAKING);
       }
       default -> setStateFromRequest(RobotState.INTAKING);
     }
@@ -332,6 +328,7 @@ public class RobotManager extends StateMachine<RobotState> {
           setStateFromRequest(RobotState.IDLE_WITH_GP);
       default -> setStateFromRequest(RobotState.IDLE_NO_GP);
     }
+    setConfirmShotActive(false);
   }
 
   public void preparePassRequest() {
@@ -399,6 +396,7 @@ public class RobotManager extends StateMachine<RobotState> {
 
       default -> setStateFromRequest(RobotState.IDLE_WITH_GP);
     }
+    setConfirmShotActive(false);
   }
 
   public void prepareSubwooferRequest() {
