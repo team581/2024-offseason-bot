@@ -1,5 +1,6 @@
 package frc.robot.vision;
 
+import dev.doglog.DogLog;
 import frc.robot.imu.ImuSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
@@ -14,8 +15,13 @@ public class VisionSubsystem extends StateMachine<VisionState> {
   private final ImuSubsystem imu;
   private final Limelight leftLimelight;
   private final Limelight rightLimelight;
-  private final List<VisionResult> processedVisionResult = new ArrayList<>();
   private final List<VisionResult> interpolatedVisionResult = new ArrayList<>();
+  private double robotHeading;
+  private double pitch;
+  private double angularVelocity;
+  private double pitchRate;
+  private double roll;
+  private double rollRate;
 
   public static final Pose2d ORIGINAL_RED_SPEAKER =
       new Pose2d(
@@ -33,29 +39,25 @@ public class VisionSubsystem extends StateMachine<VisionState> {
 
   @Override
   protected void collectInputs() {
-    var leftResult = leftLimelight.getRawVisionResult();
-    var rightResult = rightLimelight.getRawVisionResult();
+    robotHeading = imu.getRobotHeading().getDegrees();
+    DogLog.log("Vision/RobotHeading", imu.getRobotHeading().getDegrees());
+    angularVelocity = imu.getRobotAngularVelocity();
+    pitch = imu.getPitch();
+    pitchRate = imu.getPitchRate();
+    roll = imu.getRoll();
+    rollRate = imu.getRollRate();
+
     var leftInterpolatedVisionResult = leftLimelight.getInterpolatedVisionResult();
     var rightInterpolatedVisionResult = rightLimelight.getInterpolatedVisionResult();
 
-    processedVisionResult.clear();
+    interpolatedVisionResult.clear();
 
-    if (leftResult.isPresent()) {
-      processedVisionResult.add(leftResult.get());
-    }
-    if (rightResult.isPresent()) {
-      processedVisionResult.add(rightResult.get());
-    }
     if (leftInterpolatedVisionResult.isPresent()) {
       interpolatedVisionResult.add(leftInterpolatedVisionResult.get());
     }
     if (rightInterpolatedVisionResult.isPresent()) {
       interpolatedVisionResult.add(rightInterpolatedVisionResult.get());
     }
-  }
-
-  public List<VisionResult> getVisionResult() {
-    return processedVisionResult;
   }
 
   public List<VisionResult> getInterpolatedVisionResult() {
@@ -65,5 +67,12 @@ public class VisionSubsystem extends StateMachine<VisionState> {
   @Override
   public void robotPeriodic() {
     super.robotPeriodic();
+    rightLimelight.sendImuData(robotHeading, angularVelocity, pitch, pitchRate, roll, rollRate);
+    leftLimelight.sendImuData(robotHeading, angularVelocity, pitch, pitchRate, roll, rollRate);
+    DogLog.log("Vision/AngularVelocity", angularVelocity);
+    DogLog.log("Vision/Pitch", pitch);
   }
+
+  // 2. Tell each Limelight class that set of data
+  // 3. Each Limelight class broadcasts to the Limelight itself
 }

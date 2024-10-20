@@ -167,3 +167,6 @@ src/main/java/frc/robot/generated/BuildConstants.java
 # Simulator files
 networktables.json
 simgui*.json
+
+# Compiled files
+bin
