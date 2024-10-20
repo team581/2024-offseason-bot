@@ -1,5 +1,7 @@
 package frc.robot.robot_manager;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.FieldUtil;
 import frc.robot.arm.ArmState;
 import frc.robot.arm.ArmSubsystem;
 import frc.robot.imu.ImuSubsystem;
@@ -10,6 +12,8 @@ import frc.robot.queuer.QueuerState;
 import frc.robot.queuer.QueuerSubsystem;
 import frc.robot.shooter.ShooterState;
 import frc.robot.shooter.ShooterSubsystem;
+import frc.robot.swerve.SnapUtil;
+import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
 import frc.robot.vision.VisionSubsystem;
@@ -22,9 +26,13 @@ public class RobotManager extends StateMachine<RobotState> {
   public final ImuSubsystem imu;
   public final IntakeSubsystem intake;
   public final QueuerSubsystem queuer;
+  public final SwerveSubsystem swerve;
 
   private final double distanceToFeedSpot = 0.0;
   private final double distanceToSpeaker = 0.0;
+
+  private boolean confirmShotActive = false;
+  private double fieldRelativeAngleToSpeaker = 0;
 
   public RobotManager(
       ArmSubsystem arm,
@@ -33,7 +41,8 @@ public class RobotManager extends StateMachine<RobotState> {
       VisionSubsystem vision,
       ImuSubsystem imu,
       IntakeSubsystem intake,
-      QueuerSubsystem queuer) {
+      QueuerSubsystem queuer,
+      SwerveSubsystem swerve) {
     super(SubsystemPriority.ROBOT_MANAGER, RobotState.IDLE_NO_GP);
     this.arm = arm;
     this.shooter = shooter;
@@ -42,10 +51,13 @@ public class RobotManager extends StateMachine<RobotState> {
     this.imu = imu;
     this.intake = intake;
     this.queuer = queuer;
+    this.swerve = swerve;
   }
 
   @Override
-  protected void collectInputs() {}
+  protected void collectInputs() {
+   fieldRelativeAngleToSpeaker =localization.getFieldRelativeAngleToPose(FieldUtil.getSpeakerPose());
+  }
 
   @Override
   protected RobotState getNextState(RobotState currentState) {
@@ -57,14 +69,24 @@ public class RobotManager extends StateMachine<RobotState> {
               IDLE_NO_GP,
               IDLE_WITH_GP,
               CLIMBING_1_LINEUP,
-              CLIMBING_2_HANGING ->
+              CLIMBING_2_HANGING,
+              PODIUM_WAITING,
+              OUTTAKING,
+              INTAKING_FORWARD_PUSH ->
           currentState;
-      case SPEAKER_SCORING, FEEDING_SHOOTING, PASS_SHOOTING, SUBWOOFER_SCORING ->
+      case SPEAKER_SCORING,
+              AMP_SCORING,
+              FEEDING_SHOOTING,
+              PASS_SHOOTING,
+              SUBWOOFER_SCORING,
+              PODIUM_SCORING ->
           queuer.hasNote() ? currentState : RobotState.IDLE_NO_GP;
-      case AMP_SCORING -> queuer.hasNote() ? currentState : RobotState.AMP_WAITING;
 
       case SPEAKER_PREPARE_TO_SCORE ->
-          shooter.atGoal() && arm.atGoal() ? RobotState.SPEAKER_SCORING : currentState;
+          (shooter.atGoal() && arm.atGoal())
+                  && (DriverStation.isAutonomous() || confirmShotActive == true)
+              ? RobotState.SPEAKER_SCORING
+              : currentState;
 
       case AMP_PREPARE_TO_SCORE ->
           shooter.atGoal() && arm.atGoal() ? RobotState.AMP_SCORING : currentState;
@@ -75,9 +97,13 @@ public class RobotManager extends StateMachine<RobotState> {
           shooter.atGoal() && arm.atGoal() ? RobotState.PASS_SHOOTING : currentState;
       case SUBWOOFER_PREPARE_TO_SCORE ->
           shooter.atGoal() && arm.atGoal() ? RobotState.SUBWOOFER_SCORING : currentState;
+      case PODIUM_PREPARE_TO_SCORE ->
+          shooter.atGoal() && arm.atGoal() ? RobotState.PODIUM_SCORING : currentState;
+
       case UNJAM -> currentState;
-      case INTAKING -> queuer.hasNote() ? RobotState.IDLE_WITH_GP : currentState;
-      case OUTTAKING -> queuer.hasNote() ? currentState : RobotState.IDLE_NO_GP;
+      case INTAKING -> queuer.hasNote() ? RobotState.INTAKING_BACK : currentState;
+      case INTAKING_BACK->!queuer.hasNote()?RobotState.INTAKING_FORWARD_PUSH:currentState;
+      
     };
   }
 
@@ -89,102 +115,174 @@ public class RobotManager extends StateMachine<RobotState> {
         shooter.setState(ShooterState.SUBWOOFER_SHOT);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
+        swerve.setSnapsEnabled(true);
+        swerve.setSnapToAngle(SnapUtil.getSubwooferAngle());
+      }
+      case PODIUM_PREPARE_TO_SCORE, PODIUM_WAITING -> {
+        arm.setState(ArmState.PODIUM_SHOT);
+        shooter.setState(ShooterState.PODIUM_SHOT);
+        intake.setState(IntakeState.IDLE);
+        queuer.setState(QueuerState.IDLE);
+                swerve.setSnapToAngle(SnapUtil.getPodiumAngle());
+        swerve.setSnapsEnabled(true);
+      }
+      case PODIUM_SCORING -> {
+        arm.setState(ArmState.PODIUM_SHOT);
+        shooter.setState(ShooterState.PODIUM_SHOT);
+        intake.setState(IntakeState.IDLE);
+        queuer.setState(QueuerState.SHOOTING);
+
+        swerve.setSnapsEnabled(true);
+                swerve.setSnapToAngle(SnapUtil.getPodiumAngle());
+
       }
       case SUBWOOFER_SCORING -> {
         arm.setState(ArmState.SUBWOOFER_SHOT);
         shooter.setState(ShooterState.SUBWOOFER_SHOT);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.SHOOTING);
+
+        swerve.setSnapsEnabled(true);
+                swerve.setSnapToAngle(SnapUtil.getSubwooferAngle());
+
       }
       case SPEAKER_PREPARE_TO_SCORE, SPEAKER_WAITING -> {
         arm.setState(ArmState.SPEAKER_SHOT);
         shooter.setState(ShooterState.SPEAKER_SHOT);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
+        swerve.setSnapsEnabled(true);
+
       }
       case SPEAKER_SCORING -> {
         arm.setState(ArmState.SPEAKER_SHOT);
         shooter.setState(ShooterState.SPEAKER_SHOT);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.SHOOTING);
+        swerve.setSnapsEnabled(true);
+                swerve.setSnapToAngle(0);
+
       }
       case AMP_PREPARE_TO_SCORE, AMP_WAITING -> {
         arm.setState(ArmState.AMP);
         shooter.setState(ShooterState.AMP);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
+        swerve.setSnapsEnabled(true);
+        swerve.setSnapToAngle(SnapUtil.getAmpAngle());
       }
       case AMP_SCORING -> {
         arm.setState(ArmState.AMP);
         shooter.setState(ShooterState.AMP);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.AMPING);
+        swerve.setSnapsEnabled(true);
+                swerve.setSnapToAngle(SnapUtil.getAmpAngle());
+
       }
       case FEEDING_PREPARE_TO_SHOOT, FEEDING_WAITING -> {
         arm.setState(ArmState.FEEDING);
         shooter.setState(ShooterState.FEEDING);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
+        swerve.setSnapsEnabled(true);
+                swerve.setSnapToAngle(0);
+
       }
       case FEEDING_SHOOTING -> {
         arm.setState(ArmState.FEEDING);
         shooter.setState(ShooterState.FEEDING);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.SHOOTING);
+
+        swerve.setSnapsEnabled(true);
+                swerve.setSnapToAngle(0);
+
       }
       case PASS_PREPARE_TO_SHOOT -> {
         arm.setState(ArmState.PASS);
         shooter.setState(ShooterState.PASS);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
+        swerve.setSnapsEnabled(true);
+                swerve.setSnapToAngle(0);
+
       }
       case PASS_SHOOTING -> {
         arm.setState(ArmState.PASS);
         shooter.setState(ShooterState.PASS);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.SHOOTING);
+        swerve.setSnapsEnabled(true);
+                swerve.setSnapToAngle(0);
+
       }
       case UNJAM -> {
         arm.setState(ArmState.AMP);
         shooter.setState(ShooterState.PASS);
         intake.setState(IntakeState.OUTTAKING);
         queuer.setState(QueuerState.OUTTAKING);
+        swerve.setSnapsEnabled(false);
       }
       case INTAKING -> {
         arm.setState(ArmState.IDLE);
         shooter.setState(ShooterState.IDLE_STOPPED);
         intake.setState(IntakeState.INTAKING);
         queuer.setState(QueuerState.INTAKING);
+        swerve.setSnapsEnabled(false);
+      }
+      case INTAKING_BACK -> {
+        arm.setState(ArmState.IDLE);
+        shooter.setState(ShooterState.IDLE_STOPPED);
+        intake.setState(IntakeState.INTAKING_BACK);
+        queuer.setState(QueuerState.INTAKING_BACK);
+        swerve.setSnapsEnabled(false);
+      }
+      case INTAKING_FORWARD_PUSH -> {
+        arm.setState(ArmState.IDLE);
+        shooter.setState(ShooterState.IDLE_STOPPED);
+        intake.setState(IntakeState.INTAKING_FORWARD_PUSH);
+        queuer.setState(QueuerState.INTAKING_FORWARD_PUSH);
+        swerve.setSnapsEnabled(false);
       }
       case OUTTAKING -> {
         arm.setState(ArmState.IDLE);
         shooter.setState(ShooterState.IDLE_STOPPED);
         intake.setState(IntakeState.OUTTAKING);
         queuer.setState(QueuerState.OUTTAKING);
+        swerve.setSnapsEnabled(false);
+                
+
       }
       case CLIMBING_1_LINEUP -> {
         arm.setState(ArmState.CLIMBING_1_LINEUP);
         shooter.setState(ShooterState.IDLE_STOPPED);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
+        swerve.setSnapsEnabled(true);
+                swerve.setSnapToAngle(SnapUtil.getClimbingAngle());
+
       }
       case CLIMBING_2_HANGING -> {
         arm.setState(ArmState.CLIMBING_2_HANGING);
         shooter.setState(ShooterState.IDLE_STOPPED);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
+        swerve.setSnapsEnabled(false);
       }
       case IDLE_NO_GP -> {
         arm.setState(ArmState.IDLE);
         shooter.setState(ShooterState.IDLE_STOPPED);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
+        swerve.setSnapsEnabled(false);
       }
       case IDLE_WITH_GP -> {
         arm.setState(ArmState.IDLE);
         shooter.setState(ShooterState.IDLE_WARMUP);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
+        swerve.setSnapsEnabled(false);
       }
     }
   }
@@ -198,6 +296,7 @@ public class RobotManager extends StateMachine<RobotState> {
       case SPEAKER_PREPARE_TO_SCORE, SPEAKER_SCORING, SPEAKER_WAITING -> {
         shooter.setDistanceToSpeaker(distanceToSpeaker);
         arm.setDistanceToSpeaker(distanceToSpeaker);
+        swerve.setSnapToAngle(fieldRelativeAngleToSpeaker);
       }
       case FEEDING_PREPARE_TO_SHOOT, FEEDING_SHOOTING, FEEDING_WAITING -> {
         shooter.setDistanceToFeedSpot(distanceToFeedSpot);
@@ -207,7 +306,12 @@ public class RobotManager extends StateMachine<RobotState> {
     }
   }
 
+  public void setConfirmShotActive(boolean newValue) {
+    confirmShotActive = newValue;
+  }
+
   public void confirmShotRequest() {
+
     switch (getState()) {
       case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
 
@@ -215,6 +319,7 @@ public class RobotManager extends StateMachine<RobotState> {
       case SPEAKER_WAITING -> setStateFromRequest(RobotState.SPEAKER_PREPARE_TO_SCORE);
       case FEEDING_WAITING -> setStateFromRequest(RobotState.FEEDING_PREPARE_TO_SHOOT);
       case SUBWOOFER_WAITING -> setStateFromRequest(RobotState.SUBWOOFER_PREPARE_TO_SCORE);
+      case PODIUM_WAITING -> setStateFromRequest(RobotState.PODIUM_PREPARE_TO_SCORE);
       default -> setStateFromRequest(RobotState.SPEAKER_PREPARE_TO_SCORE);
     }
   }
@@ -230,6 +335,12 @@ public class RobotManager extends StateMachine<RobotState> {
     switch (getState()) {
       case CLIMBING_1_LINEUP, CLIMBING_2_HANGING, SPEAKER_SCORING -> {}
       default -> setStateFromRequest(RobotState.SUBWOOFER_WAITING);
+    }
+  }
+  public void waitPodiumRequest() {
+    switch (getState()) {
+      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING, SPEAKER_SCORING -> {}
+      default -> setStateFromRequest(RobotState.PODIUM_WAITING);
     }
   }
 
@@ -290,7 +401,9 @@ public class RobotManager extends StateMachine<RobotState> {
               FEEDING_SHOOTING,
               PASS_SHOOTING,
               IDLE_WITH_GP,
-              UNJAM ->
+              UNJAM ,
+              INTAKING_BACK,
+              INTAKING_FORWARD_PUSH->
           setStateFromRequest(RobotState.IDLE_WITH_GP);
       default -> setStateFromRequest(RobotState.IDLE_NO_GP);
     }
@@ -342,6 +455,13 @@ public class RobotManager extends StateMachine<RobotState> {
     }
   }
 
+  public void waitFeedRequest() {
+    switch (getState()) {
+      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
+      default -> setStateFromRequest(RobotState.FEEDING_WAITING);
+    }
+  }
+
   public void stopShootingRequest() {
     // If we are actively taking a shot, ignore the request to avoid messing up shooting
     switch (getState()) {
@@ -360,6 +480,13 @@ public class RobotManager extends StateMachine<RobotState> {
     switch (getState()) {
       case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
       default -> setStateFromRequest(RobotState.SUBWOOFER_PREPARE_TO_SCORE);
+    }
+  }
+
+  public void preparePodiumRequest() {
+    switch (getState()) {
+      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
+      default -> setStateFromRequest(RobotState.PODIUM_PREPARE_TO_SCORE);
     }
   }
 }
