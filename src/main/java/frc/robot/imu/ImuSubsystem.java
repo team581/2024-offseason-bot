@@ -64,6 +64,5 @@ public class ImuSubsystem extends StateMachine<ImuState> {
     DogLog.log("Imu/RobotHeading", robotHeading.getDegrees());
     DogLog.log("Imu/AngularVelocity", angularVelocity);
     DogLog.log("Imu/Pitch", pitch);
-
   }
 }

@@ -1,12 +1,11 @@
 package frc.robot.vision;
 
+import dev.doglog.DogLog;
 import frc.robot.imu.ImuSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
 import java.util.ArrayList;
 import java.util.List;
-
-import dev.doglog.DogLog;
 
 public class VisionSubsystem extends StateMachine<VisionState> {
   private final ImuSubsystem imu;
@@ -61,7 +60,6 @@ public class VisionSubsystem extends StateMachine<VisionState> {
     leftLimelight.sendImuData(robotHeading, angularVelocity, pitch, pitchRate, roll, rollRate);
     DogLog.log("Vision/AngularVelocity", angularVelocity);
     DogLog.log("Vision/Pitch", pitch);
-
   }
 
   // 2. Tell each Limelight class that set of data
