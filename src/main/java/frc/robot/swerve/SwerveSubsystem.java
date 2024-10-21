@@ -117,6 +117,16 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
     sendSwerveRequest();
   }
 
+  public void setIntakeAssistTeleopSpeeds(ChassisSpeeds speeds) {
+    teleopSpeeds = speeds;
+    sendSwerveRequest();
+  }
+
+  public void setIntakeAssistAutoSpeeds(ChassisSpeeds speeds) {
+    autoSpeeds = speeds;
+    sendSwerveRequest();
+  }
+
   public void driveTeleop(double x, double y, double theta) {
     double leftY =
         -1.0
@@ -192,6 +202,7 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
     return linearSpeed < MAX_FLOOR_SPEED_SHOOTING;
   }
 
+
   private void sendSwerveRequest() {
     switch (getState()) {
       case TELEOP ->
@@ -209,15 +220,23 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
                   .withVelocityY(teleopSpeeds.vyMetersPerSecond)
                   .withTargetDirection(Rotation2d.fromDegrees(goalSnapAngle))
                   .withDriveRequestType(DriveRequestType.OpenLoopVoltage));
-        } else {
+
+         } else {
+                    drivetrain.setControl(
+                        drive
+                            .withVelocityX(teleopSpeeds.vxMetersPerSecond)
+                            .withVelocityY(teleopSpeeds.vyMetersPerSecond)
+                            .withRotationalRate(teleopSpeeds.omegaRadiansPerSecond)
+                            .withDriveRequestType(DriveRequestType.OpenLoopVoltage));
+                  }
+                }
+        case INTAKE_ASSIST_TELEOP ->
           drivetrain.setControl(
               drive
                   .withVelocityX(teleopSpeeds.vxMetersPerSecond)
                   .withVelocityY(teleopSpeeds.vyMetersPerSecond)
                   .withRotationalRate(teleopSpeeds.omegaRadiansPerSecond)
                   .withDriveRequestType(DriveRequestType.OpenLoopVoltage));
-        }
-      }
       case AUTO ->
           drivetrain.setControl(
               drive
@@ -232,6 +251,14 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
                   .withVelocityY(autoSpeeds.vyMetersPerSecond)
                   .withTargetDirection(Rotation2d.fromDegrees(goalSnapAngle))
                   .withDriveRequestType(DriveRequestType.Velocity));
+
+      case INTAKE_ASSIST_AUTO ->
+            drivetrain.setControl(
+              drive
+                  .withVelocityX(teleopSpeeds.vxMetersPerSecond)
+                  .withVelocityY(teleopSpeeds.vyMetersPerSecond)
+                  .withRotationalRate(teleopSpeeds.omegaRadiansPerSecond)
+                  .withDriveRequestType(DriveRequestType.OpenLoopVoltage));
+        }
     }
   }
-}

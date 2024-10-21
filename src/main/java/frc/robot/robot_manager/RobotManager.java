@@ -76,6 +76,7 @@ public class RobotManager extends StateMachine<RobotState> {
           shooter.atGoal() && arm.atGoal() ? RobotState.SUBWOOFER_SCORING : currentState;
       case UNJAM -> currentState;
       case INTAKING -> queuer.hasNote() ? RobotState.IDLE_WITH_GP : currentState;
+      case INTAKE_ASSIST -> queuer.hasNote() ? RobotState.IDLE_WITH_GP : currentState;
       case OUTTAKING -> queuer.hasNote() ? currentState : RobotState.IDLE_NO_GP;
     };
   }
@@ -150,6 +151,12 @@ public class RobotManager extends StateMachine<RobotState> {
         queuer.setState(QueuerState.OUTTAKING);
       }
       case INTAKING -> {
+        arm.setState(ArmState.IDLE);
+        shooter.setState(ShooterState.IDLE_STOPPED);
+        intake.setState(IntakeState.INTAKING);
+        queuer.setState(QueuerState.INTAKING);
+      }
+      case INTAKE_ASSIST -> {
         arm.setState(ArmState.IDLE);
         shooter.setState(ShooterState.IDLE_STOPPED);
         intake.setState(IntakeState.INTAKING);
@@ -252,11 +259,25 @@ public class RobotManager extends StateMachine<RobotState> {
     }
   }
 
+  public void intakeAssistRequest() {
+    switch(getState()) {
+      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
+      default -> setStateFromRequest(RobotState.INTAKE_ASSIST);
+    }
+  }
+
   // TODO: This seems like we ended up not really needing it, can remove it in favor of
   // stowRequest()
   public void stopIntakingRequest() {
     switch (getState()) {
       case INTAKING -> setStateFromRequest(RobotState.IDLE_NO_GP);
+      default -> {}
+    }
+  }
+
+  public void stopIntakeAssistRequest() {
+    switch (getState()) {
+      case INTAKE_ASSIST -> setStateFromRequest(RobotState.IDLE_NO_GP);
       default -> {}
     }
   }

@@ -18,6 +18,7 @@ public enum RobotState {
 
   INTAKING,
   OUTTAKING,
+  INTAKE_ASSIST,
 
   UNJAM,
 
