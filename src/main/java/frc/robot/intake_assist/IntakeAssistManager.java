@@ -1,18 +1,19 @@
 package frc.robot.intake_assist;
 
 import dev.doglog.DogLog;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.imu.ImuSubsystem;
 import frc.robot.localization.LocalizationSubsystem;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.scheduling.LifecycleSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
+import frc.robot.vision.LimelightHelpers;
 
 public class IntakeAssistManager extends LifecycleSubsystem {
+  private static final double ASSIST_KP = 0.2;
   private static final String LIMELIGHT_NAME = "limelight-note";
   private final LocalizationSubsystem localization;
   private final SwerveSubsystem swerve;
@@ -31,25 +32,36 @@ public class IntakeAssistManager extends LifecycleSubsystem {
 
 
 
-  public double getRobotRelativeAssistSpeeds(ChassisSpeeds fieldRelativeInputSpeeds ){
+  public ChassisSpeeds getRobotRelativeAssistSpeeds(ChassisSpeeds fieldRelativeInputSpeeds ){
 
-    double tx = NetworkTableInstance.getDefault().getTable(LIMELIGHT_NAME).getEntry("tx").getDouble(0);
-
-    Rotation2d robotToNoteAngle = Rotation2d.fromDegrees(tx);
-
-    Rotation2d fieldRelativeNoteAngle = imu.getRobotHeading().plus(robotToNoteAngle);
-
-    Rotation2d driverRequest = fieldRelativeNoteAngle;
-
-    double angleError = imu.getRobotHeading().minus(driverRequest).getDegrees();
-
-    double angleChange = Math.max(MAX_ANGLE_CHANGE, Math.min(MIN_ANGLE_CHANGE, angleError * 0.2));
-
-    return angleChange;
+    double tx = LimelightHelpers.getTX(LIMELIGHT_NAME);
 
 
+    if (tx == 0) {
+      return fieldRelativeInputSpeeds;
+    }
+
+    DogLog.log("IntakeAssist/TX", tx);
+
+    double fieldRelativeNoteAngle = imu.getRobotHeading()  + tx;
+
+    double angleError = imu.getRobotHeading() - fieldRelativeNoteAngle;
+
+    double angleChange = MathUtil.clamp(MIN_ANGLE_CHANGE, MAX_ANGLE_CHANGE, angleError * ASSIST_KP);
+
+    Translation2d requestedFieldRelativeDrive = new Translation2d(fieldRelativeInputSpeeds.vxMetersPerSecond,
+    fieldRelativeInputSpeeds.vyMetersPerSecond);
+
+    Translation2d newDriveRequest = requestedFieldRelativeDrive.rotateBy(Rotation2d.fromDegrees(angleChange));
+
+    return new ChassisSpeeds(newDriveRequest.getX(), newDriveRequest.getY(), fieldRelativeInputSpeeds.omegaRadiansPerSecond);
 
   }
 
+  public void updateSwerveSpeeds() {
+    ChassisSpeeds intakeAssistSpeeds = getRobotRelativeAssistSpeeds(swerve.getFieldRelativeSpeeds());
+    swerve.setIntakeAssistTeleopSpeeds(intakeAssistSpeeds);
+    swerve.setIntakeAssistAutoSpeeds(intakeAssistSpeeds);
+}
 
 }

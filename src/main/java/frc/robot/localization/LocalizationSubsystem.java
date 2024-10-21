@@ -3,6 +3,7 @@ package frc.robot.localization;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.Timer;
@@ -33,7 +34,7 @@ public class LocalizationSubsystem extends StateMachine<LocalizationState> {
     poseEstimator =
         new SwerveDrivePoseEstimator(
             SwerveSubsystem.KINEMATICS,
-            imu.getRobotHeading(),
+            Rotation2d.fromDegrees(imu.getRobotHeading()),
             swerve.getModulePositions().toArray(new SwerveModulePosition[4]),
             new Pose2d());
   }
