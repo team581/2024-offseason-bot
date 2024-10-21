@@ -6,7 +6,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.robot.imu.ImuSubsystem;
-import frc.robot.localization.LocalizationSubsystem;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.scheduling.LifecycleSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
@@ -15,17 +14,13 @@ import frc.robot.vision.LimelightHelpers;
 public class IntakeAssistManager extends LifecycleSubsystem {
   private static final double ASSIST_KP = 0.2;
   private static final String LIMELIGHT_NAME = "limelight-note";
-  private final LocalizationSubsystem localization;
   private final SwerveSubsystem swerve;
   private final ImuSubsystem imu;
   private static final double MAX_ANGLE_CHANGE = -35.0;
   private static final double MIN_ANGLE_CHANGE = 35.0;
 
-  public IntakeAssistManager(
-      LocalizationSubsystem localization, SwerveSubsystem swerve, ImuSubsystem imu) {
+  public IntakeAssistManager(SwerveSubsystem swerve, ImuSubsystem imu) {
     super(SubsystemPriority.INTAKE_ASSIST_MANAGER);
-
-    this.localization = localization;
     this.swerve = swerve;
     this.imu = imu;
   }
