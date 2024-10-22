@@ -33,6 +33,8 @@ public class RobotManager extends StateMachine<RobotState> {
 
   private boolean confirmShotActive = false;
   private double fieldRelativeAngleToSpeaker = 0;
+    private double fieldRelativeAngleToFeedSpot = 0;
+
 
   public RobotManager(
       ArmSubsystem arm,
@@ -58,6 +60,7 @@ public class RobotManager extends StateMachine<RobotState> {
   protected void collectInputs() {
     fieldRelativeAngleToSpeaker =
         localization.getFieldRelativeAngleToPose(FieldUtil.getSpeakerPose());
+    fieldRelativeAngleToFeedSpot = localization.getFieldRelativeAngleToPose(FieldUtil.getFeedSpotPose());
   }
 
   @Override
@@ -150,6 +153,8 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
         swerve.setSnapsEnabled(true);
+                swerve.setSnapToAngle(fieldRelativeAngleToSpeaker);
+
       }
       case SPEAKER_SCORING -> {
         arm.setState(ArmState.SPEAKER_SHOT);
@@ -157,6 +162,7 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.SHOOTING);
         swerve.setSnapsEnabled(true);
+        swerve.setSnapToAngle(fieldRelativeAngleToSpeaker);
       }
       case AMP_PREPARE_TO_SCORE, AMP_WAITING -> {
         arm.setState(ArmState.AMP);
@@ -180,7 +186,7 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
         swerve.setSnapsEnabled(true);
-        swerve.setSnapToAngle(0);
+        swerve.setSnapToAngle(fieldRelativeAngleToFeedSpot);
       }
       case FEEDING_SHOOTING -> {
         arm.setState(ArmState.FEEDING);
@@ -189,7 +195,7 @@ public class RobotManager extends StateMachine<RobotState> {
         queuer.setState(QueuerState.SHOOTING);
 
         swerve.setSnapsEnabled(true);
-        swerve.setSnapToAngle(0);
+        swerve.setSnapToAngle(fieldRelativeAngleToFeedSpot);
       }
       case PASS_PREPARE_TO_SHOOT -> {
         arm.setState(ArmState.PASS);
