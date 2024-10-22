@@ -20,6 +20,11 @@ public class RobotCommands {
         .andThen(robot.waitForState(RobotState.IDLE_WITH_GP));
   }
 
+  public Command intakeAssistCommand() {
+    return Commands.runOnce(robot::intakeAssistRequest, requirements)
+        .andThen(robot.waitForState(RobotState.IDLE_WITH_GP));
+  }
+
   public Command outtakeCommand() {
     return Commands.runOnce(robot::outtakeRequest, requirements)
         .andThen(robot.waitForState(RobotState.IDLE_NO_GP));
