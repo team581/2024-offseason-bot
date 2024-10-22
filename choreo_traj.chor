@@ -6451,6 +6451,6 @@
             "isTrajectoryStale": false
         }
     },
-    "splitTrajectoriesAtStopPoints": false,
+    "splitTrajectoriesAtStopPoints": true,
     "usesObstacles": false
 }
