@@ -54,8 +54,6 @@ public class Robot extends TimedRobot {
 
   private final RobotCommands robotCommands = new RobotCommands(robotManager);
 
-  
-
   public Robot() {
     System.out.println("roboRIO serial number: " + RobotConfig.SERIAL_NUMBER);
 
@@ -190,11 +188,7 @@ public class Robot extends TimedRobot {
         .leftBumper()
         .onTrue(robotCommands.outtakeCommand())
         .onFalse(robotCommands.stopShootingCommand());
-    hardware
-        .driverController
-        .y()
-        .onTrue(robotCommands.waitPodiumCommand())
-        ;
+    hardware.driverController.y().onTrue(robotCommands.waitPodiumCommand());
     hardware
         .driverController
         .x()

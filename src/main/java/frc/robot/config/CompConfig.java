@@ -49,13 +49,8 @@ class CompConfig {
                   .withCurrentLimits(
                       new CurrentLimitsConfigs()
                           .withSupplyCurrentLimit(25)
-                          .withStatorCurrentLimit(20)).withSlot0(
-                      new Slot0Configs()
-                          .withKV(0)
-                          .withKP(1.0)
-                          .withKI(0)
-                          .withKD(0)
-                          .withKG(0))
+                          .withStatorCurrentLimit(20))
+                  .withSlot0(new Slot0Configs().withKV(0).withKP(1.0).withKI(0).withKD(0).withKG(0))
                   .withMotorOutput(
                       new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive)),
               new Debouncer(3.0 * 0.02)),
@@ -95,14 +90,9 @@ class CompConfig {
                   .withCurrentLimits(
                       new CurrentLimitsConfigs()
                           .withStatorCurrentLimit(20)
-                          .withSupplyCurrentLimit(25)).withSlot0(
-                      new Slot0Configs()
-                          .withKV(0)
-                          .withKP(1.0)
-                          .withKI(0)
-                          .withKD(0)
-                          .withKG(0))
-                          ,
+                          .withSupplyCurrentLimit(25))
+                  .withSlot0(
+                      new Slot0Configs().withKV(0).withKP(1.0).withKI(0).withKD(0).withKG(0)),
               centeringMotor -> {
                 centeringMotor.setSmartCurrentLimit(20);
                 centeringMotor.burnFlash();

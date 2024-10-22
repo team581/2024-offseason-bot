@@ -56,7 +56,8 @@ public class RobotManager extends StateMachine<RobotState> {
 
   @Override
   protected void collectInputs() {
-   fieldRelativeAngleToSpeaker =localization.getFieldRelativeAngleToPose(FieldUtil.getSpeakerPose());
+    fieldRelativeAngleToSpeaker =
+        localization.getFieldRelativeAngleToPose(FieldUtil.getSpeakerPose());
   }
 
   @Override
@@ -102,8 +103,7 @@ public class RobotManager extends StateMachine<RobotState> {
 
       case UNJAM -> currentState;
       case INTAKING -> queuer.hasNote() ? RobotState.INTAKING_BACK : currentState;
-      case INTAKING_BACK->!queuer.hasNote()?RobotState.INTAKING_FORWARD_PUSH:currentState;
-      
+      case INTAKING_BACK -> !queuer.hasNote() ? RobotState.INTAKING_FORWARD_PUSH : currentState;
     };
   }
 
@@ -123,7 +123,7 @@ public class RobotManager extends StateMachine<RobotState> {
         shooter.setState(ShooterState.PODIUM_SHOT);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
-                swerve.setSnapToAngle(SnapUtil.getPodiumAngle());
+        swerve.setSnapToAngle(SnapUtil.getPodiumAngle());
         swerve.setSnapsEnabled(true);
       }
       case PODIUM_SCORING -> {
@@ -133,8 +133,7 @@ public class RobotManager extends StateMachine<RobotState> {
         queuer.setState(QueuerState.SHOOTING);
 
         swerve.setSnapsEnabled(true);
-                swerve.setSnapToAngle(SnapUtil.getPodiumAngle());
-
+        swerve.setSnapToAngle(SnapUtil.getPodiumAngle());
       }
       case SUBWOOFER_SCORING -> {
         arm.setState(ArmState.SUBWOOFER_SHOT);
@@ -143,8 +142,7 @@ public class RobotManager extends StateMachine<RobotState> {
         queuer.setState(QueuerState.SHOOTING);
 
         swerve.setSnapsEnabled(true);
-                swerve.setSnapToAngle(SnapUtil.getSubwooferAngle());
-
+        swerve.setSnapToAngle(SnapUtil.getSubwooferAngle());
       }
       case SPEAKER_PREPARE_TO_SCORE, SPEAKER_WAITING -> {
         arm.setState(ArmState.SPEAKER_SHOT);
@@ -152,7 +150,7 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
         swerve.setSnapsEnabled(true);
-
+        swerve.setSnapToAngle(fieldRelativeAngleToSpeaker);
       }
       case SPEAKER_SCORING -> {
         arm.setState(ArmState.SPEAKER_SHOT);
@@ -160,8 +158,7 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.SHOOTING);
         swerve.setSnapsEnabled(true);
-                swerve.setSnapToAngle(0);
-
+        swerve.setSnapToAngle(fieldRelativeAngleToSpeaker);
       }
       case AMP_PREPARE_TO_SCORE, AMP_WAITING -> {
         arm.setState(ArmState.AMP);
@@ -177,8 +174,7 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.AMPING);
         swerve.setSnapsEnabled(true);
-                swerve.setSnapToAngle(SnapUtil.getAmpAngle());
-
+        swerve.setSnapToAngle(SnapUtil.getAmpAngle());
       }
       case FEEDING_PREPARE_TO_SHOOT, FEEDING_WAITING -> {
         arm.setState(ArmState.FEEDING);
@@ -186,8 +182,7 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
         swerve.setSnapsEnabled(true);
-                swerve.setSnapToAngle(0);
-
+        swerve.setSnapToAngle(0);
       }
       case FEEDING_SHOOTING -> {
         arm.setState(ArmState.FEEDING);
@@ -196,8 +191,7 @@ public class RobotManager extends StateMachine<RobotState> {
         queuer.setState(QueuerState.SHOOTING);
 
         swerve.setSnapsEnabled(true);
-                swerve.setSnapToAngle(0);
-
+        swerve.setSnapToAngle(0);
       }
       case PASS_PREPARE_TO_SHOOT -> {
         arm.setState(ArmState.PASS);
@@ -205,8 +199,7 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
         swerve.setSnapsEnabled(true);
-                swerve.setSnapToAngle(0);
-
+        swerve.setSnapToAngle(0);
       }
       case PASS_SHOOTING -> {
         arm.setState(ArmState.PASS);
@@ -214,8 +207,7 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.SHOOTING);
         swerve.setSnapsEnabled(true);
-                swerve.setSnapToAngle(0);
-
+        swerve.setSnapToAngle(0);
       }
       case UNJAM -> {
         arm.setState(ArmState.AMP);
@@ -251,8 +243,6 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.OUTTAKING);
         queuer.setState(QueuerState.OUTTAKING);
         swerve.setSnapsEnabled(false);
-                
-
       }
       case CLIMBING_1_LINEUP -> {
         arm.setState(ArmState.CLIMBING_1_LINEUP);
@@ -260,8 +250,7 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
         swerve.setSnapsEnabled(true);
-                swerve.setSnapToAngle(SnapUtil.getClimbingAngle());
-
+        swerve.setSnapToAngle(SnapUtil.getClimbingAngle());
       }
       case CLIMBING_2_HANGING -> {
         arm.setState(ArmState.CLIMBING_2_HANGING);
@@ -337,6 +326,7 @@ public class RobotManager extends StateMachine<RobotState> {
       default -> setStateFromRequest(RobotState.SUBWOOFER_WAITING);
     }
   }
+
   public void waitPodiumRequest() {
     switch (getState()) {
       case CLIMBING_1_LINEUP, CLIMBING_2_HANGING, SPEAKER_SCORING -> {}
@@ -401,9 +391,9 @@ public class RobotManager extends StateMachine<RobotState> {
               FEEDING_SHOOTING,
               PASS_SHOOTING,
               IDLE_WITH_GP,
-              UNJAM ,
+              UNJAM,
               INTAKING_BACK,
-              INTAKING_FORWARD_PUSH->
+              INTAKING_FORWARD_PUSH ->
           setStateFromRequest(RobotState.IDLE_WITH_GP);
       default -> setStateFromRequest(RobotState.IDLE_NO_GP);
     }
