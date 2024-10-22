@@ -5,6 +5,7 @@ import com.ctre.phoenix6.mechanisms.swerve.utility.PhoenixPIDController;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import frc.robot.vision.interpolation.InterpolatedVisionDataset;
 import java.util.function.Consumer;
 
 public record RobotConfig(
@@ -56,7 +57,10 @@ public record RobotConfig(
       double maxAngle) {}
 
   public record VisionConfig(
-      int translationHistoryArraySize, double xyStdDev, double thetaStdDev) {}
+      int translationHistoryArraySize,
+      double xyStdDev,
+      double thetaStdDev,
+      InterpolatedVisionDataset interpolatedVisionSet) {}
 
   // TODO: Change this to false during events
   public static final boolean IS_DEVELOPMENT = true;

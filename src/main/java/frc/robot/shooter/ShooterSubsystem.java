@@ -80,7 +80,10 @@ public class ShooterSubsystem extends StateMachine<ShooterState> {
   @Override
   protected void afterTransition(ShooterState newState) {
     switch (newState) {
-      case IDLE_STOPPED -> topMotor.disable();
+      case IDLE_STOPPED -> {
+        topMotor.disable();
+        bottomMotor.disable();
+      }
       case IDLE_WARMUP -> {
         topMotor.setControl(velocityRequest.withVelocity(ShooterRpms.IDLE_WARMUP / 60.0));
         bottomMotor.setControl(velocityRequest.withVelocity(ShooterRpms.IDLE_WARMUP / 60.0));

@@ -18,6 +18,7 @@ import frc.robot.config.RobotConfig.QueuerConfig;
 import frc.robot.config.RobotConfig.ShooterConfig;
 import frc.robot.config.RobotConfig.SwerveConfig;
 import frc.robot.config.RobotConfig.VisionConfig;
+import frc.robot.vision.interpolation.InterpolatedVisionDataset;
 
 class CompConfig {
   private static final String CANIVORE_NAME = "581CANivore";
@@ -49,7 +50,9 @@ class CompConfig {
                       new CurrentLimitsConfigs()
                           .withSupplyCurrentLimit(25)
                           .withStatorCurrentLimit(20))
-                          .withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive)),
+                  .withSlot0(new Slot0Configs().withKV(0).withKP(1.0).withKI(0).withKD(0).withKG(0))
+                  .withMotorOutput(
+                      new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive)),
               new Debouncer(3.0 * 0.02)),
           new ShooterConfig(
               18,
@@ -87,7 +90,9 @@ class CompConfig {
                   .withCurrentLimits(
                       new CurrentLimitsConfigs()
                           .withStatorCurrentLimit(20)
-                          .withSupplyCurrentLimit(25)),
+                          .withSupplyCurrentLimit(25))
+                  .withSlot0(
+                      new Slot0Configs().withKV(0).withKP(1.0).withKI(0).withKD(0).withKG(0)),
               centeringMotor -> {
                 centeringMotor.setSmartCurrentLimit(20);
                 centeringMotor.burnFlash();
@@ -118,7 +123,7 @@ class CompConfig {
                       new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive))
                   .withMotionMagic(
                       new MotionMagicConfigs()
-                          .withMotionMagicAcceleration(3.0)
+                          .withMotionMagicAcceleration(2.0)
                           .withMotionMagicCruiseVelocity(3.0)
                           .withMotionMagicJerk(100)),
               new TalonFXConfiguration()
@@ -144,7 +149,7 @@ class CompConfig {
                           .withInverted(InvertedValue.CounterClockwise_Positive))
                   .withMotionMagic(
                       new MotionMagicConfigs()
-                          .withMotionMagicAcceleration(3.0)
+                          .withMotionMagicAcceleration(2.0)
                           .withMotionMagicCruiseVelocity(3.0)
                           .withMotionMagicJerk(100)),
               feedSpotDistanceToAngle -> {
@@ -153,9 +158,9 @@ class CompConfig {
               speakerDistanceToAngle -> {
                 speakerDistanceToAngle.put(123.0, 321.0);
               },
-              -76.5,
-              80.0),
-          new VisionConfig(4, 0.4, 0.4));
+              -77.0,
+              87.0),
+          new VisionConfig(4, 0.4, 0.4, InterpolatedVisionDataset.HOME));
 
   // NOT TUNED
 

@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.arm.ArmSubsystem;
 import frc.robot.autos.Autos;
 import frc.robot.config.RobotConfig;
@@ -22,7 +23,9 @@ import frc.robot.shooter.ShooterSubsystem;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.Stopwatch;
 import frc.robot.util.scheduling.LifecycleSubsystemManager;
+import frc.robot.vision.Limelight;
 import frc.robot.vision.VisionSubsystem;
+import frc.robot.vision.interpolation.InterpolatedVisionDataset;
 
 public class Robot extends TimedRobot {
   private Command autonomousCommand;
@@ -38,7 +41,12 @@ public class Robot extends TimedRobot {
       new IntakeSubsystem(hardware.intakeMain, hardware.intakeCenteringMotor);
   private final SwerveSubsystem swerve = new SwerveSubsystem();
   private final ImuSubsystem imu = new ImuSubsystem(swerve.drivetrainPigeon);
-  private final VisionSubsystem vision = new VisionSubsystem(imu);
+  private final Limelight leftLimelight =
+      new Limelight("left", InterpolatedVisionDataset.HOME.leftSet);
+  private final Limelight rightLimelight =
+      new Limelight("right", InterpolatedVisionDataset.HOME.rightSet);
+
+  private final VisionSubsystem vision = new VisionSubsystem(imu, leftLimelight, rightLimelight);
   private final LocalizationSubsystem localization = new LocalizationSubsystem(imu, vision, swerve);
   private final Autos autos = new Autos();
   private final RobotManager robotManager =
@@ -155,8 +163,19 @@ public class Robot extends TimedRobot {
     hardware
         .driverController
         .rightTrigger()
-        .onTrue(robotCommands.confirmShotCommand())
-        .onFalse(robotCommands.stopShootingCommand());
+        .onTrue(
+            robotCommands
+                .confirmShotCommand()
+                .alongWith(
+                    Commands.runOnce(
+                        () -> {
+                          robotManager.setConfirmShotActive(true);
+                        })))
+        .onFalse(
+            Commands.runOnce(
+                () -> {
+                  robotManager.setConfirmShotActive(false);
+                }));
     hardware
         .driverController
         .leftTrigger()
@@ -165,36 +184,25 @@ public class Robot extends TimedRobot {
     hardware
         .driverController
         .rightBumper()
-        .onTrue(robotCommands.passCommand())
-        .onFalse(robotCommands.stopShootingCommand());
+        .onTrue(robotCommands.waitFeedingCommand())
+        .onFalse(robotCommands.feedingCommand());
     hardware
         .driverController
         .leftBumper()
-        .onTrue(robotCommands.feedingCommand())
-        .onFalse(robotCommands.stopShootingCommand());
-
-    hardware
-        .operatorController
-        .rightTrigger()
-        .onTrue(robotCommands.ampCommand())
-        .onFalse(robotCommands.stopShootingCommand());
-    hardware
-        .operatorController
-        .leftTrigger()
-        .onTrue(robotCommands.subwooferCommand())
-        .onFalse(robotCommands.stowCommand());
-    hardware
-        .operatorController
-        .x()
         .onTrue(robotCommands.outtakeCommand())
-        .onFalse(robotCommands.stowCommand());
-    hardware.operatorController.a().onTrue(robotCommands.stowCommand());
-    hardware.operatorController.povUp().onTrue(robotCommands.climbUpCommand());
-    hardware.operatorController.povDown().onTrue(robotCommands.climbDownCommand());
+        .onFalse(robotCommands.stopShootingCommand());
+    hardware.driverController.y().onTrue(robotCommands.waitPodiumCommand());
     hardware
-        .operatorController
-        .povLeft()
-        .onTrue(robotCommands.unjamCommand())
-        .onFalse(robotCommands.stowCommand());
+        .driverController
+        .x()
+        // TODO:snap
+        .onTrue(robotCommands.waitSubwooferCommand());
+    hardware.driverController.b().onTrue(robotCommands.waitAmpCommand());
+
+    hardware.driverController.a().onTrue(robotCommands.stowCommand());
+    hardware.driverController.povDown().onTrue(robotCommands.climbDownCommand());
+    hardware.driverController.povLeft().onTrue(robotCommands.unjamCommand());
+    hardware.driverController.povUp().onTrue(robotCommands.climbUpCommand());
+    hardware.driverController.back().onTrue(localization.getZeroCommand());
   }
 }

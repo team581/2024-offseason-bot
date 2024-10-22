@@ -130,9 +130,9 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
   public void driveTeleop(double x, double y, double theta) {
     double leftY =
         -1.0
-            * ControllerHelpers.getExponent(ControllerHelpers.getDeadbanded(x, leftYDeadband), 1.5);
+            * ControllerHelpers.getExponent(ControllerHelpers.getDeadbanded(y, leftYDeadband), 1.5);
     double leftX =
-        ControllerHelpers.getExponent(ControllerHelpers.getDeadbanded(y, leftXDeadband), 1.5);
+        ControllerHelpers.getExponent(ControllerHelpers.getDeadbanded(x, leftXDeadband), 1.5);
     double rightX =
         ControllerHelpers.getExponent(ControllerHelpers.getDeadbanded(theta, rightXDeadband), 2);
 
@@ -258,6 +258,17 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
                   .withVelocityY(autoSpeeds.vyMetersPerSecond)
                   .withRotationalRate(autoSpeeds.omegaRadiansPerSecond)
                   .withDriveRequestType(DriveRequestType.Velocity));
+    }
+  }
+
+  public void setState(SwerveState newState) {
+    setStateFromRequest(newState);
+  }
+
+  public void setSnapsEnabled(boolean newValue) {
+    switch (getState()) {
+      case TELEOP, TELEOP_SNAPS ->
+          setStateFromRequest(newValue ? SwerveState.TELEOP_SNAPS : SwerveState.TELEOP);
     }
   }
 }

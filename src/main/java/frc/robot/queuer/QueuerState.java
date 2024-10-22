@@ -4,5 +4,8 @@ public enum QueuerState {
   IDLE,
   SHOOTING,
   INTAKING,
-  OUTTAKING;
+  INTAKING_BACK,
+  INTAKING_FORWARD_PUSH,
+  OUTTAKING,
+  AMPING;
 }

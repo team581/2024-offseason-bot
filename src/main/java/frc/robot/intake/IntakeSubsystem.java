@@ -25,6 +25,10 @@ public class IntakeSubsystem extends StateMachine<IntakeState> {
     setStateFromRequest(newState);
   }
 
+  public double getIntakeRotations() {
+    return mainMotor.getRotorPosition().getValueAsDouble();
+  }
+
   @Override
   protected IntakeState getNextState(IntakeState currentState) {
     return currentState;
@@ -44,8 +48,14 @@ public class IntakeSubsystem extends StateMachine<IntakeState> {
       }
 
       case OUTTAKING -> {
-        mainMotor.setVoltage(-6); 
+        mainMotor.setVoltage(-6);
         centeringMotor.setVoltage(-10);
+      }
+      case INTAKING_BACK -> {
+        mainMotor.setVoltage(-0.5);
+      }
+      case INTAKING_FORWARD_PUSH -> {
+        mainMotor.setVoltage(0.5);
       }
     }
   }
@@ -56,5 +66,5 @@ public class IntakeSubsystem extends StateMachine<IntakeState> {
     DogLog.log("Intake/StatorCurrent", mainMotor.getStatorCurrent().getValueAsDouble());
     DogLog.log("Intake/SupplyCurrent", mainMotor.getSupplyCurrent().getValueAsDouble());
     DogLog.log("Intake/AppliedVoltage", mainMotor.getMotorVoltage().getValueAsDouble());
-      }
+  }
 }
