@@ -1,5 +1,6 @@
 package frc.robot.queuer;
 
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import dev.doglog.DogLog;
@@ -17,6 +18,9 @@ public class QueuerSubsystem extends StateMachine<QueuerState> {
   private final Debouncer debouncer = RobotConfig.get().queuer().debouncer();
 
   private final PositionVoltage pidRequest = new PositionVoltage(0).withEnableFOC(false);
+
+  private final MotionMagicVoltage motionMagicRequest =
+      new MotionMagicVoltage(0).withEnableFOC(false);
 
   public QueuerSubsystem(TalonFX motor, DigitalInput sensor) {
     super(SubsystemPriority.QUEUER, QueuerState.IDLE);
@@ -61,7 +65,7 @@ public class QueuerSubsystem extends StateMachine<QueuerState> {
       case AMPING -> motor.setVoltage(-10);
       case INTAKING_BACK -> motor.setVoltage(-0.5);
       case INTAKING_FORWARD_PUSH ->
-          motor.setControl(pidRequest.withPosition(getQueuerRotations() + 1));
+          motor.setControl(motionMagicRequest.withPosition(getQueuerRotations() + 1));
     }
   }
 

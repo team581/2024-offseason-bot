@@ -150,7 +150,6 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
         swerve.setSnapsEnabled(true);
-        swerve.setSnapToAngle(fieldRelativeAngleToSpeaker);
       }
       case SPEAKER_SCORING -> {
         arm.setState(ArmState.SPEAKER_SHOT);
@@ -158,7 +157,6 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.SHOOTING);
         swerve.setSnapsEnabled(true);
-        swerve.setSnapToAngle(fieldRelativeAngleToSpeaker);
       }
       case AMP_PREPARE_TO_SCORE, AMP_WAITING -> {
         arm.setState(ArmState.AMP);
