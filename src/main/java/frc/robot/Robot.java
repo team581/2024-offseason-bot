@@ -161,8 +161,8 @@ public class Robot extends TimedRobot {
     hardware
         .driverController
         .leftTrigger()
-        .onTrue(robotCommands.intakeCommand())
-        .onFalse(robotCommands.intakeAssistCommand());
+        .onTrue(robotCommands.intakeAssistCommand())
+        .onFalse(robotCommands.intakeCommand());
     hardware
         .driverController
         .rightBumper()
