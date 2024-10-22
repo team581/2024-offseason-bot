@@ -374,13 +374,6 @@ public class RobotManager extends StateMachine<RobotState> {
 
   // TODO: This seems like we ended up not really needing it, can remove it in favor of
   // stowRequest()
-  public void stopIntakingRequest() {
-    switch (getState()) {
-      case INTAKING -> setStateFromRequest(RobotState.IDLE_NO_GP);
-      default -> {}
-    }
-  }
-
   public void outtakeRequest() {
     switch (getState()) {
       case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}

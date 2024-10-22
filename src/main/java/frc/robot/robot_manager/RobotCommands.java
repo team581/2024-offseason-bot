@@ -51,7 +51,7 @@ public class RobotCommands {
   }
 
   public Command stopIntakingCommand() {
-    return Commands.runOnce(robot::stopIntakingRequest, requirements)
+    return Commands.runOnce(robot::stowRequest, requirements)
         .andThen(robot.waitForState(RobotState.IDLE_NO_GP));
   }
 
