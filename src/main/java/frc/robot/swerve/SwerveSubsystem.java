@@ -255,10 +255,10 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
       case INTAKE_ASSIST_AUTO ->
             drivetrain.setControl(
               drive
-                  .withVelocityX(teleopSpeeds.vxMetersPerSecond)
-                  .withVelocityY(teleopSpeeds.vyMetersPerSecond)
-                  .withRotationalRate(teleopSpeeds.omegaRadiansPerSecond)
-                  .withDriveRequestType(DriveRequestType.OpenLoopVoltage));
+                  .withVelocityX(autoSpeeds.vxMetersPerSecond)
+                  .withVelocityY(autoSpeeds.vyMetersPerSecond)
+                  .withRotationalRate(autoSpeeds.omegaRadiansPerSecond)
+                  .withDriveRequestType(DriveRequestType.Velocity));
         }
     }
   }

@@ -1,5 +1,6 @@
 package frc.robot.robot_manager;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.arm.ArmState;
 import frc.robot.arm.ArmSubsystem;
 import frc.robot.imu.ImuSubsystem;
@@ -10,6 +11,7 @@ import frc.robot.queuer.QueuerState;
 import frc.robot.queuer.QueuerSubsystem;
 import frc.robot.shooter.ShooterState;
 import frc.robot.shooter.ShooterSubsystem;
+import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
 import frc.robot.vision.VisionSubsystem;
@@ -22,6 +24,7 @@ public class RobotManager extends StateMachine<RobotState> {
   public final ImuSubsystem imu;
   public final IntakeSubsystem intake;
   public final QueuerSubsystem queuer;
+  public final SwerveSubsystem swerve;
 
   private final double distanceToFeedSpot = 0.0;
   private final double distanceToSpeaker = 0.0;
@@ -33,7 +36,8 @@ public class RobotManager extends StateMachine<RobotState> {
       VisionSubsystem vision,
       ImuSubsystem imu,
       IntakeSubsystem intake,
-      QueuerSubsystem queuer) {
+      QueuerSubsystem queuer,
+      SwerveSubsystem swerve) {
     super(SubsystemPriority.ROBOT_MANAGER, RobotState.IDLE_NO_GP);
     this.arm = arm;
     this.shooter = shooter;
@@ -42,6 +46,7 @@ public class RobotManager extends StateMachine<RobotState> {
     this.imu = imu;
     this.intake = intake;
     this.queuer = queuer;
+    this.swerve = swerve;
   }
 
   @Override
@@ -160,6 +165,11 @@ public class RobotManager extends StateMachine<RobotState> {
         shooter.setState(ShooterState.IDLE_STOPPED);
         intake.setState(IntakeState.INTAKING);
         queuer.setState(QueuerState.INTAKING);
+        if (DriverStation.isTeleop()) {
+          swerve.setIntakeAssistTeleopSpeeds(swerve.getRobotRelativeSpeeds());
+        } else {
+          swerve.setIntakeAssistAutoSpeeds(swerve.getRobotRelativeSpeeds());
+        }
       }
       case OUTTAKING -> {
         arm.setState(ArmState.IDLE);
@@ -270,13 +280,6 @@ public class RobotManager extends StateMachine<RobotState> {
   public void stopIntakingRequest() {
     switch (getState()) {
       case INTAKING -> setStateFromRequest(RobotState.IDLE_NO_GP);
-      default -> {}
-    }
-  }
-
-  public void stopIntakeAssistRequest() {
-    switch (getState()) {
-      case INTAKE_ASSIST -> setStateFromRequest(RobotState.IDLE_NO_GP);
       default -> {}
     }
   }
