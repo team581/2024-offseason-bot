@@ -96,8 +96,11 @@ public class LocalizationSubsystem extends StateMachine<LocalizationState> {
     return Commands.runOnce(() -> resetGyro(FmsSubsystem.isRedAlliance() ? 0 : 180));
   }
 
-  /** Get the field relative angle the robot should face in order to be looking directly at the target pose. */
+  /**
+   * Get the field relative angle the robot should face in order to be looking directly at the
+   * target pose.
+   */
   public double getFieldRelativeAngleToPose(Pose2d target) {
-    return 0 ;
+    return 0;
   }
 }

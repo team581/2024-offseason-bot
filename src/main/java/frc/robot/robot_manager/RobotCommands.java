@@ -53,6 +53,7 @@ public class RobotCommands {
   public Command waitSubwooferCommand() {
     return Commands.runOnce(robot::waitSubwooferRequest, requirements);
   }
+
   public Command waitPodiumCommand() {
     return Commands.runOnce(robot::waitPodiumRequest, requirements);
   }
