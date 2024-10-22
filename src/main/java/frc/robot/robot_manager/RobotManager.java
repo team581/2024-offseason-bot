@@ -75,8 +75,7 @@ public class RobotManager extends StateMachine<RobotState> {
       case SUBWOOFER_PREPARE_TO_SCORE ->
           shooter.atGoal() && arm.atGoal() ? RobotState.SUBWOOFER_SCORING : currentState;
       case UNJAM -> currentState;
-      case INTAKING -> queuer.hasNote() ? RobotState.IDLE_WITH_GP : currentState;
-      case INTAKE_ASSIST -> queuer.hasNote() ? RobotState.IDLE_WITH_GP : currentState;
+      case INTAKING, INTAKE_ASSIST -> queuer.hasNote() ? RobotState.IDLE_WITH_GP : currentState;
       case OUTTAKING -> queuer.hasNote() ? currentState : RobotState.IDLE_NO_GP;
     };
   }
