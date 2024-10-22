@@ -19,8 +19,7 @@ public class QueuerSubsystem extends StateMachine<QueuerState> {
 
   private final PositionVoltage pidRequest = new PositionVoltage(0).withEnableFOC(false);
 
-  private final MotionMagicVoltage motionMagicRequest =
-      new MotionMagicVoltage(0).withEnableFOC(false);
+  
 
   public QueuerSubsystem(TalonFX motor, DigitalInput sensor) {
     super(SubsystemPriority.QUEUER, QueuerState.IDLE);
@@ -63,9 +62,9 @@ public class QueuerSubsystem extends StateMachine<QueuerState> {
       case INTAKING -> motor.setVoltage(1);
       case OUTTAKING -> motor.setVoltage(-4);
       case AMPING -> motor.setVoltage(-10);
-      case INTAKING_BACK -> motor.setVoltage(-0.5);
+      case INTAKING_BACK -> motor.setVoltage(-1);
       case INTAKING_FORWARD_PUSH ->
-          motor.setControl(motionMagicRequest.withPosition(getQueuerRotations() + 1));
+          motor.setControl(pidRequest.withPosition(getQueuerRotations() + 2));
     }
   }
 
