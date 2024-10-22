@@ -12,7 +12,6 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.util.Units;
 import frc.robot.config.RobotConfig;
 import frc.robot.fms.FmsSubsystem;
-import frc.robot.intake_assist.IntakeAssistManager;
 import frc.robot.util.ControllerHelpers;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
@@ -52,67 +51,65 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
   public static final SwerveDriveKinematics KINEMATICS =
       new SwerveDriveKinematics(MODULE_LOCATIONS);
 
-        private final CommandSwerveDrivetrain drivetrain = new CommandSwerveDrivetrain();
+  private final CommandSwerveDrivetrain drivetrain = new CommandSwerveDrivetrain();
 
-        public final Pigeon2 drivetrainPigeon = drivetrain.getPigeon2();
+  public final Pigeon2 drivetrainPigeon = drivetrain.getPigeon2();
 
-        private final SwerveRequest.FieldCentric drive =
-            new SwerveRequest.FieldCentric()
-                // I want field-centric driving in open loop
-                .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
-                .withDeadband(MaxSpeed * 0.03)
-                .withRotationalDeadband(MaxAngularRate * 0.03);
+  private final SwerveRequest.FieldCentric drive =
+      new SwerveRequest.FieldCentric()
+          // I want field-centric driving in open loop
+          .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
+          .withDeadband(MaxSpeed * 0.03)
+          .withRotationalDeadband(MaxAngularRate * 0.03);
 
-        private final SwerveRequest.FieldCentricFacingAngle driveToAngle =
-            new SwerveRequest.FieldCentricFacingAngle()
-                .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
-                .withDeadband(MaxSpeed * 0.03);
-        private final SwerveModule frontLeft = drivetrain.getModule(0);
-        private final SwerveModule frontRight = drivetrain.getModule(1);
-        private final SwerveModule backLeft = drivetrain.getModule(2);
-        private final SwerveModule backRight = drivetrain.getModule(3);
+  private final SwerveRequest.FieldCentricFacingAngle driveToAngle =
+      new SwerveRequest.FieldCentricFacingAngle()
+          .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
+          .withDeadband(MaxSpeed * 0.03);
+  private final SwerveModule frontLeft = drivetrain.getModule(0);
+  private final SwerveModule frontRight = drivetrain.getModule(1);
+  private final SwerveModule backLeft = drivetrain.getModule(2);
+  private final SwerveModule backRight = drivetrain.getModule(3);
 
-        private boolean slowEnoughToShoot = false;
-        private List<SwerveModulePosition> modulePositions;
-        private ChassisSpeeds robotRelativeSpeeds;
-        private ChassisSpeeds fieldRelativeSpeeds;
-        private boolean slowEnoughToFeed;
-        private double goalSnapAngle = 0;
+  private boolean slowEnoughToShoot = false;
+  private List<SwerveModulePosition> modulePositions;
+  private ChassisSpeeds robotRelativeSpeeds;
+  private ChassisSpeeds fieldRelativeSpeeds;
+  private boolean slowEnoughToFeed;
+  private double goalSnapAngle = 0;
 
-        /** The latest requested teleop speeds. */
-        private ChassisSpeeds teleopSpeeds = new ChassisSpeeds();
+  /** The latest requested teleop speeds. */
+  private ChassisSpeeds teleopSpeeds = new ChassisSpeeds();
 
-        private ChassisSpeeds autoSpeeds = new ChassisSpeeds();
+  private ChassisSpeeds autoSpeeds = new ChassisSpeeds();
 
-        public ChassisSpeeds getRobotRelativeSpeeds() {
-          return robotRelativeSpeeds;
-        }
+  public ChassisSpeeds getRobotRelativeSpeeds() {
+    return robotRelativeSpeeds;
+  }
 
-        public ChassisSpeeds getFieldRelativeSpeeds() {
-          return fieldRelativeSpeeds;
-        }
+  public ChassisSpeeds getFieldRelativeSpeeds() {
+    return fieldRelativeSpeeds;
+  }
 
-        public boolean isSlowEnoughToShoot() {
-          return slowEnoughToShoot;
-        }
+  public boolean isSlowEnoughToShoot() {
+    return slowEnoughToShoot;
+  }
 
-        public boolean isSlowEnoughToFeed() {
-          return slowEnoughToFeed;
-        }
+  public boolean isSlowEnoughToFeed() {
+    return slowEnoughToFeed;
+  }
 
-        public List<SwerveModulePosition> getModulePositions() {
-          return modulePositions;
-        }
+  public List<SwerveModulePosition> getModulePositions() {
+    return modulePositions;
+  }
 
-        public void setSnapToAngle(double angle) {
-          goalSnapAngle = angle;
-        }
-      private final IntakeAssistManager intakeAssistManager;
+  public void setSnapToAngle(double angle) {
+    goalSnapAngle = angle;
+  }
 
-        public SwerveSubsystem(IntakeAssistManager intakeAssistManager) {
-          super(SubsystemPriority.SWERVE, SwerveState.TELEOP);
+  public SwerveSubsystem() {
+    super(SubsystemPriority.SWERVE, SwerveState.TELEOP);
     modulePositions = calculateModulePositions();
-    this.intakeAssistManager = intakeAssistManager;
   }
 
   public void setFieldRelativeAutoSpeeds(ChassisSpeeds speeds) {
@@ -172,12 +169,6 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
     fieldRelativeSpeeds = calculateFieldRelativeSpeeds();
     slowEnoughToShoot = calculateMovingSlowEnoughForSpeakerShot(robotRelativeSpeeds);
     slowEnoughToFeed = calculateMovingSlowEnoughForFloorShot(robotRelativeSpeeds);
-
-    ChassisSpeeds intakeAssistSpeeds = intakeAssistManager.getRobotRelativeAssistSpeeds(getFieldRelativeSpeeds());
-    setIntakeAssistTeleopSpeeds(intakeAssistSpeeds);
-    setIntakeAssistAutoSpeeds(intakeAssistSpeeds);
-
-
   }
 
   private List<SwerveModulePosition> calculateModulePositions() {
@@ -211,7 +202,6 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
     return linearSpeed < MAX_FLOOR_SPEED_SHOOTING;
   }
 
-
   private void sendSwerveRequest() {
     switch (getState()) {
       case TELEOP ->
@@ -230,16 +220,16 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
                   .withTargetDirection(Rotation2d.fromDegrees(goalSnapAngle))
                   .withDriveRequestType(DriveRequestType.OpenLoopVoltage));
 
-         } else {
-                    drivetrain.setControl(
-                        drive
-                            .withVelocityX(teleopSpeeds.vxMetersPerSecond)
-                            .withVelocityY(teleopSpeeds.vyMetersPerSecond)
-                            .withRotationalRate(teleopSpeeds.omegaRadiansPerSecond)
-                            .withDriveRequestType(DriveRequestType.OpenLoopVoltage));
-                  }
-                }
-        case INTAKE_ASSIST_TELEOP ->
+        } else {
+          drivetrain.setControl(
+              drive
+                  .withVelocityX(teleopSpeeds.vxMetersPerSecond)
+                  .withVelocityY(teleopSpeeds.vyMetersPerSecond)
+                  .withRotationalRate(teleopSpeeds.omegaRadiansPerSecond)
+                  .withDriveRequestType(DriveRequestType.OpenLoopVoltage));
+        }
+      }
+      case INTAKE_ASSIST_TELEOP ->
           drivetrain.setControl(
               drive
                   .withVelocityX(teleopSpeeds.vxMetersPerSecond)
@@ -262,12 +252,12 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
                   .withDriveRequestType(DriveRequestType.Velocity));
 
       case INTAKE_ASSIST_AUTO ->
-            drivetrain.setControl(
+          drivetrain.setControl(
               drive
                   .withVelocityX(autoSpeeds.vxMetersPerSecond)
                   .withVelocityY(autoSpeeds.vyMetersPerSecond)
                   .withRotationalRate(autoSpeeds.omegaRadiansPerSecond)
                   .withDriveRequestType(DriveRequestType.Velocity));
-        }
     }
   }
+}

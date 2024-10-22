@@ -269,7 +269,7 @@ public class RobotManager extends StateMachine<RobotState> {
   }
 
   public void intakeAssistRequest() {
-    switch(getState()) {
+    switch (getState()) {
       case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
       default -> setStateFromRequest(RobotState.INTAKE_ASSIST);
     }

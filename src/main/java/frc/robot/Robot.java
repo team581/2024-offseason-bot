@@ -38,7 +38,6 @@ public class Robot extends TimedRobot {
       new IntakeSubsystem(hardware.intakeMain, hardware.intakeCenteringMotor);
   private final SwerveSubsystem swerve = new SwerveSubsystem();
   private final ImuSubsystem imu = new ImuSubsystem(swerve.drivetrainPigeon);
-
   private final VisionSubsystem vision = new VisionSubsystem(imu);
   private final LocalizationSubsystem localization = new LocalizationSubsystem(imu, vision, swerve);
   private final Autos autos = new Autos();
