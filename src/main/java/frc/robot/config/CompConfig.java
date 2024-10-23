@@ -38,7 +38,7 @@ class CompConfig {
   public static final RobotConfig competitionBot =
       new RobotConfig(
           "competition",
-          new SwerveConfig(new PhoenixPIDController(20, 0, 2), true, true, true),
+          new SwerveConfig(new PhoenixPIDController(25, 0, 2), true, true, true),
           new QueuerConfig(
               20,
               CANIVORE_NAME,

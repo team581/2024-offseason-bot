@@ -109,6 +109,9 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
 
   public SwerveSubsystem() {
     super(SubsystemPriority.SWERVE, SwerveState.TELEOP);
+    driveToAngle.HeadingController = RobotConfig.get().swerve().snapController();
+    driveToAngle.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
+    driveToAngle.HeadingController.setTolerance(0.02);    
     modulePositions = calculateModulePositions();
   }
 
