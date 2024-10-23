@@ -58,9 +58,6 @@ public class ShooterSubsystem extends StateMachine<ShooterState> {
       case SPEAKER_SHOT ->
           MathUtil.isNear(speakerDistanceToRpm.get(distanceToSpeaker), bottomMotorRpm, 50)
               && MathUtil.isNear(speakerDistanceToRpm.get(distanceToSpeaker), topMotorRpm, 50);
-      case AMP ->
-          MathUtil.isNear(ShooterRpms.AMP, bottomMotorRpm, 50)
-              && MathUtil.isNear(ShooterRpms.AMP, topMotorRpm, 50);
       case PASS ->
           MathUtil.isNear(ShooterRpms.PASS, bottomMotorRpm, 50)
               && MathUtil.isNear(ShooterRpms.PASS, topMotorRpm, 50);
@@ -101,10 +98,6 @@ public class ShooterSubsystem extends StateMachine<ShooterState> {
       case PODIUM_SHOT -> {
         topMotor.setControl(velocityRequest.withVelocity(ShooterRpms.PODIUM / 60.0));
         bottomMotor.setControl(velocityRequest.withVelocity(ShooterRpms.PODIUM / 60.0));
-      }
-      case AMP -> {
-        topMotor.setControl(velocityRequest.withVelocity(ShooterRpms.AMP / 60.0));
-        bottomMotor.setControl(velocityRequest.withVelocity(ShooterRpms.AMP / 60.0));
       }
       case PASS -> {
         topMotor.setControl(velocityRequest.withVelocity(ShooterRpms.PASS / 60.0));

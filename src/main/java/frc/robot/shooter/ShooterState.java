@@ -8,6 +8,5 @@ public enum ShooterState {
   SUBWOOFER_SHOT,
   FEEDING,
   PODIUM_SHOT,
-  AMP,
   PASS;
 }
