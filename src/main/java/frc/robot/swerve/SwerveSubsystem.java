@@ -240,6 +240,7 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
       case INTAKE_ASSIST_TELEOP -> {
         intakeAssistTeleopSpeeds =
             IntakeAssistManager.getRobotRelativeAssistSpeeds(123, teleopSpeeds);
+        /// fix robotHeading
 
         drivetrain.setControl(
             drive
@@ -265,6 +266,7 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
 
       case INTAKE_ASSIST_AUTO -> {
         intakeAssistAutoSpeeds = IntakeAssistManager.getRobotRelativeAssistSpeeds(1723, autoSpeeds);
+        /// fix robotHeading
         drivetrain.setControl(
             drive
                 .withVelocityX(intakeAssistAutoSpeeds.vxMetersPerSecond)
