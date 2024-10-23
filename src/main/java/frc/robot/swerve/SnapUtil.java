@@ -21,21 +21,21 @@ public class SnapUtil {
 
   public static double getClimbingAngle(ImuSubsystem imu) {
     if (FmsSubsystem.isRedAlliance()) {
-      if (imu.getRobotHeading().getDegrees() < 0 && imu.getRobotHeading().getDegrees() < -120) {
+      if (imu.getRobotHeading() < 0 && imu.getRobotHeading() < -120) {
         return -60;
-      } else if (imu.getRobotHeading().getDegrees() > 0
-          && imu.getRobotHeading().getDegrees() < 120) {
+      } else if (imu.getRobotHeading() > 0
+          && imu.getRobotHeading() < 120) {
         return 60;
-      } else if (imu.getRobotHeading().getDegrees() > 120
-          && imu.getRobotHeading().getDegrees() < 240) {
+      } else if (imu.getRobotHeading() > 120
+          && imu.getRobotHeading() < 240) {
         return 180;
       }
     }
     if (!FmsSubsystem.isRedAlliance()) {
-      if (imu.getRobotHeading().getDegrees() > 60 && imu.getRobotHeading().getDegrees() < 180) {
+      if (imu.getRobotHeading() > 60 && imu.getRobotHeading() < 180) {
         return 120;
-      } else if (imu.getRobotHeading().getDegrees() > 180
-          && imu.getRobotHeading().getDegrees() < 300) {
+      } else if (imu.getRobotHeading() > 180
+          && imu.getRobotHeading() < 300) {
         return 240;
       }
       // else if(imu.getRobotHeading().getDegrees()<-60&&imu.getRobotHeading().getDegrees()<60){
