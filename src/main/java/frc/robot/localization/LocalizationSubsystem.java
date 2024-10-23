@@ -39,7 +39,7 @@ public class LocalizationSubsystem extends StateMachine<LocalizationState> {
     poseEstimator =
         new SwerveDrivePoseEstimator(
             SwerveSubsystem.KINEMATICS,
-            imu.getRobotHeading(),
+            Rotation2d.fromDegrees(imu.getRobotHeading()),
             swerve.getModulePositions().toArray(new SwerveModulePosition[4]),
             new Pose2d());
   }

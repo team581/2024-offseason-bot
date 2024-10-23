@@ -13,6 +13,7 @@ import frc.robot.queuer.QueuerSubsystem;
 import frc.robot.shooter.ShooterState;
 import frc.robot.shooter.ShooterSubsystem;
 import frc.robot.swerve.SnapUtil;
+import frc.robot.swerve.SwerveState;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
@@ -102,7 +103,7 @@ public class RobotManager extends StateMachine<RobotState> {
           shooter.atGoal() && arm.atGoal() ? RobotState.PODIUM_SCORING : currentState;
 
       case UNJAM -> currentState;
-      case INTAKING -> queuer.hasNote() ? RobotState.INTAKING_BACK : currentState;
+      case INTAKING, INTAKE_ASSIST -> queuer.hasNote() ? RobotState.INTAKING_BACK : currentState;
       case INTAKING_BACK -> !queuer.hasNote() ? RobotState.INTAKING_FORWARD_PUSH : currentState;
     };
   }
@@ -221,6 +222,7 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.INTAKING);
         queuer.setState(QueuerState.INTAKING);
         swerve.setSnapsEnabled(false);
+        swerve.setState(SwerveState.TELEOP);
       }
       case INTAKING_BACK -> {
         arm.setState(ArmState.IDLE);
@@ -235,6 +237,17 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.INTAKING_FORWARD_PUSH);
         queuer.setState(QueuerState.INTAKING_FORWARD_PUSH);
         swerve.setSnapsEnabled(false);
+      }
+      case INTAKE_ASSIST -> {
+        arm.setState(ArmState.IDLE);
+        shooter.setState(ShooterState.IDLE_STOPPED);
+        intake.setState(IntakeState.INTAKING);
+        queuer.setState(QueuerState.INTAKING);
+        if (DriverStation.isTeleop()) {
+          swerve.setState(SwerveState.INTAKE_ASSIST_TELEOP);
+        } else {
+          swerve.setState(SwerveState.INTAKE_ASSIST_AUTO);
+        }
       }
       case OUTTAKING -> {
         arm.setState(ArmState.IDLE);
@@ -354,15 +367,15 @@ public class RobotManager extends StateMachine<RobotState> {
     }
   }
 
-  // TODO: This seems like we ended up not really needing it, can remove it in favor of
-  // stowRequest()
-  public void stopIntakingRequest() {
+  public void intakeAssistRequest() {
     switch (getState()) {
-      case INTAKING -> setStateFromRequest(RobotState.IDLE_NO_GP);
-      default -> {}
+      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
+      default -> setStateFromRequest(RobotState.INTAKE_ASSIST);
     }
   }
 
+  // TODO: This seems like we ended up not really needing it, can remove it in favor of
+  // stowRequest()
   public void outtakeRequest() {
     switch (getState()) {
       case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}

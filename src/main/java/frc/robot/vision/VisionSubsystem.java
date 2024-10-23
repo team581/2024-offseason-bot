@@ -37,8 +37,8 @@ public class VisionSubsystem extends StateMachine<VisionState> {
 
   @Override
   protected void collectInputs() {
-    robotHeading = imu.getRobotHeading().getDegrees();
-    DogLog.log("Vision/RobotHeading", imu.getRobotHeading().getDegrees());
+    robotHeading = imu.getRobotHeading();
+    DogLog.log("Vision/RobotHeading", imu.getRobotHeading());
     angularVelocity = imu.getRobotAngularVelocity();
     pitch = imu.getPitch();
     pitchRate = imu.getPitchRate();

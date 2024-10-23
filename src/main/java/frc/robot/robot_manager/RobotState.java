@@ -20,6 +20,7 @@ public enum RobotState {
   INTAKING_BACK,
   INTAKING_FORWARD_PUSH,
   OUTTAKING,
+  INTAKE_ASSIST,
 
   UNJAM,
 
