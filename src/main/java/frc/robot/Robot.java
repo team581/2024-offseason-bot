@@ -15,7 +15,6 @@ import frc.robot.fms.FmsSubsystem;
 import frc.robot.generated.BuildConstants;
 import frc.robot.imu.ImuSubsystem;
 import frc.robot.intake.IntakeSubsystem;
-import frc.robot.intake_assist.IntakeAssistManager;
 import frc.robot.localization.LocalizationSubsystem;
 import frc.robot.queuer.QueuerSubsystem;
 import frc.robot.robot_manager.RobotCommands;
@@ -40,9 +39,7 @@ public class Robot extends TimedRobot {
   private final ArmSubsystem arm = new ArmSubsystem(hardware.armLeft, hardware.armRight);
   private final IntakeSubsystem intake =
       new IntakeSubsystem(hardware.intakeMain, hardware.intakeCenteringMotor);
-
-  private final IntakeAssistManager intakeAssistManager = new IntakeAssistManager();
-  private final SwerveSubsystem swerve = new SwerveSubsystem(intakeAssistManager);
+  private final SwerveSubsystem swerve = new SwerveSubsystem();
   private final ImuSubsystem imu = new ImuSubsystem(swerve.drivetrainPigeon);
   private final Limelight leftLimelight =
       new Limelight("left", InterpolatedVisionDataset.HOME.leftSet);

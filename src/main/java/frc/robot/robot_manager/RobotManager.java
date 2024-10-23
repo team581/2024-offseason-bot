@@ -162,7 +162,7 @@ public class RobotManager extends StateMachine<RobotState> {
       }
       case AMP_PREPARE_TO_SCORE, AMP_WAITING -> {
         arm.setState(ArmState.AMP);
-        shooter.setState(ShooterState.AMP);
+        shooter.setState(ShooterState.IDLE_WARMUP);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
         swerve.setSnapsEnabled(true);
@@ -170,7 +170,7 @@ public class RobotManager extends StateMachine<RobotState> {
       }
       case AMP_SCORING -> {
         arm.setState(ArmState.AMP);
-        shooter.setState(ShooterState.AMP);
+        shooter.setState(ShooterState.IDLE_WARMUP);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.AMPING);
         swerve.setSnapsEnabled(true);

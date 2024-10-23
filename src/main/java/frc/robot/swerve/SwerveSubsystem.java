@@ -56,8 +56,6 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
 
   public final Pigeon2 drivetrainPigeon = drivetrain.getPigeon2();
 
-  private final IntakeAssistManager intakeAssistManager;
-
   private final SwerveRequest.FieldCentric drive =
       new SwerveRequest.FieldCentric()
           // I want field-centric driving in open loop
@@ -114,13 +112,12 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
     goalSnapAngle = angle;
   }
 
-  public SwerveSubsystem(IntakeAssistManager intakeAssistManager) {
+  public SwerveSubsystem() {
     super(SubsystemPriority.SWERVE, SwerveState.TELEOP);
     driveToAngle.HeadingController = RobotConfig.get().swerve().snapController();
     driveToAngle.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
     driveToAngle.HeadingController.setTolerance(0.02);
     modulePositions = calculateModulePositions();
-    this.intakeAssistManager = intakeAssistManager;
   }
 
   public void setFieldRelativeAutoSpeeds(ChassisSpeeds speeds) {
@@ -241,7 +238,8 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
         }
       }
       case INTAKE_ASSIST_TELEOP -> {
-        intakeAssistTeleopSpeeds = intakeAssistManager.getRobotRelativeAssistSpeeds(teleopSpeeds);
+        intakeAssistTeleopSpeeds =
+            IntakeAssistManager.getRobotRelativeAssistSpeeds(123, teleopSpeeds);
 
         drivetrain.setControl(
             drive
@@ -266,7 +264,7 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
                   .withDriveRequestType(DriveRequestType.Velocity));
 
       case INTAKE_ASSIST_AUTO -> {
-        intakeAssistAutoSpeeds = intakeAssistManager.getRobotRelativeAssistSpeeds(autoSpeeds);
+        intakeAssistAutoSpeeds = IntakeAssistManager.getRobotRelativeAssistSpeeds(1723, autoSpeeds);
         drivetrain.setControl(
             drive
                 .withVelocityX(intakeAssistAutoSpeeds.vxMetersPerSecond)
