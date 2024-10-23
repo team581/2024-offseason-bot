@@ -249,7 +249,7 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
         swerve.setSnapsEnabled(true);
-        swerve.setSnapToAngle(SnapUtil.getClimbingAngle());
+        swerve.setSnapToAngle(SnapUtil.getClimbingAngle(imu));
       }
       case CLIMBING_2_HANGING -> {
         arm.setState(ArmState.CLIMBING_2_HANGING);
