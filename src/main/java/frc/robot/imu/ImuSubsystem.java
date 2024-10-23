@@ -7,7 +7,7 @@ import frc.robot.util.state_machines.StateMachine;
 
 public class ImuSubsystem extends StateMachine<ImuState> {
   private final Pigeon2 imu;
-  private double robotHeading = 0;
+  private static double robotHeading = 0;
   private double pitch;
   private double angularVelocity;
   private double pitchRate;
@@ -29,7 +29,7 @@ public class ImuSubsystem extends StateMachine<ImuState> {
     rollRate = imu.getAngularVelocityXWorld().getValueAsDouble();
   }
 
-  public double getRobotHeading() {
+  public static double getRobotHeading() {
     return robotHeading;
   }
 

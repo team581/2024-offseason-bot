@@ -13,6 +13,7 @@ import frc.robot.queuer.QueuerSubsystem;
 import frc.robot.shooter.ShooterState;
 import frc.robot.shooter.ShooterSubsystem;
 import frc.robot.swerve.SnapUtil;
+import frc.robot.swerve.SwerveState;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
@@ -221,6 +222,7 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.INTAKING);
         queuer.setState(QueuerState.INTAKING);
         swerve.setSnapsEnabled(false);
+        swerve.setState(SwerveState.TELEOP);
       }
       case INTAKING_BACK -> {
         arm.setState(ArmState.IDLE);
@@ -242,9 +244,9 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.INTAKING);
         queuer.setState(QueuerState.INTAKING);
         if (DriverStation.isTeleop()) {
-          swerve.setIntakeAssistTeleopSpeeds(swerve.getRobotRelativeSpeeds());
+          swerve.setState(SwerveState.INTAKE_ASSIST_TELEOP);
         } else {
-          swerve.setIntakeAssistAutoSpeeds(swerve.getRobotRelativeSpeeds());
+          swerve.setState(SwerveState.INTAKE_ASSIST_AUTO);
         }
       }
       case OUTTAKING -> {

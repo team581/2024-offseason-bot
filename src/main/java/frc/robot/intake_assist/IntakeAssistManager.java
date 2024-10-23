@@ -6,23 +6,18 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.robot.imu.ImuSubsystem;
-import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.scheduling.LifecycleSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.vision.LimelightHelpers;
 
 public class IntakeAssistManager extends LifecycleSubsystem {
-  private static final double ASSIST_KP = 0.2;
+  private static final double ASSIST_KP = 3.5;
   private static final String LIMELIGHT_NAME = "limelight-note";
-  private final ImuSubsystem imu;
-  private final SwerveSubsystem swerve;
   private static final double MAX_ANGLE_CHANGE = -35.0;
   private static final double MIN_ANGLE_CHANGE = 35.0;
 
-  public IntakeAssistManager(ImuSubsystem imu, SwerveSubsystem swerve) {
+  public IntakeAssistManager() {
     super(SubsystemPriority.INTAKE_ASSIST_MANAGER);
-    this.imu = imu;
-    this.swerve = swerve;
   }
 
   public ChassisSpeeds getRobotRelativeAssistSpeeds(ChassisSpeeds fieldRelativeInputSpeeds) {
@@ -35,9 +30,9 @@ public class IntakeAssistManager extends LifecycleSubsystem {
 
     DogLog.log("IntakeAssist/TX", tx);
 
-    double fieldRelativeNoteAngle = imu.getRobotHeading() + tx;
+    double fieldRelativeNoteAngle = ImuSubsystem.getRobotHeading() + tx;
 
-    double angleError = imu.getRobotHeading() - fieldRelativeNoteAngle;
+    double angleError = ImuSubsystem.getRobotHeading() - fieldRelativeNoteAngle;
 
     double angleChange = MathUtil.clamp(MIN_ANGLE_CHANGE, MAX_ANGLE_CHANGE, angleError * ASSIST_KP);
 
@@ -52,12 +47,5 @@ public class IntakeAssistManager extends LifecycleSubsystem {
         newDriveRequest.getX(),
         newDriveRequest.getY(),
         fieldRelativeInputSpeeds.omegaRadiansPerSecond);
-  }
-
-  public void updateSwerveSpeeds() {
-    ChassisSpeeds intakeAssistSpeeds =
-        getRobotRelativeAssistSpeeds(swerve.getFieldRelativeSpeeds());
-    swerve.setIntakeAssistTeleopSpeeds(intakeAssistSpeeds);
-    swerve.setIntakeAssistAutoSpeeds(intakeAssistSpeeds);
   }
 }

@@ -12,6 +12,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.util.Units;
 import frc.robot.config.RobotConfig;
 import frc.robot.fms.FmsSubsystem;
+import frc.robot.intake_assist.IntakeAssistManager;
 import frc.robot.util.ControllerHelpers;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
@@ -55,6 +56,8 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
 
   public final Pigeon2 drivetrainPigeon = drivetrain.getPigeon2();
 
+  private final IntakeAssistManager intakeAssistManager;
+
   private final SwerveRequest.FieldCentric drive =
       new SwerveRequest.FieldCentric()
           // I want field-centric driving in open loop
@@ -83,6 +86,10 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
 
   private ChassisSpeeds autoSpeeds = new ChassisSpeeds();
 
+  private ChassisSpeeds intakeAssistTeleopSpeeds = new ChassisSpeeds();
+
+  private ChassisSpeeds intakeAssistAutoSpeeds = new ChassisSpeeds();
+
   public ChassisSpeeds getRobotRelativeSpeeds() {
     return robotRelativeSpeeds;
   }
@@ -107,9 +114,10 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
     goalSnapAngle = angle;
   }
 
-  public SwerveSubsystem() {
+  public SwerveSubsystem(IntakeAssistManager intakeAssistManager) {
     super(SubsystemPriority.SWERVE, SwerveState.TELEOP);
     modulePositions = calculateModulePositions();
+    this.intakeAssistManager = intakeAssistManager;
   }
 
   public void setFieldRelativeAutoSpeeds(ChassisSpeeds speeds) {
@@ -118,12 +126,12 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
   }
 
   public void setIntakeAssistTeleopSpeeds(ChassisSpeeds speeds) {
-    teleopSpeeds = speeds;
+    intakeAssistTeleopSpeeds = speeds;
     sendSwerveRequest();
   }
 
   public void setIntakeAssistAutoSpeeds(ChassisSpeeds speeds) {
-    autoSpeeds = speeds;
+    intakeAssistAutoSpeeds = speeds;
     sendSwerveRequest();
   }
 
@@ -169,6 +177,7 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
     fieldRelativeSpeeds = calculateFieldRelativeSpeeds();
     slowEnoughToShoot = calculateMovingSlowEnoughForSpeakerShot(robotRelativeSpeeds);
     slowEnoughToFeed = calculateMovingSlowEnoughForFloorShot(robotRelativeSpeeds);
+
   }
 
   private List<SwerveModulePosition> calculateModulePositions() {
@@ -229,13 +238,16 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
                   .withDriveRequestType(DriveRequestType.OpenLoopVoltage));
         }
       }
-      case INTAKE_ASSIST_TELEOP ->
+      case INTAKE_ASSIST_TELEOP -> {
+         intakeAssistTeleopSpeeds = intakeAssistManager.getRobotRelativeAssistSpeeds(teleopSpeeds);
+
           drivetrain.setControl(
               drive
-                  .withVelocityX(teleopSpeeds.vxMetersPerSecond)
-                  .withVelocityY(teleopSpeeds.vyMetersPerSecond)
-                  .withRotationalRate(teleopSpeeds.omegaRadiansPerSecond)
+                  .withVelocityX(intakeAssistTeleopSpeeds.vxMetersPerSecond)
+                  .withVelocityY(intakeAssistTeleopSpeeds.vyMetersPerSecond)
+                  .withRotationalRate(intakeAssistTeleopSpeeds.omegaRadiansPerSecond)
                   .withDriveRequestType(DriveRequestType.OpenLoopVoltage));
+      }
       case AUTO ->
           drivetrain.setControl(
               drive
@@ -251,14 +263,16 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
                   .withTargetDirection(Rotation2d.fromDegrees(goalSnapAngle))
                   .withDriveRequestType(DriveRequestType.Velocity));
 
-      case INTAKE_ASSIST_AUTO ->
+      case INTAKE_ASSIST_AUTO -> {
+        intakeAssistAutoSpeeds = intakeAssistManager.getRobotRelativeAssistSpeeds(autoSpeeds);
           drivetrain.setControl(
               drive
-                  .withVelocityX(autoSpeeds.vxMetersPerSecond)
-                  .withVelocityY(autoSpeeds.vyMetersPerSecond)
-                  .withRotationalRate(autoSpeeds.omegaRadiansPerSecond)
+                  .withVelocityX(intakeAssistAutoSpeeds.vxMetersPerSecond)
+                  .withVelocityY(intakeAssistAutoSpeeds.vyMetersPerSecond)
+                  .withRotationalRate(intakeAssistAutoSpeeds.omegaRadiansPerSecond)
                   .withDriveRequestType(DriveRequestType.Velocity));
     }
+  }
   }
 
   public void setState(SwerveState newState) {
