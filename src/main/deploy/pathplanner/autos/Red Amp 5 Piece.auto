@@ -18,6 +18,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "speakerShot"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Red Amp 5 Piece.2"
@@ -27,6 +33,12 @@
           "type": "path",
           "data": {
             "pathName": "Red Amp 5 Piece.3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "speakerShot"
           }
         },
         {
@@ -48,6 +60,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "speakerShot"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Red Amp 5 Piece.7"
@@ -60,6 +78,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "speakerShot"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Red Amp 5 Piece.9"
@@ -69,6 +93,12 @@
           "type": "path",
           "data": {
             "pathName": "Red Amp 5 Piece.10"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "speakerShot"
           }
         }
       ]

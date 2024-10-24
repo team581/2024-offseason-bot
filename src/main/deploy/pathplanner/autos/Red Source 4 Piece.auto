@@ -24,6 +24,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "speakerShot"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Red Source 4 Piece.3"
@@ -36,6 +42,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "speakerShot"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Red Source 4 Piece.5"
@@ -45,6 +57,12 @@
           "type": "path",
           "data": {
             "pathName": "Red Source 4 Piece.6"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "speakerShot"
           }
         }
       ]
