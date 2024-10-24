@@ -13,4 +13,11 @@ public class FieldUtil {
       return VisionSubsystem.ORIGINAL_BLUE_SPEAKER;
     }
   }
+  public static Pose2d getFeedSpotPose() {
+    if (FmsSubsystem.isRedAlliance()) {
+      return VisionSubsystem.RED_FEED_SPOT_AMP_AREA;
+    } else {
+      return VisionSubsystem.BLUE_FEED_SPOT_AMP_AREA;
+    }
+  }
 }
