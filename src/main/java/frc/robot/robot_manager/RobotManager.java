@@ -33,8 +33,7 @@ public class RobotManager extends StateMachine<RobotState> {
 
   private boolean confirmShotActive = false;
   private double fieldRelativeAngleToSpeaker = 0;
-    private double fieldRelativeAngleToFeedSpot = 0;
-
+  private double fieldRelativeAngleToFeedSpot = 0;
 
   public RobotManager(
       ArmSubsystem arm,
@@ -60,7 +59,8 @@ public class RobotManager extends StateMachine<RobotState> {
   protected void collectInputs() {
     fieldRelativeAngleToSpeaker =
         localization.getFieldRelativeAngleToPose(FieldUtil.getSpeakerPose());
-    fieldRelativeAngleToFeedSpot = localization.getFieldRelativeAngleToPose(FieldUtil.getFeedSpotPose());
+    fieldRelativeAngleToFeedSpot =
+        localization.getFieldRelativeAngleToPose(FieldUtil.getFeedSpotPose());
   }
 
   @Override
@@ -153,8 +153,7 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
         swerve.setSnapsEnabled(true);
-                swerve.setSnapToAngle(fieldRelativeAngleToSpeaker);
-
+        swerve.setSnapToAngle(fieldRelativeAngleToSpeaker);
       }
       case SPEAKER_SCORING -> {
         arm.setState(ArmState.SPEAKER_SHOT);
