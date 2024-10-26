@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -101,6 +102,17 @@ public class LocalizationSubsystem extends StateMachine<LocalizationState> {
    * target pose.
    */
   public double getFieldRelativeAngleToPose(Pose2d target) {
-    return 0;
+
+    double distanceAngleToSpeaker = distanceAngleToTarget(target, getPose());
+
+    return distanceAngleToSpeaker;
+  }
+
+  public static double distanceAngleToTarget(Pose2d target, Pose2d current) {
+    double angle =
+        Units.radiansToDegrees(
+            Math.atan2(target.getY() - current.getY(), target.getX() - current.getX()));
+
+    return angle;
   }
 }
