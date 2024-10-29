@@ -43,6 +43,7 @@ public class Autos extends LifecycleSubsystem {
     autoChooser = new AutoChooser(autoCommands);
 
     registerCommand("speakerShot", robotCommands.speakerCommand());
+    registerCommand("intakeAssist", robotCommands.intakeAssistCommand());
   }
 
   public Command getAutoCommand() {
