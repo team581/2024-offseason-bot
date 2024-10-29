@@ -127,15 +127,14 @@ public class RobotManager extends StateMachine<RobotState> {
         shooter.setState(ShooterState.PODIUM_SHOT);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
-        swerve.setSnapToAngle(SnapUtil.getPodiumAngle());
         swerve.setSnapsEnabled(true);
+        swerve.setSnapToAngle(SnapUtil.getPodiumAngle());
       }
       case PODIUM_SCORING -> {
         arm.setState(ArmState.PODIUM_SHOT);
         shooter.setState(ShooterState.PODIUM_SHOT);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.SHOOTING);
-
         swerve.setSnapsEnabled(true);
         swerve.setSnapToAngle(SnapUtil.getPodiumAngle());
       }
@@ -144,7 +143,6 @@ public class RobotManager extends StateMachine<RobotState> {
         shooter.setState(ShooterState.SUBWOOFER_SHOT);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.SHOOTING);
-
         swerve.setSnapsEnabled(true);
         swerve.setSnapToAngle(SnapUtil.getSubwooferAngle());
       }
@@ -193,7 +191,6 @@ public class RobotManager extends StateMachine<RobotState> {
         shooter.setState(ShooterState.FEEDING);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.SHOOTING);
-
         swerve.setSnapsEnabled(true);
         swerve.setSnapToAngle(fieldRelativeAngleToFeedSpot);
       }
@@ -202,7 +199,7 @@ public class RobotManager extends StateMachine<RobotState> {
         shooter.setState(ShooterState.PASS);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
-        swerve.setSnapsEnabled(true);
+        swerve.setSnapsEnabled(false);
         swerve.setSnapToAngle(0);
       }
       case PASS_SHOOTING -> {
@@ -211,6 +208,7 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.SHOOTING);
         swerve.setSnapsEnabled(false);
+        swerve.setSnapToAngle(0);
       }
       case UNJAM -> {
         arm.setState(ArmState.AMP);
@@ -218,6 +216,7 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.OUTTAKING);
         queuer.setState(QueuerState.OUTTAKING);
         swerve.setSnapsEnabled(false);
+        swerve.setSnapToAngle(0);
       }
       case INTAKING -> {
         arm.setState(ArmState.IDLE);
@@ -225,6 +224,7 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.INTAKING);
         queuer.setState(QueuerState.INTAKING);
         swerve.setSnapsEnabled(false);
+        swerve.setSnapToAngle(0);
       }
       case INTAKING_BACK -> {
         arm.setState(ArmState.IDLE);
@@ -232,6 +232,7 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.INTAKING_BACK);
         queuer.setState(QueuerState.INTAKING_BACK);
         swerve.setSnapsEnabled(false);
+        swerve.setSnapToAngle(0);
       }
       case INTAKING_FORWARD_PUSH -> {
         arm.setState(ArmState.IDLE);
@@ -239,12 +240,14 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.INTAKING_FORWARD_PUSH);
         queuer.setState(QueuerState.INTAKING_FORWARD_PUSH);
         swerve.setSnapsEnabled(false);
+        swerve.setSnapToAngle(0);
       }
       case INTAKE_ASSIST -> {
         arm.setState(ArmState.IDLE);
         shooter.setState(ShooterState.IDLE_STOPPED);
         intake.setState(IntakeState.INTAKING);
         queuer.setState(QueuerState.INTAKING);
+        // We don't use the setSnaps here, since intake assist is a separate state
         if (DriverStation.isTeleop()) {
           swerve.setState(SwerveState.INTAKE_ASSIST_TELEOP);
         } else {
@@ -257,6 +260,7 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.OUTTAKING);
         queuer.setState(QueuerState.OUTTAKING);
         swerve.setSnapsEnabled(false);
+        swerve.setSnapToAngle(0);
       }
       case CLIMBING_1_LINEUP -> {
         arm.setState(ArmState.CLIMBING_1_LINEUP);
@@ -272,6 +276,7 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
         swerve.setSnapsEnabled(false);
+        swerve.setSnapToAngle(0);
       }
       case IDLE_NO_GP -> {
         arm.setState(ArmState.IDLE);
@@ -279,6 +284,7 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
         swerve.setSnapsEnabled(false);
+        swerve.setSnapToAngle(0);
       }
       case IDLE_WITH_GP -> {
         arm.setState(ArmState.IDLE);
@@ -286,6 +292,7 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
         swerve.setSnapsEnabled(false);
+        swerve.setSnapToAngle(0);
       }
     }
   }
