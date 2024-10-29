@@ -280,7 +280,7 @@
       "command": {
         "type": "named",
         "data": {
-          "name": "intakeFloor"
+          "name": "intakeAssist"
         }
       }
     }
