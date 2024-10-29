@@ -118,6 +118,18 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
     driveToAngle.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
     driveToAngle.HeadingController.setTolerance(0.02);
     modulePositions = calculateModulePositions();
+
+    // The CTR SwerveModule class will overwrite your torque current limits and the stator current
+    // limit with the configured slip current. This logic allows us to exercise more precise control
+    // over what current limits are used for each control mode.
+    // See https://github.com/CrossTheRoadElec/Phoenix-Releases/issues/81
+    for (int i = 0; i < 4; i++) {
+      var module = drivetrain.getModule(i);
+      var driveMotorConfigurator = module.getDriveMotor().getConfigurator();
+
+      driveMotorConfigurator.apply(RobotConfig.get().swerve().driveMotorCurrentLimits());
+      driveMotorConfigurator.apply(RobotConfig.get().swerve().driveMotorTorqueCurrentLimits());
+    }
   }
 
   public void setFieldRelativeAutoSpeeds(ChassisSpeeds speeds) {

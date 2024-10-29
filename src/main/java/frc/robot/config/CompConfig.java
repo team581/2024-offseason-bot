@@ -8,9 +8,11 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.configs.VoltageConfigs;
 import com.ctre.phoenix6.mechanisms.swerve.utility.PhoenixPIDController;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.filter.Debouncer;
 import frc.robot.config.RobotConfig.ArmConfig;
 import frc.robot.config.RobotConfig.IntakeConfig;
@@ -38,7 +40,42 @@ class CompConfig {
   public static final RobotConfig competitionBot =
       new RobotConfig(
           "competition",
-          new SwerveConfig(new PhoenixPIDController(25, 0, 2), true, true, true),
+          new SwerveConfig(
+              new PhoenixPIDController(25, 0, 2),
+              true,
+              true,
+              true,
+              new TalonFXConfiguration()
+                  .withCurrentLimits(
+                      new CurrentLimitsConfigs()
+                          .withStatorCurrentLimitEnable(true)
+                          .withStatorCurrentLimit(110)
+                          .withSupplyCurrentLimitEnable(true)
+                          .withSupplyCurrentLimit(90)
+                          .withSupplyTimeThreshold(0.5))
+                  .withOpenLoopRamps(
+                      new OpenLoopRampsConfigs()
+                          .withDutyCycleOpenLoopRampPeriod(0.25)
+                          .withVoltageOpenLoopRampPeriod(0.25))
+                  .withVoltage(
+                      new VoltageConfigs().withPeakForwardVoltage(12).withPeakReverseVoltage(-12))
+                  .withMotorOutput(
+                      new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake)),
+              new TalonFXConfiguration()
+                  .withCurrentLimits(
+                      new CurrentLimitsConfigs()
+                          // Swerve azimuth does not require much torque output, so we can set a
+                          // relatively low stator current limit to help avoid brownouts without
+                          // impacting performance.
+                          .withStatorCurrentLimitEnable(true)
+                          .withStatorCurrentLimit(80)
+                          .withSupplyCurrentLimitEnable(true)
+                          .withSupplyCurrentLimit(60)
+                          .withSupplyTimeThreshold(0.2))
+                  .withVoltage(
+                      new VoltageConfigs().withPeakForwardVoltage(12).withPeakReverseVoltage(-12))
+                  .withMotorOutput(
+                      new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake))),
           new QueuerConfig(
               20,
               CANIVORE_NAME,

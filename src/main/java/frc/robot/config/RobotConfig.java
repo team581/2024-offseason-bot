@@ -20,7 +20,9 @@ public record RobotConfig(
       PhoenixPIDController snapController,
       boolean invertRotation,
       boolean invertX,
-      boolean invertY) {}
+      boolean invertY,
+      TalonFXConfiguration driveMotorConfig,
+      TalonFXConfiguration steerMotorConfig) {}
 
   public record QueuerConfig(
       int motorID,
