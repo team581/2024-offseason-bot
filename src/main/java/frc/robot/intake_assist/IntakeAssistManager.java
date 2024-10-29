@@ -8,7 +8,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.robot.vision.LimelightHelpers;
 
 public class IntakeAssistManager {
-  private static final double ASSIST_KP = 3.5;
+  private static final double ASSIST_KP = 3.0;
   private static final String LIMELIGHT_NAME = "limelight-note";
   private static final double MAX_ANGLE_CHANGE = -35.0;
   private static final double MIN_ANGLE_CHANGE = 35.0;
