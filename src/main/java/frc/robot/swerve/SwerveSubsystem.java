@@ -304,8 +304,10 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
 
   public void setSnapsEnabled(boolean newValue) {
     switch (getState()) {
-      case TELEOP, TELEOP_SNAPS ->
+      case TELEOP, TELEOP_SNAPS, INTAKE_ASSIST_TELEOP ->
           setStateFromRequest(newValue ? SwerveState.TELEOP_SNAPS : SwerveState.TELEOP);
+      case AUTO, AUTO_SNAPS, INTAKE_ASSIST_AUTO ->
+          setStateFromRequest(newValue ? SwerveState.AUTO_SNAPS : SwerveState.AUTO);
     }
   }
 }
