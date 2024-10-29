@@ -68,6 +68,8 @@ public class LocalizationSubsystem extends StateMachine<LocalizationState> {
         poseEstimator.addVisionMeasurement(
             visionPose,
             visionTimestamp,
+            // TODO: This should just be statically set in the pose estimator, instead of creating a
+            // fresh object every time
             VecBuilder.fill(
                 RobotConfig.get().vision().xyStdDev(),
                 RobotConfig.get().vision().xyStdDev(),
