@@ -126,9 +126,18 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
     for (int i = 0; i < 4; i++) {
       var module = drivetrain.getModule(i);
       var driveMotorConfigurator = module.getDriveMotor().getConfigurator();
+      var steerMotorConfigurator = module.getSteerMotor().getConfigurator();
 
-      driveMotorConfigurator.apply(RobotConfig.get().swerve().driveMotorCurrentLimits());
-      driveMotorConfigurator.apply(RobotConfig.get().swerve().driveMotorTorqueCurrentLimits());
+      driveMotorConfigurator.apply(RobotConfig.get().swerve().driveMotorConfig().CurrentLimits);
+      driveMotorConfigurator.apply(RobotConfig.get().swerve().driveMotorConfig().TorqueCurrent);
+      driveMotorConfigurator.apply(RobotConfig.get().swerve().driveMotorConfig().Voltage);
+      driveMotorConfigurator.apply(RobotConfig.get().swerve().driveMotorConfig().OpenLoopRamps);
+      driveMotorConfigurator.apply(RobotConfig.get().swerve().driveMotorConfig().MotorOutput);
+
+      steerMotorConfigurator.apply(RobotConfig.get().swerve().steerMotorConfig().CurrentLimits);
+      steerMotorConfigurator.apply(RobotConfig.get().swerve().steerMotorConfig().Voltage);
+      steerMotorConfigurator.apply(RobotConfig.get().swerve().steerMotorConfig().OpenLoopRamps);
+      steerMotorConfigurator.apply(RobotConfig.get().swerve().steerMotorConfig().MotorOutput);
     }
   }
 
