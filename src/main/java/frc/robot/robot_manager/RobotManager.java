@@ -307,6 +307,27 @@ public class RobotManager extends StateMachine<RobotState> {
         shooter.setDistanceToFeedSpot(distanceToFeedSpot);
         arm.setDistanceToFeedSpot(distanceToFeedSpot);
       }
+      case INTAKING, INTAKE_ASSIST -> {
+        if (arm.atGoal()) {
+          intake.setState(IntakeState.INTAKING);
+        } else {
+          intake.setState(IntakeState.IDLE);
+        }
+      }
+      case INTAKING_BACK -> {
+        if (arm.atGoal()) {
+          intake.setState(IntakeState.INTAKING_BACK);
+        } else {
+          intake.setState(IntakeState.IDLE);
+        }
+      }
+      case INTAKING_FORWARD_PUSH -> {
+        if (arm.atGoal()) {
+          intake.setState(IntakeState.INTAKING_FORWARD_PUSH);
+        } else {
+          intake.setState(IntakeState.IDLE);
+        }
+      }
       default -> {}
     }
   }
