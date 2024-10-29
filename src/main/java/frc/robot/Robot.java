@@ -189,7 +189,7 @@ public class Robot extends TimedRobot {
     hardware
         .driverController
         .leftBumper()
-        .onTrue(robotCommands.outtakeCommand())
+        .onTrue(robotCommands.passCommand())
         .onFalse(robotCommands.stopShootingCommand());
     hardware.driverController.y().onTrue(robotCommands.waitPodiumCommand());
     hardware

@@ -210,8 +210,7 @@ public class RobotManager extends StateMachine<RobotState> {
         shooter.setState(ShooterState.PASS);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.SHOOTING);
-        swerve.setSnapsEnabled(true);
-        swerve.setSnapToAngle(0);
+        swerve.setSnapsEnabled(false);
       }
       case UNJAM -> {
         arm.setState(ArmState.AMP);
@@ -226,7 +225,6 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.INTAKING);
         queuer.setState(QueuerState.INTAKING);
         swerve.setSnapsEnabled(false);
-        swerve.setState(SwerveState.TELEOP);
       }
       case INTAKING_BACK -> {
         arm.setState(ArmState.IDLE);
