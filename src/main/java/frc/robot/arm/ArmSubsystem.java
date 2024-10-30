@@ -208,7 +208,6 @@ public class ArmSubsystem extends StateMachine<ArmState> {
         Units.rotationsToDegrees(rightMotor.getPosition().getValueAsDouble()));
     DogLog.log("Arm/Right/AppliedVoltage", rightMotor.getMotorVoltage().getValueAsDouble());
     DogLog.log("Arm/Right/LowestSeenAngle", lowestSeenAngleRight);
-    DogLog.log("Arm/ArmState", getState());
 
     if (DriverStation.isEnabled() && getState() == ArmState.PRE_MATCH_HOMING) {
       // We are enabled and still in pre match homing
