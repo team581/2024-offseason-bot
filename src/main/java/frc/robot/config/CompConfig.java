@@ -199,7 +199,5 @@ class CompConfig {
               87.0),
           new VisionConfig(4, 0.4, 0.4, InterpolatedVisionDataset.HOME));
 
-  // NOT TUNED
-
   private CompConfig() {}
 }
