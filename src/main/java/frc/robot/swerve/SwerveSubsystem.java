@@ -1,9 +1,12 @@
 package frc.robot.swerve;
 
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -12,10 +15,12 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.util.Units;
 import frc.robot.config.RobotConfig;
 import frc.robot.fms.FmsSubsystem;
+import frc.robot.generated.TunerConstants;
 import frc.robot.intake_assist.IntakeAssistManager;
 import frc.robot.util.ControllerHelpers;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
+import java.security.InvalidParameterException;
 import java.util.List;
 
 public class SwerveSubsystem extends StateMachine<SwerveState> {
@@ -51,6 +56,16 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
       };
   public static final SwerveDriveKinematics KINEMATICS =
       new SwerveDriveKinematics(MODULE_LOCATIONS);
+
+  private static SwerveModuleConstants constantsForModuleNumber(int moduleNumber) {
+    return switch (moduleNumber) {
+      case 0 -> TunerConstants.FrontLeft;
+      case 1 -> TunerConstants.FrontRight;
+      case 2 -> TunerConstants.BackLeft;
+      case 3 -> TunerConstants.BackRight;
+      default -> throw new InvalidParameterException("Expected an ID from [0, 3]");
+    };
+  }
 
   private final CommandSwerveDrivetrain drivetrain = new CommandSwerveDrivetrain();
 
@@ -127,17 +142,28 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
       var module = drivetrain.getModule(i);
       var driveMotorConfigurator = module.getDriveMotor().getConfigurator();
       var steerMotorConfigurator = module.getSteerMotor().getConfigurator();
+      var usedConstants = constantsForModuleNumber(i);
 
       driveMotorConfigurator.apply(RobotConfig.get().swerve().driveMotorConfig().CurrentLimits);
-      driveMotorConfigurator.apply(RobotConfig.get().swerve().driveMotorConfig().TorqueCurrent);
       driveMotorConfigurator.apply(RobotConfig.get().swerve().driveMotorConfig().Voltage);
       driveMotorConfigurator.apply(RobotConfig.get().swerve().driveMotorConfig().OpenLoopRamps);
-      driveMotorConfigurator.apply(RobotConfig.get().swerve().driveMotorConfig().MotorOutput);
+      MotorOutputConfigs driveMotorOutput =
+          RobotConfig.get().swerve().driveMotorConfig().MotorOutput;
+      driveMotorOutput.Inverted =
+          usedConstants.DriveMotorInverted
+              ? InvertedValue.Clockwise_Positive
+              : InvertedValue.CounterClockwise_Positive;
+      driveMotorConfigurator.apply(driveMotorOutput);
 
       steerMotorConfigurator.apply(RobotConfig.get().swerve().steerMotorConfig().CurrentLimits);
       steerMotorConfigurator.apply(RobotConfig.get().swerve().steerMotorConfig().Voltage);
-      steerMotorConfigurator.apply(RobotConfig.get().swerve().steerMotorConfig().OpenLoopRamps);
-      steerMotorConfigurator.apply(RobotConfig.get().swerve().steerMotorConfig().MotorOutput);
+      MotorOutputConfigs steerMotorOutput =
+          RobotConfig.get().swerve().steerMotorConfig().MotorOutput;
+      steerMotorOutput.Inverted =
+          usedConstants.SteerMotorInverted
+              ? InvertedValue.Clockwise_Positive
+              : InvertedValue.CounterClockwise_Positive;
+      steerMotorConfigurator.apply(steerMotorOutput);
     }
   }
 
