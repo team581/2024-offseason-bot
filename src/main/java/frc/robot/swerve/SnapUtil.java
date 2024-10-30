@@ -2,6 +2,7 @@ package frc.robot.swerve;
 
 import frc.robot.fms.FmsSubsystem;
 import frc.robot.imu.ImuSubsystem;
+import java.util.List;
 
 public class SnapUtil {
 
@@ -19,28 +20,17 @@ public class SnapUtil {
     return FmsSubsystem.isRedAlliance() ? 0 : (180.0);
   }
 
+  private static final List<Double> RED_STAGE_ANGLES = List.of(-60.0, 60.0, 180.0);
+  private static final List<Double> BLUE_STAGE_ANGLES = List.of(-60.0 + 180.0, 60.0 + 180.0, 0.0);
+
   public static double getClimbingAngle(ImuSubsystem imu) {
-    if (FmsSubsystem.isRedAlliance()) {
-      if (imu.getRobotHeading() < 0 && imu.getRobotHeading() < -120) {
-        return -60;
-      } else if (imu.getRobotHeading() > 0 && imu.getRobotHeading() < 120) {
-        return 60;
-      } else if (imu.getRobotHeading() > 120 && imu.getRobotHeading() < 240) {
-        return 180;
-      }
-    }
-    if (!FmsSubsystem.isRedAlliance()) {
-      if (imu.getRobotHeading() > 60 && imu.getRobotHeading() < 180) {
-        return 120;
-      } else if (imu.getRobotHeading() > 180 && imu.getRobotHeading() < 300) {
-        return 240;
-      }
-      // else if(imu.getRobotHeading().getDegrees()<-60&&imu.getRobotHeading().getDegrees()<60){
-      else {
-        return 0;
-      }
-    }
-    return 0;
+    var usedAngles = FmsSubsystem.isRedAlliance() ? RED_STAGE_ANGLES : BLUE_STAGE_ANGLES;
+
+    var currentAngle = imu.getRobotHeading();
+
+    return usedAngles.stream()
+        .min((a, b) -> Double.compare(currentAngle - a, currentAngle - b))
+        .orElse(0.0);
   }
 
   private SnapUtil() {}
