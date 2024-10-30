@@ -28,10 +28,6 @@ public class ArmSubsystem extends StateMachine<ArmState> {
   private final PositionVoltage pidRequest =
       new PositionVoltage(0).withEnableFOC(false).withOverrideBrakeDurNeutral(true);
 
-  //  private final StaticBrake staticBrake =
-  //      new StaticBrake();
-  // IF withOverrideBrakeDurNeutral DOEST WORK
-
   public void setDistanceToSpeaker(double distance) {
     distanceToSpeaker = distance;
   }
@@ -57,12 +53,6 @@ public class ArmSubsystem extends StateMachine<ArmState> {
     }
   }
 
-  // public void disabledPeriodic()
-  // {
-  //   rightMotor.setControl(staticBrake);
-  //   leftMotor.setControl(staticBrake);
-  // }
-  // IF withOverrideBrakeDurNeutral DOESNT WORK
   public boolean atGoal() {
     return switch (getState()) {
       case IDLE, PRE_MATCH_HOMING -> true;
@@ -200,6 +190,9 @@ public class ArmSubsystem extends StateMachine<ArmState> {
         "Arm/Left/ArmAngle", Units.rotationsToDegrees(leftMotor.getPosition().getValueAsDouble()));
     DogLog.log("Arm/Left/AppliedVoltage", leftMotor.getMotorVoltage().getValueAsDouble());
     DogLog.log("Arm/Left/LowestSeenAngle", lowestSeenAngleLeft);
+    DogLog.log(
+        "Arm/Left/GoalAngle",
+        Units.rotationsToDegrees(leftMotor.getClosedLoopReference().getValueAsDouble()));
 
     DogLog.log("Arm/Right/StatorCurrent", rightMotor.getStatorCurrent().getValueAsDouble());
     DogLog.log("Arm/Right/SupplyCurrent", rightMotor.getSupplyCurrent().getValueAsDouble());
@@ -208,6 +201,9 @@ public class ArmSubsystem extends StateMachine<ArmState> {
         Units.rotationsToDegrees(rightMotor.getPosition().getValueAsDouble()));
     DogLog.log("Arm/Right/AppliedVoltage", rightMotor.getMotorVoltage().getValueAsDouble());
     DogLog.log("Arm/Right/LowestSeenAngle", lowestSeenAngleRight);
+    DogLog.log(
+        "Arm/Right/GoalAngle",
+        Units.rotationsToDegrees(rightMotor.getClosedLoopReference().getValueAsDouble()));
 
     if (DriverStation.isEnabled() && getState() == ArmState.PRE_MATCH_HOMING) {
       // We are enabled and still in pre match homing
