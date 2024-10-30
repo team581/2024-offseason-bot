@@ -77,14 +77,10 @@ public class RobotManager extends StateMachine<RobotState> {
               CLIMBING_2_HANGING,
               PODIUM_WAITING,
               OUTTAKING,
-              INTAKING_FORWARD_PUSH ->
+              INTAKING_FORWARD_PUSH,
+              AMP_SCORING ->
           currentState;
-      case SPEAKER_SCORING,
-              AMP_SCORING,
-              FEEDING_SHOOTING,
-              PASS_SHOOTING,
-              SUBWOOFER_SCORING,
-              PODIUM_SCORING ->
+      case SPEAKER_SCORING, FEEDING_SHOOTING, PASS_SHOOTING, SUBWOOFER_SCORING, PODIUM_SCORING ->
           queuer.hasNote() ? currentState : RobotState.IDLE_NO_GP;
 
       case SPEAKER_PREPARE_TO_SCORE ->
