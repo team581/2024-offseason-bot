@@ -76,8 +76,7 @@ public class RobotManager extends StateMachine<RobotState> {
               CLIMBING_1_LINEUP,
               CLIMBING_2_HANGING,
               PODIUM_WAITING,
-              OUTTAKING,
-              INTAKING_FORWARD_PUSH ->
+              OUTTAKING ->
           currentState;
       case SPEAKER_SCORING,
               AMP_SCORING,
@@ -108,6 +107,7 @@ public class RobotManager extends StateMachine<RobotState> {
       case UNJAM -> currentState;
       case INTAKING, INTAKE_ASSIST -> queuer.hasNote() ? RobotState.INTAKING_BACK : currentState;
       case INTAKING_BACK -> !queuer.hasNote() ? RobotState.INTAKING_FORWARD_PUSH : currentState;
+      case INTAKING_FORWARD_PUSH -> queuer.atGoal() ? RobotState.IDLE_WITH_GP : currentState;
     };
   }
 
@@ -195,7 +195,7 @@ public class RobotManager extends StateMachine<RobotState> {
         swerve.setSnapToAngle(fieldRelativeAngleToFeedSpot);
       }
       case PASS_PREPARE_TO_SHOOT -> {
-        arm.setState(ArmState.PASS);
+        arm.setState(ArmState.IDLE);
         shooter.setState(ShooterState.PASS);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
@@ -203,7 +203,7 @@ public class RobotManager extends StateMachine<RobotState> {
         swerve.setSnapToAngle(0);
       }
       case PASS_SHOOTING -> {
-        arm.setState(ArmState.PASS);
+        arm.setState(ArmState.IDLE);
         shooter.setState(ShooterState.PASS);
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.SHOOTING);
