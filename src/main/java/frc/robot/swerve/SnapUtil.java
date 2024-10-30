@@ -6,7 +6,7 @@ import frc.robot.imu.ImuSubsystem;
 public class SnapUtil {
 
   public static double getAmpAngle() {
-    return FmsSubsystem.isRedAlliance() ? -90 : (-90.0);
+    return FmsSubsystem.isRedAlliance() ? 90 : (-90.0);
   }
 
   public static double getPodiumAngle() {
