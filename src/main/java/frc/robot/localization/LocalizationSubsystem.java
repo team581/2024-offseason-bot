@@ -1,11 +1,13 @@
 package frc.robot.localization;
 
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,7 +23,14 @@ import frc.robot.vision.VisionSubsystem;
 import java.util.ArrayList;
 import java.util.List;
 
+import dev.doglog.DogLog;
+
 public class LocalizationSubsystem extends StateMachine<LocalizationState> {
+  private static final Vector<N3> VISION_STD_DEVS =
+  VecBuilder.fill(
+      RobotConfig.get().vision().xyStdDev(),
+      RobotConfig.get().vision().xyStdDev(),
+      RobotConfig.get().vision().thetaStdDev());
   private final ImuSubsystem imu;
   private final VisionSubsystem vision;
   private final SwerveSubsystem swerve;
@@ -30,7 +39,6 @@ public class LocalizationSubsystem extends StateMachine<LocalizationState> {
       TimeInterpolatableBuffer.createBuffer(1.5);
   private double lastAddedVisionTimestamp = 0;
   private List<VisionResult> latestResult = new ArrayList<>();
-  private List<VisionResult> latestInterpolatedResult = new ArrayList<>();
 
   public LocalizationSubsystem(ImuSubsystem imu, VisionSubsystem vision, SwerveSubsystem swerve) {
     super(SubsystemPriority.LOCALIZATION, LocalizationState.DEFAULT_STATE);
@@ -57,6 +65,10 @@ public class LocalizationSubsystem extends StateMachine<LocalizationState> {
   @Override
   public void robotPeriodic() {
     super.robotPeriodic();
+    SwerveModulePosition[] modulePositions =
+        swerve.getModulePositions().toArray(new SwerveModulePosition[4]);
+    poseEstimator.update(Rotation2d.fromDegrees(imu.getRobotHeading()), modulePositions);
+
     for (var results : latestResult) {
       Pose2d visionPose = results.pose();
 
@@ -68,17 +80,14 @@ public class LocalizationSubsystem extends StateMachine<LocalizationState> {
         poseEstimator.addVisionMeasurement(
             visionPose,
             visionTimestamp,
-            // TODO: This should just be statically set in the pose estimator, instead of creating a
-            // fresh object every time
-            VecBuilder.fill(
-                RobotConfig.get().vision().xyStdDev(),
-                RobotConfig.get().vision().xyStdDev(),
-                RobotConfig.get().vision().thetaStdDev()));
+            VISION_STD_DEVS);
         lastAddedVisionTimestamp = visionTimestamp;
       }
 
       poseHistory.addSample(Timer.getFPGATimestamp(), poseEstimator.getEstimatedPosition());
     }
+
+      DogLog.log("Localization/EstimatedPose", getPose());
   }
 
   private void resetGyro(double gyroAngle) {

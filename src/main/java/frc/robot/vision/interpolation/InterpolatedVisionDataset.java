@@ -5,42 +5,26 @@ import java.util.List;
 
 /** A interpolated vision data set for each field, for all cameras. */
 public enum InterpolatedVisionDataset {
-  // ALL POINTS ARE NOT TESTED OR VALIDATED
   HOME(
       new CameraDataset(
           List.of(
               new VisionInterpolationData(
-                  new Translation2d(15.2245, 5.522), new Translation2d(15.194, 5.634), "SUBWOOFER"),
+                  new Translation2d(15.2245, 5.522), new Translation2d(15.201, 5.702), "SUBWOOFER"),
               new VisionInterpolationData(
-                  new Translation2d(13.0745, 5.522),
-                  new Translation2d(13.125, 5.722),
-                  "PODIUM_SPEAKER_INTERSECTION"),
-              new VisionInterpolationData(
-                  new Translation2d(11.059, 6.842),
-                  new Translation2d(11.16, 6.845),
-                  "WING_LINE_MIDDLE"),
-              new VisionInterpolationData(
-                  new Translation2d(13.799, 4.202),
-                  new Translation2d(13.905, 4.361),
-                  "FRONT_PODIUM_MIDDLE")),
+                  new Translation2d(12.9895, 5.522),
+                  new Translation2d(12.965, 5.655),
+                  "PODIUM_SPEAKER_INTERSECTION")),
           List.of()),
       new CameraDataset(
           List.of(
               new VisionInterpolationData(
-                  new Translation2d(15.2245, 5.522), new Translation2d(15.194, 5.634), "SUBWOOFER"),
+                  new Translation2d(15.2245, 5.522), new Translation2d(15.202, 5.713), "SUBWOOFER"),
               new VisionInterpolationData(
-                  new Translation2d(13.0745, 5.522),
-                  new Translation2d(13.125, 5.722),
-                  "PODIUM_SPEAKER_INTERSECTION"),
-              new VisionInterpolationData(
-                  new Translation2d(11.059, 6.842),
-                  new Translation2d(11.16, 6.845),
-                  "WING_LINE_MIDDLE"),
-              new VisionInterpolationData(
-                  new Translation2d(13.799, 4.202),
-                  new Translation2d(13.905, 4.361),
-                  "FRONT_PODIUM_MIDDLE")),
+                  new Translation2d(12.9895, 5.522),
+                  new Translation2d(12.87, 5.581),
+                  "PODIUM_SPEAKER_INTERSECTION")),
           List.of())),
+          //bellarmine is not tested
   BELLARMINE(
       new CameraDataset(
           List.of(
