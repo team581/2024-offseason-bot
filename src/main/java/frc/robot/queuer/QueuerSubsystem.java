@@ -19,8 +19,6 @@ public class QueuerSubsystem extends StateMachine<QueuerState> {
   private double goalPosition;
   private final Debouncer debouncer = RobotConfig.get().queuer().debouncer();
 
-  private boolean queuerPushDone = false;
-
   private final PositionVoltage pidRequest = new PositionVoltage(0).withEnableFOC(false);
 
   public QueuerSubsystem(TalonFX motor, DigitalInput sensor) {
@@ -38,7 +36,7 @@ public class QueuerSubsystem extends StateMachine<QueuerState> {
 
   public boolean atGoal() {
     return switch (getState()) {
-      case INTAKING_FORWARD_PUSH -> MathUtil.isNear(goalPosition, motorPosition, 0.2);
+      case INTAKING_FORWARD_PUSH -> MathUtil.isNear(goalPosition, motorPosition, 0.4);
       default -> true;
     };
   }
@@ -76,10 +74,6 @@ public class QueuerSubsystem extends StateMachine<QueuerState> {
     }
   }
 
-  public boolean queuerPushDone() {
-    return queuerPushDone;
-  }
-
   @Override
   public void robotPeriodic() {
     super.robotPeriodic();
@@ -91,5 +85,6 @@ public class QueuerSubsystem extends StateMachine<QueuerState> {
     DogLog.log("Queuer/DebouncedSensor", hasNote());
     DogLog.log("Queuer/atGoal", atGoal());
     DogLog.log("Queuer/goalPosition", goalPosition);
+    DogLog.log("Queuer/motorPosition", motorPosition);
   }
 }

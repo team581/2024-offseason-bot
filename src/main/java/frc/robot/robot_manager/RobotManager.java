@@ -67,19 +67,19 @@ public class RobotManager extends StateMachine<RobotState> {
   @Override
   protected RobotState getNextState(RobotState currentState) {
     return switch (currentState) {
-      case SPEAKER_WAITING,
-              AMP_WAITING,
-              SUBWOOFER_WAITING,
-              FEEDING_WAITING,
-              IDLE_NO_GP,
+      case IDLE_NO_GP,
               IDLE_WITH_GP,
               CLIMBING_1_LINEUP,
               CLIMBING_2_HANGING,
-              PODIUM_WAITING,
               OUTTAKING,
-              
-              AMP_SCORING ->
+              AMP_SCORING,
+              SPEAKER_WAITING,
+              AMP_WAITING,
+              SUBWOOFER_WAITING,
+              FEEDING_WAITING,
+              PODIUM_WAITING ->
           currentState;
+
       case SPEAKER_SCORING, FEEDING_SHOOTING, PASS_SHOOTING, SUBWOOFER_SCORING, PODIUM_SCORING ->
           queuer.hasNote() ? currentState : RobotState.IDLE_NO_GP;
 
@@ -354,28 +354,47 @@ public class RobotManager extends StateMachine<RobotState> {
 
   public void waitAmpRequest() {
     switch (getState()) {
-      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING, AMP_SCORING -> {}
+      case CLIMBING_1_LINEUP,
+          CLIMBING_2_HANGING,
+          AMP_SCORING,
+          INTAKING_BACK,
+          INTAKING_FORWARD_PUSH,
+          INTAKING -> {}
       default -> setStateFromRequest(RobotState.AMP_WAITING);
     }
   }
 
   public void waitSubwooferRequest() {
     switch (getState()) {
-      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING, SPEAKER_SCORING -> {}
+      case CLIMBING_1_LINEUP,
+          CLIMBING_2_HANGING,
+          SPEAKER_SCORING,
+          INTAKING_BACK,
+          INTAKING_FORWARD_PUSH,
+          INTAKING -> {}
       default -> setStateFromRequest(RobotState.SUBWOOFER_WAITING);
     }
   }
 
   public void waitPodiumRequest() {
     switch (getState()) {
-      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING, SPEAKER_SCORING -> {}
+      case CLIMBING_1_LINEUP,
+          CLIMBING_2_HANGING,
+          SPEAKER_SCORING,
+          INTAKING_BACK,
+          INTAKING_FORWARD_PUSH,
+          INTAKING -> {}
       default -> setStateFromRequest(RobotState.PODIUM_WAITING);
     }
   }
 
   public void waitSpeakerRequest() {
     switch (getState()) {
-      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
+      case CLIMBING_1_LINEUP,
+          CLIMBING_2_HANGING,
+          INTAKING_BACK,
+          INTAKING_FORWARD_PUSH,
+          INTAKING -> {}
       default -> setStateFromRequest(RobotState.SPEAKER_WAITING);
     }
   }
@@ -440,7 +459,11 @@ public class RobotManager extends StateMachine<RobotState> {
 
   public void preparePassRequest() {
     switch (getState()) {
-      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
+      case CLIMBING_1_LINEUP,
+          CLIMBING_2_HANGING,
+          INTAKING_BACK,
+          INTAKING_FORWARD_PUSH,
+          INTAKING -> {}
       default -> setStateFromRequest(RobotState.PASS_PREPARE_TO_SHOOT);
     }
   }
@@ -465,28 +488,44 @@ public class RobotManager extends StateMachine<RobotState> {
 
   public void prepareSpeakerRequest() {
     switch (getState()) {
-      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
+      case CLIMBING_1_LINEUP,
+          CLIMBING_2_HANGING,
+          INTAKING_BACK,
+          INTAKING_FORWARD_PUSH,
+          INTAKING -> {}
       default -> setStateFromRequest(RobotState.SPEAKER_PREPARE_TO_SCORE);
     }
   }
 
   public void prepareAmpRequest() {
     switch (getState()) {
-      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
+      case CLIMBING_1_LINEUP,
+          CLIMBING_2_HANGING,
+          INTAKING_BACK,
+          INTAKING_FORWARD_PUSH,
+          INTAKING -> {}
       default -> setStateFromRequest(RobotState.AMP_PREPARE_TO_SCORE);
     }
   }
 
   public void prepareFeedRequest() {
     switch (getState()) {
-      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
+      case CLIMBING_1_LINEUP,
+          CLIMBING_2_HANGING,
+          INTAKING_BACK,
+          INTAKING_FORWARD_PUSH,
+          INTAKING -> {}
       default -> setStateFromRequest(RobotState.FEEDING_PREPARE_TO_SHOOT);
     }
   }
 
   public void waitFeedRequest() {
     switch (getState()) {
-      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
+      case CLIMBING_1_LINEUP,
+          CLIMBING_2_HANGING,
+          INTAKING_BACK,
+          INTAKING_FORWARD_PUSH,
+          INTAKING -> {}
       default -> setStateFromRequest(RobotState.FEEDING_WAITING);
     }
   }
@@ -507,14 +546,22 @@ public class RobotManager extends StateMachine<RobotState> {
 
   public void prepareSubwooferRequest() {
     switch (getState()) {
-      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
+      case CLIMBING_1_LINEUP,
+          CLIMBING_2_HANGING,
+          INTAKING_BACK,
+          INTAKING_FORWARD_PUSH,
+          INTAKING -> {}
       default -> setStateFromRequest(RobotState.SUBWOOFER_PREPARE_TO_SCORE);
     }
   }
 
   public void preparePodiumRequest() {
     switch (getState()) {
-      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
+      case CLIMBING_1_LINEUP,
+          CLIMBING_2_HANGING,
+          INTAKING_BACK,
+          INTAKING_FORWARD_PUSH,
+          INTAKING -> {}
       default -> setStateFromRequest(RobotState.PODIUM_PREPARE_TO_SCORE);
     }
   }
