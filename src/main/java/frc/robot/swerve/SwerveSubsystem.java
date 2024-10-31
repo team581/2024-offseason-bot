@@ -34,7 +34,7 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
   private static final Rotation2d TELEOP_MAX_ANGULAR_RATE = Rotation2d.fromRotations(2);
 
   private static final double leftXDeadband = 0.05;
-  private static final double rightXDeadband = 0.05;
+  private static final double rightXDeadband = 0.07;
   private static final double leftYDeadband = 0.05;
 
   public static final Translation2d FRONT_LEFT_LOCATION =

@@ -41,7 +41,7 @@ class CompConfig {
       new RobotConfig(
           "competition",
           new SwerveConfig(
-              new PhoenixPIDController(25, 0, 2),
+              new PhoenixPIDController(10, 0, 1),
               true,
               true,
               true,
@@ -190,10 +190,10 @@ class CompConfig {
                           .withMotionMagicCruiseVelocity(3.0)
                           .withMotionMagicJerk(100)),
               feedSpotDistanceToAngle -> {
-                feedSpotDistanceToAngle.put(123.0, 321.0);
+                feedSpotDistanceToAngle.put(0.0, 0.0);
               },
               speakerDistanceToAngle -> {
-                speakerDistanceToAngle.put(123.0, 321.0);
+                speakerDistanceToAngle.put(52.5, -20.0);
               },
               -77.0,
               87.0),
