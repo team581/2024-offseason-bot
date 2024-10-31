@@ -96,6 +96,12 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "Red Amp 5 Piece.11"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "speakerShot"
