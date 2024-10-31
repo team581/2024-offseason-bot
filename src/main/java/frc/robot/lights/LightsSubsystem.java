@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.robot_manager.RobotManager;
+import frc.robot.robot_manager.RobotState;
 import frc.robot.util.scheduling.LifecycleSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.vision.LimelightHelpers;
@@ -21,6 +22,9 @@ public class LightsSubsystem extends LifecycleSubsystem {
   private final RobotManager robotManager;
   private static final double FAST_BLINK_DURATION = 0.08;
   private static final double SLOW_BLINK_DURATION = 0.25;
+
+  private RobotState previousState = RobotState.IDLE_NO_GP;
+
 
   public LightsSubsystem(RobotManager robotManager, CANdle candle) {
     super(SubsystemPriority.LIGHTS);
@@ -122,5 +126,6 @@ public class LightsSubsystem extends LifecycleSubsystem {
         candle.setLEDs(color8Bit.red, color8Bit.green, color8Bit.blue);
       }
     }
+    previousState=robotManager.getState();
   }
 }
