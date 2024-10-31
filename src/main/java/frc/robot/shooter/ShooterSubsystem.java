@@ -43,24 +43,24 @@ public class ShooterSubsystem extends StateMachine<ShooterState> {
   public boolean atGoal() {
     return switch (getState()) {
       case SUBWOOFER_SHOT ->
-          MathUtil.isNear(ShooterRpms.SUBWOOFER, topMotorRpm, 50)
+          MathUtil.isNear(ShooterRpms.SUBWOOFER, topMotorRpm, 150)
               && MathUtil.isNear(ShooterRpms.SUBWOOFER, bottomMotorRpm, 50);
       case IDLE_WARMUP, IDLE_STOPPED -> true;
       case PODIUM_SHOT ->
-          MathUtil.isNear(ShooterRpms.PODIUM, topMotorRpm, 50)
-              && MathUtil.isNear(ShooterRpms.PODIUM, bottomMotorRpm, 50);
+          MathUtil.isNear(ShooterRpms.PODIUM, topMotorRpm, 150)
+              && MathUtil.isNear(ShooterRpms.PODIUM, bottomMotorRpm, 150);
       case DROP ->
-          MathUtil.isNear(ShooterRpms.DROP, topMotorRpm, 50)
-              && MathUtil.isNear(ShooterRpms.DROP, bottomMotorRpm, 50);
+          MathUtil.isNear(ShooterRpms.DROP, topMotorRpm, 150)
+              && MathUtil.isNear(ShooterRpms.DROP, bottomMotorRpm, 150);
       case FEEDING ->
-          MathUtil.isNear(feedSpotDistanceToRpm.get(distanceToFeedSpot), bottomMotorRpm, 50)
-              && MathUtil.isNear(feedSpotDistanceToRpm.get(distanceToFeedSpot), topMotorRpm, 50);
+          MathUtil.isNear(feedSpotDistanceToRpm.get(distanceToFeedSpot), bottomMotorRpm, 150)
+              && MathUtil.isNear(feedSpotDistanceToRpm.get(distanceToFeedSpot), topMotorRpm, 150);
       case SPEAKER_SHOT ->
-          MathUtil.isNear(speakerDistanceToRpm.get(distanceToSpeaker), bottomMotorRpm, 50)
-              && MathUtil.isNear(speakerDistanceToRpm.get(distanceToSpeaker), topMotorRpm, 50);
+          MathUtil.isNear(speakerDistanceToRpm.get(distanceToSpeaker), bottomMotorRpm, 150)
+              && MathUtil.isNear(speakerDistanceToRpm.get(distanceToSpeaker), topMotorRpm, 150);
       case PASS ->
-          MathUtil.isNear(ShooterRpms.PASS, bottomMotorRpm, 50)
-              && MathUtil.isNear(ShooterRpms.PASS, topMotorRpm, 50);
+          MathUtil.isNear(ShooterRpms.PASS, bottomMotorRpm, 150)
+              && MathUtil.isNear(ShooterRpms.PASS, topMotorRpm, 150);
     };
   }
 

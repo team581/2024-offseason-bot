@@ -193,7 +193,7 @@ class CompConfig {
                 feedSpotDistanceToAngle.put(0.0, 0.0);
               },
               speakerDistanceToAngle -> {
-                speakerDistanceToAngle.put(0.0, 0.0);
+                speakerDistanceToAngle.put(52.5, -20.0);
               },
               -77.0,
               87.0),
