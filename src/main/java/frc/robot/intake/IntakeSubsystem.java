@@ -19,6 +19,35 @@ public class IntakeSubsystem extends StateMachine<IntakeState> {
     mainMotor.getConfigurator().apply(RobotConfig.get().intake().mainMotorConfig());
 
     RobotConfig.get().intake().centeringMotorConfig().accept(centeringMotor);
+
+    createHandler(IntakeState.IDLE)
+        .onEnter(
+            () -> {
+              mainMotor.disable();
+              centeringMotor.disable();
+            });
+    createHandler(IntakeState.INTAKING)
+        .onEnter(
+            () -> {
+              mainMotor.setVoltage(12);
+              centeringMotor.setVoltage(8);
+            });
+    createHandler(IntakeState.OUTTAKING)
+        .onEnter(
+            () -> {
+              mainMotor.setVoltage(-6);
+              centeringMotor.setVoltage(-10);
+            });
+    createHandler(IntakeState.INTAKING_BACK)
+        .onEnter(
+            () -> {
+              mainMotor.setVoltage(-1);
+            });
+    createHandler(IntakeState.INTAKING_FORWARD_PUSH)
+        .onEnter(
+            () -> {
+              mainMotor.setVoltage(1);
+            });
   }
 
   public void setState(IntakeState newState) {
@@ -27,37 +56,6 @@ public class IntakeSubsystem extends StateMachine<IntakeState> {
 
   public double getIntakeRotations() {
     return mainMotor.getRotorPosition().getValueAsDouble();
-  }
-
-  @Override
-  protected IntakeState getNextState(IntakeState currentState) {
-    return currentState;
-  }
-
-  @Override
-  protected void afterTransition(IntakeState newState) {
-    switch (newState) {
-      case IDLE -> {
-        mainMotor.disable();
-        centeringMotor.disable();
-      }
-
-      case INTAKING -> {
-        mainMotor.setVoltage(12);
-        centeringMotor.setVoltage(8);
-      }
-
-      case OUTTAKING -> {
-        mainMotor.setVoltage(-6);
-        centeringMotor.setVoltage(-10);
-      }
-      case INTAKING_BACK -> {
-        mainMotor.setVoltage(-1);
-      }
-      case INTAKING_FORWARD_PUSH -> {
-        mainMotor.setVoltage(1);
-      }
-    }
   }
 
   @Override

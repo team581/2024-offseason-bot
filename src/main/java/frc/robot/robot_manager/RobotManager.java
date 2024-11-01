@@ -54,6 +54,324 @@ public class RobotManager extends StateMachine<RobotState> {
     this.intake = intake;
     this.queuer = queuer;
     this.swerve = swerve;
+
+    // Idle
+    createHandler(RobotState.IDLE_NO_GP)
+        .onEnter(
+            () -> {
+              arm.setState(ArmState.IDLE);
+              shooter.setState(ShooterState.IDLE_STOPPED);
+              intake.setState(IntakeState.IDLE);
+              queuer.setState(QueuerState.IDLE);
+              swerve.setSnapsEnabled(false);
+              swerve.setSnapToAngle(0);
+            });
+    createHandler(RobotState.IDLE_WITH_GP)
+        .onEnter(
+            () -> {
+              arm.setState(ArmState.IDLE);
+              shooter.setState(ShooterState.IDLE_WARMUP);
+              intake.setState(IntakeState.IDLE);
+              queuer.setState(QueuerState.IDLE);
+              swerve.setSnapsEnabled(false);
+              swerve.setSnapToAngle(0);
+            });
+
+    // Subwoofer
+    createHandler(RobotState.SUBWOOFER_WAITING)
+        .onEnter(
+            () -> {
+              arm.setState(ArmState.SUBWOOFER_SHOT);
+              shooter.setState(ShooterState.SUBWOOFER_SHOT);
+              intake.setState(IntakeState.IDLE);
+              queuer.setState(QueuerState.IDLE);
+              swerve.setSnapsEnabled(true);
+              swerve.setSnapToAngle(SnapUtil.getSubwooferAngle());
+            });
+    createHandler(RobotState.SUBWOOFER_PREPARE_TO_SCORE)
+        .onEnter(RobotState.SUBWOOFER_WAITING)
+        .withTransitions(
+            () -> shooter.atGoal() && arm.atGoal() ? RobotState.SUBWOOFER_SCORING : null);
+    createHandler(RobotState.SUBWOOFER_SCORING)
+        .onEnter(
+            () -> {
+              arm.setState(ArmState.SUBWOOFER_SHOT);
+              shooter.setState(ShooterState.SUBWOOFER_SHOT);
+              intake.setState(IntakeState.IDLE);
+              queuer.setState(QueuerState.SHOOTING);
+              swerve.setSnapsEnabled(true);
+              swerve.setSnapToAngle(SnapUtil.getSubwooferAngle());
+            })
+        .withTransitions(() -> queuer.hasNote() ? null : RobotState.IDLE_NO_GP);
+
+    // Podium
+    createHandler(RobotState.PODIUM_WAITING)
+        .onEnter(
+            () -> {
+              arm.setState(ArmState.PODIUM_SHOT);
+              shooter.setState(ShooterState.PODIUM_SHOT);
+              intake.setState(IntakeState.IDLE);
+              queuer.setState(QueuerState.IDLE);
+              swerve.setSnapsEnabled(true);
+              swerve.setSnapToAngle(SnapUtil.getPodiumAngle());
+            });
+    createHandler(RobotState.PODIUM_PREPARE_TO_SCORE)
+        .onEnter(RobotState.PODIUM_WAITING)
+        .withTransitions(() -> shooter.atGoal() && arm.atGoal() ? RobotState.PODIUM_SCORING : null);
+    createHandler(RobotState.PODIUM_SCORING)
+        .onEnter(
+            () -> {
+              arm.setState(ArmState.PODIUM_SHOT);
+              shooter.setState(ShooterState.PODIUM_SHOT);
+              intake.setState(IntakeState.IDLE);
+              queuer.setState(QueuerState.SHOOTING);
+              swerve.setSnapsEnabled(true);
+              swerve.setSnapToAngle(SnapUtil.getPodiumAngle());
+            })
+        .withTransitions(() -> queuer.hasNote() ? null : RobotState.IDLE_NO_GP);
+
+    // Speaker
+    createHandler(RobotState.SPEAKER_PREPARE_TO_SCORE)
+        .onEnter(
+            () -> {
+              arm.setState(ArmState.SPEAKER_SHOT);
+              shooter.setState(ShooterState.SPEAKER_SHOT);
+              intake.setState(IntakeState.IDLE);
+              queuer.setState(QueuerState.IDLE);
+              swerve.setSnapsEnabled(true);
+              swerve.setSnapToAngle(fieldRelativeAngleToSpeaker);
+            })
+        .withPeriodic(
+            () -> {
+              shooter.setDistanceToSpeaker(distanceToSpeaker);
+              arm.setDistanceToSpeaker(distanceToSpeaker);
+              swerve.setSnapToAngle(fieldRelativeAngleToSpeaker);
+            })
+        .withTransitions(
+            () ->
+                (shooter.atGoal() && arm.atGoal())
+                        && (DriverStation.isAutonomous() || confirmShotActive == true)
+                    ? RobotState.SPEAKER_SCORING
+                    : null);
+    createHandler(RobotState.SPEAKER_WAITING)
+        .onEnter(RobotState.SPEAKER_PREPARE_TO_SCORE)
+        .withPeriodic(RobotState.SPEAKER_PREPARE_TO_SCORE);
+    createHandler(RobotState.SPEAKER_SCORING)
+        .onEnter(
+            () -> {
+              arm.setState(ArmState.SPEAKER_SHOT);
+              shooter.setState(ShooterState.SPEAKER_SHOT);
+              intake.setState(IntakeState.IDLE);
+              queuer.setState(QueuerState.SHOOTING);
+              swerve.setSnapsEnabled(true);
+              swerve.setSnapToAngle(fieldRelativeAngleToSpeaker);
+            })
+        .withPeriodic(RobotState.SPEAKER_PREPARE_TO_SCORE)
+        .withTransitions(() -> queuer.hasNote() ? null : RobotState.IDLE_NO_GP);
+
+    // Amp
+    createHandler(RobotState.AMP_PREPARE_TO_SCORE)
+        .onEnter(
+            () -> {
+              arm.setState(ArmState.AMP);
+              shooter.setState(ShooterState.IDLE_WARMUP);
+              intake.setState(IntakeState.IDLE);
+              queuer.setState(QueuerState.IDLE);
+              swerve.setSnapsEnabled(true);
+              swerve.setSnapToAngle(SnapUtil.getAmpAngle());
+            })
+        .withTransitions(() -> shooter.atGoal() && arm.atGoal() ? RobotState.AMP_SCORING : null);
+    createHandler(RobotState.AMP_WAITING).onEnter(RobotState.AMP_PREPARE_TO_SCORE);
+    createHandler(RobotState.AMP_SCORING)
+        .onEnter(
+            () -> {
+              arm.setState(ArmState.AMP);
+              shooter.setState(ShooterState.IDLE_WARMUP);
+              intake.setState(IntakeState.IDLE);
+              queuer.setState(QueuerState.AMPING);
+              swerve.setSnapsEnabled(true);
+              swerve.setSnapToAngle(SnapUtil.getAmpAngle());
+            })
+        .withTransitions(() -> queuer.hasNote() ? null : RobotState.IDLE_NO_GP);
+
+    // Feeding
+    createHandler(RobotState.FEEDING_PREPARE_TO_SHOOT)
+        .onEnter(
+            () -> {
+              arm.setState(ArmState.FEEDING);
+              shooter.setState(ShooterState.FEEDING);
+              intake.setState(IntakeState.IDLE);
+              queuer.setState(QueuerState.IDLE);
+              swerve.setSnapsEnabled(true);
+              swerve.setSnapToAngle(fieldRelativeAngleToFeedSpot);
+            })
+        .withPeriodic(
+            () -> {
+              shooter.setDistanceToFeedSpot(distanceToFeedSpot);
+              arm.setDistanceToFeedSpot(distanceToFeedSpot);
+            });
+    createHandler(RobotState.FEEDING_WAITING)
+        .onEnter(RobotState.FEEDING_PREPARE_TO_SHOOT)
+        .withPeriodic(RobotState.FEEDING_PREPARE_TO_SHOOT)
+        .withTransitions(
+            () -> shooter.atGoal() && arm.atGoal() ? RobotState.FEEDING_SHOOTING : null);
+    createHandler(RobotState.FEEDING_SHOOTING)
+        .onEnter(
+            () -> {
+              arm.setState(ArmState.FEEDING);
+              shooter.setState(ShooterState.FEEDING);
+              intake.setState(IntakeState.IDLE);
+              queuer.setState(QueuerState.SHOOTING);
+              swerve.setSnapsEnabled(true);
+              swerve.setSnapToAngle(fieldRelativeAngleToFeedSpot);
+            })
+        .withPeriodic(RobotState.FEEDING_PREPARE_TO_SHOOT)
+        .withTransitions(() -> queuer.hasNote() ? null : RobotState.IDLE_NO_GP);
+
+    // Passing
+    createHandler(RobotState.PASS_PREPARE_TO_SHOOT)
+        .onEnter(
+            () -> {
+              arm.setState(ArmState.IDLE);
+              shooter.setState(ShooterState.PASS);
+              intake.setState(IntakeState.IDLE);
+              queuer.setState(QueuerState.IDLE);
+              swerve.setSnapsEnabled(false);
+              swerve.setSnapToAngle(0);
+            })
+        .withTransitions(() -> shooter.atGoal() && arm.atGoal() ? RobotState.PASS_SHOOTING : null);
+    createHandler(RobotState.PASS_SHOOTING)
+        .onEnter(
+            () -> {
+              arm.setState(ArmState.IDLE);
+              shooter.setState(ShooterState.PASS);
+              intake.setState(IntakeState.IDLE);
+              queuer.setState(QueuerState.SHOOTING);
+              swerve.setSnapsEnabled(false);
+              swerve.setSnapToAngle(0);
+            })
+        .withTransitions(() -> queuer.hasNote() ? null : RobotState.IDLE_NO_GP);
+
+    // Unjam
+    createHandler(RobotState.UNJAM)
+        .onEnter(
+            () -> {
+              arm.setState(ArmState.AMP);
+              shooter.setState(ShooterState.PASS);
+              intake.setState(IntakeState.OUTTAKING);
+              queuer.setState(QueuerState.OUTTAKING);
+              swerve.setSnapsEnabled(false);
+              swerve.setSnapToAngle(0);
+            });
+
+    // Intaking
+    createHandler(RobotState.INTAKING)
+        .onEnter(
+            () -> {
+              arm.setState(ArmState.IDLE);
+              shooter.setState(ShooterState.IDLE_STOPPED);
+              intake.setState(IntakeState.INTAKING);
+              queuer.setState(QueuerState.INTAKING);
+              swerve.setSnapsEnabled(false);
+              swerve.setSnapToAngle(0);
+            })
+        .withPeriodic(
+            () -> {
+              if (arm.atGoal()) {
+                intake.setState(IntakeState.INTAKING);
+              } else {
+                intake.setState(IntakeState.IDLE);
+              }
+            })
+        .withTransitions(() -> queuer.hasNote() ? RobotState.INTAKING_BACK : null);
+    createHandler(RobotState.INTAKE_ASSIST)
+        .onEnter(
+            () -> {
+              arm.setState(ArmState.IDLE);
+              shooter.setState(ShooterState.IDLE_STOPPED);
+              intake.setState(IntakeState.INTAKING);
+              queuer.setState(QueuerState.INTAKING);
+              // We don't use the setSnaps here, since intake assist is a separate state
+              if (DriverStation.isTeleop()) {
+                swerve.setState(SwerveState.INTAKE_ASSIST_TELEOP);
+              } else {
+                swerve.setState(SwerveState.INTAKE_ASSIST_AUTO);
+              }
+            })
+        .withPeriodic(RobotState.INTAKING)
+        .withTransitions(RobotState.INTAKING);
+    createHandler(RobotState.INTAKING_BACK)
+        .onEnter(
+            () -> {
+              arm.setState(ArmState.IDLE);
+              shooter.setState(ShooterState.IDLE_STOPPED);
+              intake.setState(IntakeState.INTAKING_BACK);
+              queuer.setState(QueuerState.INTAKING_BACK);
+              swerve.setSnapsEnabled(false);
+              swerve.setSnapToAngle(0);
+            })
+        .withPeriodic(
+            () -> {
+              if (arm.atGoal()) {
+                intake.setState(IntakeState.INTAKING_BACK);
+              } else {
+                intake.setState(IntakeState.IDLE);
+              }
+            })
+        .withTransitions(() -> queuer.hasNote() ? null : RobotState.INTAKING_FORWARD_PUSH);
+    createHandler(RobotState.INTAKING_FORWARD_PUSH)
+        .onEnter(
+            () -> {
+              arm.setState(ArmState.IDLE);
+              shooter.setState(ShooterState.IDLE_STOPPED);
+              intake.setState(IntakeState.INTAKING_FORWARD_PUSH);
+              queuer.setState(QueuerState.INTAKING_FORWARD_PUSH);
+              swerve.setSnapsEnabled(false);
+              swerve.setSnapToAngle(0);
+            })
+        .withPeriodic(
+            () -> {
+              if (arm.atGoal()) {
+                intake.setState(IntakeState.INTAKING_FORWARD_PUSH);
+              } else {
+                intake.setState(IntakeState.IDLE);
+              }
+            })
+        .withTransitions(() -> queuer.hasNote() ? RobotState.IDLE_WITH_GP : null);
+
+    // Outtake
+    createHandler(RobotState.OUTTAKING)
+        .onEnter(
+            () -> {
+              arm.setState(ArmState.IDLE);
+              shooter.setState(ShooterState.IDLE_STOPPED);
+              intake.setState(IntakeState.OUTTAKING);
+              queuer.setState(QueuerState.OUTTAKING);
+              swerve.setSnapsEnabled(false);
+              swerve.setSnapToAngle(0);
+            });
+
+    // Climbing
+    createHandler(RobotState.CLIMBING_1_LINEUP)
+        .onEnter(
+            () -> {
+              arm.setState(ArmState.CLIMBING_1_LINEUP);
+              shooter.setState(ShooterState.IDLE_STOPPED);
+              intake.setState(IntakeState.IDLE);
+              queuer.setState(QueuerState.IDLE);
+              swerve.setSnapsEnabled(true);
+              swerve.setSnapToAngle(SnapUtil.getClimbingAngle(imu));
+            });
+    createHandler(RobotState.CLIMBING_2_HANGING)
+        .onEnter(
+            () -> {
+              arm.setState(ArmState.CLIMBING_2_HANGING);
+              shooter.setState(ShooterState.IDLE_STOPPED);
+              intake.setState(IntakeState.IDLE);
+              queuer.setState(QueuerState.IDLE);
+              swerve.setSnapsEnabled(false);
+              swerve.setSnapToAngle(0);
+            });
   }
 
   @Override
@@ -62,276 +380,6 @@ public class RobotManager extends StateMachine<RobotState> {
         localization.getFieldRelativeAngleToPose(FieldUtil.getSpeakerPose());
     fieldRelativeAngleToFeedSpot =
         localization.getFieldRelativeAngleToPose(FieldUtil.getFeedSpotPose());
-  }
-
-  @Override
-  protected RobotState getNextState(RobotState currentState) {
-    return switch (currentState) {
-      case IDLE_NO_GP,
-              IDLE_WITH_GP,
-              CLIMBING_1_LINEUP,
-              CLIMBING_2_HANGING,
-              OUTTAKING,
-              AMP_SCORING,
-              SPEAKER_WAITING,
-              AMP_WAITING,
-              SUBWOOFER_WAITING,
-              FEEDING_WAITING,
-              PODIUM_WAITING ->
-          currentState;
-
-      case SPEAKER_SCORING, FEEDING_SHOOTING, PASS_SHOOTING, SUBWOOFER_SCORING, PODIUM_SCORING ->
-          queuer.hasNote() ? currentState : RobotState.IDLE_NO_GP;
-
-      case SPEAKER_PREPARE_TO_SCORE ->
-          (shooter.atGoal() && arm.atGoal())
-                  && (DriverStation.isAutonomous() || confirmShotActive == true)
-              ? RobotState.SPEAKER_SCORING
-              : currentState;
-
-      case AMP_PREPARE_TO_SCORE ->
-          shooter.atGoal() && arm.atGoal() ? RobotState.AMP_SCORING : currentState;
-
-      case FEEDING_PREPARE_TO_SHOOT ->
-          shooter.atGoal() && arm.atGoal() ? RobotState.FEEDING_SHOOTING : currentState;
-      case PASS_PREPARE_TO_SHOOT ->
-          shooter.atGoal() && arm.atGoal() ? RobotState.PASS_SHOOTING : currentState;
-      case SUBWOOFER_PREPARE_TO_SCORE ->
-          shooter.atGoal() && arm.atGoal() ? RobotState.SUBWOOFER_SCORING : currentState;
-      case PODIUM_PREPARE_TO_SCORE ->
-          shooter.atGoal() && arm.atGoal() ? RobotState.PODIUM_SCORING : currentState;
-
-      case UNJAM -> currentState;
-      case INTAKING, INTAKE_ASSIST -> queuer.hasNote() ? RobotState.INTAKING_BACK : currentState;
-      case INTAKING_BACK -> !queuer.hasNote() ? RobotState.INTAKING_FORWARD_PUSH : currentState;
-      case INTAKING_FORWARD_PUSH -> queuer.atGoal() ? RobotState.IDLE_WITH_GP : currentState;
-    };
-  }
-
-  @Override
-  protected void afterTransition(RobotState newState) {
-    switch (newState) {
-      case SUBWOOFER_PREPARE_TO_SCORE, SUBWOOFER_WAITING -> {
-        arm.setState(ArmState.SUBWOOFER_SHOT);
-        shooter.setState(ShooterState.SUBWOOFER_SHOT);
-        intake.setState(IntakeState.IDLE);
-        queuer.setState(QueuerState.IDLE);
-        swerve.setSnapsEnabled(true);
-        swerve.setSnapToAngle(SnapUtil.getSubwooferAngle());
-      }
-      case PODIUM_PREPARE_TO_SCORE, PODIUM_WAITING -> {
-        arm.setState(ArmState.PODIUM_SHOT);
-        shooter.setState(ShooterState.PODIUM_SHOT);
-        intake.setState(IntakeState.IDLE);
-        queuer.setState(QueuerState.IDLE);
-        swerve.setSnapsEnabled(true);
-        swerve.setSnapToAngle(SnapUtil.getPodiumAngle());
-      }
-      case PODIUM_SCORING -> {
-        arm.setState(ArmState.PODIUM_SHOT);
-        shooter.setState(ShooterState.PODIUM_SHOT);
-        intake.setState(IntakeState.IDLE);
-        queuer.setState(QueuerState.SHOOTING);
-        swerve.setSnapsEnabled(true);
-        swerve.setSnapToAngle(SnapUtil.getPodiumAngle());
-      }
-      case SUBWOOFER_SCORING -> {
-        arm.setState(ArmState.SUBWOOFER_SHOT);
-        shooter.setState(ShooterState.SUBWOOFER_SHOT);
-        intake.setState(IntakeState.IDLE);
-        queuer.setState(QueuerState.SHOOTING);
-        swerve.setSnapsEnabled(true);
-        swerve.setSnapToAngle(SnapUtil.getSubwooferAngle());
-      }
-      case SPEAKER_PREPARE_TO_SCORE, SPEAKER_WAITING -> {
-        arm.setState(ArmState.SPEAKER_SHOT);
-        shooter.setState(ShooterState.SPEAKER_SHOT);
-        intake.setState(IntakeState.IDLE);
-        queuer.setState(QueuerState.IDLE);
-        swerve.setSnapsEnabled(true);
-        swerve.setSnapToAngle(fieldRelativeAngleToSpeaker);
-      }
-      case SPEAKER_SCORING -> {
-        arm.setState(ArmState.SPEAKER_SHOT);
-        shooter.setState(ShooterState.SPEAKER_SHOT);
-        intake.setState(IntakeState.IDLE);
-        queuer.setState(QueuerState.SHOOTING);
-        swerve.setSnapsEnabled(true);
-        swerve.setSnapToAngle(fieldRelativeAngleToSpeaker);
-      }
-      case AMP_PREPARE_TO_SCORE, AMP_WAITING -> {
-        arm.setState(ArmState.AMP);
-        shooter.setState(ShooterState.IDLE_WARMUP);
-        intake.setState(IntakeState.IDLE);
-        queuer.setState(QueuerState.IDLE);
-        swerve.setSnapsEnabled(true);
-        swerve.setSnapToAngle(SnapUtil.getAmpAngle());
-      }
-      case AMP_SCORING -> {
-        arm.setState(ArmState.AMP);
-        shooter.setState(ShooterState.IDLE_WARMUP);
-        intake.setState(IntakeState.IDLE);
-        queuer.setState(QueuerState.AMPING);
-        swerve.setSnapsEnabled(true);
-        swerve.setSnapToAngle(SnapUtil.getAmpAngle());
-      }
-      case FEEDING_PREPARE_TO_SHOOT, FEEDING_WAITING -> {
-        arm.setState(ArmState.FEEDING);
-        shooter.setState(ShooterState.FEEDING);
-        intake.setState(IntakeState.IDLE);
-        queuer.setState(QueuerState.IDLE);
-        swerve.setSnapsEnabled(true);
-        swerve.setSnapToAngle(fieldRelativeAngleToFeedSpot);
-      }
-      case FEEDING_SHOOTING -> {
-        arm.setState(ArmState.FEEDING);
-        shooter.setState(ShooterState.FEEDING);
-        intake.setState(IntakeState.IDLE);
-        queuer.setState(QueuerState.SHOOTING);
-        swerve.setSnapsEnabled(true);
-        swerve.setSnapToAngle(fieldRelativeAngleToFeedSpot);
-      }
-      case PASS_PREPARE_TO_SHOOT -> {
-        arm.setState(ArmState.IDLE);
-        shooter.setState(ShooterState.PASS);
-        intake.setState(IntakeState.IDLE);
-        queuer.setState(QueuerState.IDLE);
-        swerve.setSnapsEnabled(false);
-        swerve.setSnapToAngle(0);
-      }
-      case PASS_SHOOTING -> {
-        arm.setState(ArmState.IDLE);
-        shooter.setState(ShooterState.PASS);
-        intake.setState(IntakeState.IDLE);
-        queuer.setState(QueuerState.SHOOTING);
-        swerve.setSnapsEnabled(false);
-        swerve.setSnapToAngle(0);
-      }
-      case UNJAM -> {
-        arm.setState(ArmState.AMP);
-        shooter.setState(ShooterState.PASS);
-        intake.setState(IntakeState.OUTTAKING);
-        queuer.setState(QueuerState.OUTTAKING);
-        swerve.setSnapsEnabled(false);
-        swerve.setSnapToAngle(0);
-      }
-      case INTAKING -> {
-        arm.setState(ArmState.IDLE);
-        shooter.setState(ShooterState.IDLE_STOPPED);
-        intake.setState(IntakeState.INTAKING);
-        queuer.setState(QueuerState.INTAKING);
-        swerve.setSnapsEnabled(false);
-        swerve.setSnapToAngle(0);
-      }
-      case INTAKING_BACK -> {
-        arm.setState(ArmState.IDLE);
-        shooter.setState(ShooterState.IDLE_STOPPED);
-        intake.setState(IntakeState.INTAKING_BACK);
-        queuer.setState(QueuerState.INTAKING_BACK);
-        swerve.setSnapsEnabled(false);
-        swerve.setSnapToAngle(0);
-      }
-      case INTAKING_FORWARD_PUSH -> {
-        arm.setState(ArmState.IDLE);
-        shooter.setState(ShooterState.IDLE_STOPPED);
-        intake.setState(IntakeState.INTAKING_FORWARD_PUSH);
-        queuer.setState(QueuerState.INTAKING_FORWARD_PUSH);
-        swerve.setSnapsEnabled(false);
-        swerve.setSnapToAngle(0);
-      }
-      case INTAKE_ASSIST -> {
-        arm.setState(ArmState.IDLE);
-        shooter.setState(ShooterState.IDLE_STOPPED);
-        intake.setState(IntakeState.INTAKING);
-        queuer.setState(QueuerState.INTAKING);
-        // We don't use the setSnaps here, since intake assist is a separate state
-        if (DriverStation.isTeleop()) {
-          swerve.setState(SwerveState.INTAKE_ASSIST_TELEOP);
-        } else {
-          swerve.setState(SwerveState.INTAKE_ASSIST_AUTO);
-        }
-      }
-      case OUTTAKING -> {
-        arm.setState(ArmState.IDLE);
-        shooter.setState(ShooterState.IDLE_STOPPED);
-        intake.setState(IntakeState.OUTTAKING);
-        queuer.setState(QueuerState.OUTTAKING);
-        swerve.setSnapsEnabled(false);
-        swerve.setSnapToAngle(0);
-      }
-      case CLIMBING_1_LINEUP -> {
-        arm.setState(ArmState.CLIMBING_1_LINEUP);
-        shooter.setState(ShooterState.IDLE_STOPPED);
-        intake.setState(IntakeState.IDLE);
-        queuer.setState(QueuerState.IDLE);
-        swerve.setSnapsEnabled(true);
-        swerve.setSnapToAngle(SnapUtil.getClimbingAngle(imu));
-      }
-      case CLIMBING_2_HANGING -> {
-        arm.setState(ArmState.CLIMBING_2_HANGING);
-        shooter.setState(ShooterState.IDLE_STOPPED);
-        intake.setState(IntakeState.IDLE);
-        queuer.setState(QueuerState.IDLE);
-        swerve.setSnapsEnabled(false);
-        swerve.setSnapToAngle(0);
-      }
-      case IDLE_NO_GP -> {
-        arm.setState(ArmState.IDLE);
-        shooter.setState(ShooterState.IDLE_STOPPED);
-        intake.setState(IntakeState.IDLE);
-        queuer.setState(QueuerState.IDLE);
-        swerve.setSnapsEnabled(false);
-        swerve.setSnapToAngle(0);
-      }
-      case IDLE_WITH_GP -> {
-        arm.setState(ArmState.IDLE);
-        shooter.setState(ShooterState.IDLE_WARMUP);
-        intake.setState(IntakeState.IDLE);
-        queuer.setState(QueuerState.IDLE);
-        swerve.setSnapsEnabled(false);
-        swerve.setSnapToAngle(0);
-      }
-    }
-  }
-
-  @Override
-  public void robotPeriodic() {
-    super.robotPeriodic();
-
-    // Continuous state actions
-    switch (getState()) {
-      case SPEAKER_PREPARE_TO_SCORE, SPEAKER_SCORING, SPEAKER_WAITING -> {
-        shooter.setDistanceToSpeaker(distanceToSpeaker);
-        arm.setDistanceToSpeaker(distanceToSpeaker);
-        swerve.setSnapToAngle(fieldRelativeAngleToSpeaker);
-      }
-      case FEEDING_PREPARE_TO_SHOOT, FEEDING_SHOOTING, FEEDING_WAITING -> {
-        shooter.setDistanceToFeedSpot(distanceToFeedSpot);
-        arm.setDistanceToFeedSpot(distanceToFeedSpot);
-      }
-      case INTAKING, INTAKE_ASSIST -> {
-        if (arm.atGoal()) {
-          intake.setState(IntakeState.INTAKING);
-        } else {
-          intake.setState(IntakeState.IDLE);
-        }
-      }
-      case INTAKING_BACK -> {
-        if (arm.atGoal()) {
-          intake.setState(IntakeState.INTAKING_BACK);
-        } else {
-          intake.setState(IntakeState.IDLE);
-        }
-      }
-      case INTAKING_FORWARD_PUSH -> {
-        if (arm.atGoal()) {
-          intake.setState(IntakeState.INTAKING_FORWARD_PUSH);
-        } else {
-          intake.setState(IntakeState.IDLE);
-        }
-      }
-      default -> {}
-    }
   }
 
   public void setConfirmShotActive(boolean newValue) {
