@@ -1,5 +1,6 @@
 package frc.robot.localization;
 
+import dev.doglog.DogLog;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -23,14 +24,12 @@ import frc.robot.vision.VisionSubsystem;
 import java.util.ArrayList;
 import java.util.List;
 
-import dev.doglog.DogLog;
-
 public class LocalizationSubsystem extends StateMachine<LocalizationState> {
   private static final Vector<N3> VISION_STD_DEVS =
-  VecBuilder.fill(
-      RobotConfig.get().vision().xyStdDev(),
-      RobotConfig.get().vision().xyStdDev(),
-      RobotConfig.get().vision().thetaStdDev());
+      VecBuilder.fill(
+          RobotConfig.get().vision().xyStdDev(),
+          RobotConfig.get().vision().xyStdDev(),
+          RobotConfig.get().vision().thetaStdDev());
   private final ImuSubsystem imu;
   private final VisionSubsystem vision;
   private final SwerveSubsystem swerve;
@@ -77,17 +76,14 @@ public class LocalizationSubsystem extends StateMachine<LocalizationState> {
       if (visionTimestamp == lastAddedVisionTimestamp) {
         // Don't add the same vision pose over and over
       } else {
-        poseEstimator.addVisionMeasurement(
-            visionPose,
-            visionTimestamp,
-            VISION_STD_DEVS);
+        poseEstimator.addVisionMeasurement(visionPose, visionTimestamp, VISION_STD_DEVS);
         lastAddedVisionTimestamp = visionTimestamp;
       }
 
       poseHistory.addSample(Timer.getFPGATimestamp(), poseEstimator.getEstimatedPosition());
     }
 
-      DogLog.log("Localization/EstimatedPose", getPose());
+    DogLog.log("Localization/EstimatedPose", getPose());
   }
 
   private void resetGyro(double gyroAngle) {

@@ -24,7 +24,7 @@ public enum InterpolatedVisionDataset {
                   new Translation2d(12.87, 5.581),
                   "PODIUM_SPEAKER_INTERSECTION")),
           List.of())),
-          //bellarmine is not tested
+  // bellarmine is not tested
   BELLARMINE(
       new CameraDataset(
           List.of(
