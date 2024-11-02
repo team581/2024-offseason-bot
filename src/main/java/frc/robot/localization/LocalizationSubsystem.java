@@ -19,6 +19,7 @@ import frc.robot.imu.ImuSubsystem;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
+import frc.robot.vision.DistanceAngle;
 import frc.robot.vision.VisionResult;
 import frc.robot.vision.VisionSubsystem;
 import java.util.ArrayList;
@@ -108,18 +109,19 @@ public class LocalizationSubsystem extends StateMachine<LocalizationState> {
    * Get the field relative angle the robot should face in order to be looking directly at the
    * target pose.
    */
-  public double getFieldRelativeAngleToPose(Pose2d target) {
+  public DistanceAngle getFieldRelativeDistanceAngleToPose(Pose2d target) {
 
-    double distanceAngleToSpeaker = distanceAngleToTarget(target, getPose());
+    DistanceAngle distanceAngleToSpeaker = distanceAngleToTarget(target,getPose());
 
     return distanceAngleToSpeaker;
   }
 
-  public static double distanceAngleToTarget(Pose2d target, Pose2d current) {
+  public static DistanceAngle distanceAngleToTarget(Pose2d target, Pose2d current) {
+    double distance = target.getTranslation().getDistance(current.getTranslation());
     double angle =
         Units.radiansToDegrees(
             Math.atan2(target.getY() - current.getY(), target.getX() - current.getX()));
 
-    return angle;
+    return new DistanceAngle(distance, angle, false);
   }
 }

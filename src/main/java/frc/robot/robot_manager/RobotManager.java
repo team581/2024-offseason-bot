@@ -1,5 +1,6 @@
 package frc.robot.robot_manager;
 
+import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.FieldUtil;
 import frc.robot.arm.ArmState;
@@ -17,6 +18,7 @@ import frc.robot.swerve.SwerveState;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
+import frc.robot.vision.DistanceAngle;
 import frc.robot.vision.VisionSubsystem;
 
 public class RobotManager extends StateMachine<RobotState> {
@@ -29,12 +31,10 @@ public class RobotManager extends StateMachine<RobotState> {
   public final QueuerSubsystem queuer;
   public final SwerveSubsystem swerve;
 
-  private final double distanceToFeedSpot = 0.0;
-  private final double distanceToSpeaker = 0.0;
+  private DistanceAngle fieldRelativeDistanceAngleToSpeaker = new DistanceAngle(0, 0, false);
+  private DistanceAngle fieldRelativeDistanceAngleToFeedSpot = new DistanceAngle(0, 0, false);
 
   private boolean confirmShotActive = false;
-  private double fieldRelativeAngleToSpeaker = 0;
-  private double fieldRelativeAngleToFeedSpot = 0;
 
   public RobotManager(
       ArmSubsystem arm,
@@ -58,10 +58,10 @@ public class RobotManager extends StateMachine<RobotState> {
 
   @Override
   protected void collectInputs() {
-    fieldRelativeAngleToSpeaker =
-        localization.getFieldRelativeAngleToPose(FieldUtil.getSpeakerPose());
-    fieldRelativeAngleToFeedSpot =
-        localization.getFieldRelativeAngleToPose(FieldUtil.getFeedSpotPose());
+    fieldRelativeDistanceAngleToSpeaker =
+        localization.getFieldRelativeDistanceAngleToPose(FieldUtil.getSpeakerPose());
+    fieldRelativeDistanceAngleToFeedSpot =
+        localization.getFieldRelativeDistanceAngleToPose(FieldUtil.getFeedSpotPose());
   }
 
   @Override
@@ -149,7 +149,7 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
         swerve.setSnapsEnabled(true);
-        swerve.setSnapToAngle(fieldRelativeAngleToSpeaker);
+        swerve.setSnapToAngle(fieldRelativeDistanceAngleToSpeaker.targetAngle());
       }
       case SPEAKER_SCORING -> {
         arm.setState(ArmState.SPEAKER_SHOT);
@@ -157,7 +157,7 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.SHOOTING);
         swerve.setSnapsEnabled(true);
-        swerve.setSnapToAngle(fieldRelativeAngleToSpeaker);
+        swerve.setSnapToAngle(fieldRelativeDistanceAngleToSpeaker.targetAngle());
       }
       case AMP_PREPARE_TO_SCORE, AMP_WAITING -> {
         arm.setState(ArmState.AMP);
@@ -181,7 +181,7 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.IDLE);
         swerve.setSnapsEnabled(true);
-        swerve.setSnapToAngle(fieldRelativeAngleToFeedSpot);
+        swerve.setSnapToAngle(fieldRelativeDistanceAngleToFeedSpot.targetAngle());
       }
       case FEEDING_SHOOTING -> {
         arm.setState(ArmState.FEEDING);
@@ -189,7 +189,7 @@ public class RobotManager extends StateMachine<RobotState> {
         intake.setState(IntakeState.IDLE);
         queuer.setState(QueuerState.SHOOTING);
         swerve.setSnapsEnabled(true);
-        swerve.setSnapToAngle(fieldRelativeAngleToFeedSpot);
+        swerve.setSnapToAngle(fieldRelativeDistanceAngleToFeedSpot.targetAngle());
       }
       case PASS_PREPARE_TO_SHOOT -> {
         arm.setState(ArmState.IDLE);
@@ -301,13 +301,14 @@ public class RobotManager extends StateMachine<RobotState> {
     // Continuous state actions
     switch (getState()) {
       case SPEAKER_PREPARE_TO_SCORE, SPEAKER_SCORING, SPEAKER_WAITING -> {
-        shooter.setDistanceToSpeaker(distanceToSpeaker);
-        arm.setDistanceToSpeaker(distanceToSpeaker);
-        swerve.setSnapToAngle(fieldRelativeAngleToSpeaker);
+        shooter.setDistanceToSpeaker(fieldRelativeDistanceAngleToSpeaker.distance());
+        arm.setDistanceToSpeaker(fieldRelativeDistanceAngleToSpeaker.distance());
+        swerve.setSnapToAngle(fieldRelativeDistanceAngleToSpeaker.targetAngle());
       }
       case FEEDING_PREPARE_TO_SHOOT, FEEDING_SHOOTING, FEEDING_WAITING -> {
-        shooter.setDistanceToFeedSpot(distanceToFeedSpot);
-        arm.setDistanceToFeedSpot(distanceToFeedSpot);
+        shooter.setDistanceToFeedSpot(fieldRelativeDistanceAngleToFeedSpot.distance());
+        arm.setDistanceToFeedSpot(fieldRelativeDistanceAngleToSpeaker.distance());
+        swerve.setSnapToAngle(fieldRelativeDistanceAngleToFeedSpot.targetAngle());
       }
       case INTAKING, INTAKE_ASSIST -> {
         if (arm.atGoal()) {
