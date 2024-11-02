@@ -1,19 +1,21 @@
 package frc.robot.util.state_machines;
 
-import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.util.scheduling.LifecycleSubsystem;
 import frc.robot.util.scheduling.LifecycleSubsystemManager;
 import frc.robot.util.scheduling.SubsystemPriority;
+import java.util.EnumMap;
 import java.util.Set;
 
 /** A state machine backed by {@link LifecycleSubsystem}. */
 public abstract class StateMachine<S extends Enum<S>> extends LifecycleSubsystem {
-  private S state;
-  private boolean isInitialized = false;
+  private S previousState = null;
+  private S currentState;
   private double lastTransitionTimestamp = Timer.getFPGATimestamp();
+  private final EnumMap<S, StateHandler<S>> stateHandlers;
+  private StateHandler<S> currentStateHandler;
 
   /**
    * Creates a new state machine.
@@ -23,23 +25,47 @@ public abstract class StateMachine<S extends Enum<S>> extends LifecycleSubsystem
    */
   protected StateMachine(SubsystemPriority priority, S initialState) {
     super(priority);
-    state = initialState;
+    currentState = initialState;
+    stateHandlers = new EnumMap<>(initialState.getDeclaringClass());
+
+    // Ensures that all states have a default handler
+    for (S state : initialState.getDeclaringClass().getEnumConstants()) {
+      stateHandlers.put(state, new StateHandler<>(stateHandlers));
+    }
+
+    currentStateHandler = stateHandlers.get(initialState);
   }
 
   /** Processes collecting inputs, state transitions, and state actions. */
   @Override
   public void robotPeriodic() {
-    // The first time the robot boots up, we need to set the state from null to the initial state
-    // This also gives us an opportunity to run the state actions for the initial state
-    // Think of it as transitioning from the robot being off to initialState
-    if (!isInitialized) {
-      doTransition();
-      isInitialized = true;
-    }
-
     collectInputs();
 
-    setStateFromRequest(getNextState(state));
+    // A transition occurred last time, so we handle the exit and enter actions
+    if (previousState != currentState) {
+      lastTransitionTimestamp = Timer.getFPGATimestamp();
+      currentStateHandler.doOnEnter();
+
+      if (previousState != null) {
+        var previousStateHandler = stateHandlers.get(previousState);
+        previousStateHandler.doOnExit(currentState);
+      }
+    }
+
+    currentStateHandler.doPeriodic();
+
+    var nextStateOrNull = currentStateHandler.doTransitions();
+
+    // A transition should occur next loop
+    if (nextStateOrNull != null) {
+      previousState = currentState;
+      currentState = nextStateOrNull;
+      currentStateHandler = stateHandlers.get(currentState);
+    }
+  }
+
+  public StateHandler<S> createHandler(S state) {
+    return stateHandlers.get(state);
   }
 
   /**
@@ -48,7 +74,7 @@ public abstract class StateMachine<S extends Enum<S>> extends LifecycleSubsystem
    * @return The current state.
    */
   public S getState() {
-    return state;
+    return currentState;
   }
 
   /**
@@ -58,7 +84,7 @@ public abstract class StateMachine<S extends Enum<S>> extends LifecycleSubsystem
    * @return A command that waits until the state is equal to the goal state.
    */
   public Command waitForState(S goalState) {
-    return Commands.waitUntil(() -> this.state == goalState);
+    return Commands.waitUntil(() -> this.currentState == goalState);
   }
 
   /**
@@ -68,7 +94,7 @@ public abstract class StateMachine<S extends Enum<S>> extends LifecycleSubsystem
    * @return A command that waits until the state is equal to any of the goal states.
    */
   public Command waitForStates(Set<S> goalStates) {
-    return Commands.waitUntil(() -> goalStates.contains(this.state));
+    return Commands.waitUntil(() -> goalStates.contains(this.currentState));
   }
 
   /**
@@ -79,38 +105,13 @@ public abstract class StateMachine<S extends Enum<S>> extends LifecycleSubsystem
   protected void collectInputs() {}
 
   /**
-   * Process transitions from one state to another.
-   *
-   * <p>Default behavior is to stay in the current state indefinitely.
-   *
-   * @param currentState The current state.
-   * @return The new state after processing transitions.
-   */
-  protected S getNextState(S currentState) {
-    return currentState;
-  }
-
-  /**
-   * Runs once after entering a new state. This is where you should run state actions.
-   *
-   * @param newState The newly entered state.
-   */
-  protected void afterTransition(S newState) {}
-
-  /**
    * Used to change to a new state when a request is made. Will also trigger all logic that should
    * happen when a state transition occurs.
    *
    * @param requestedState The new state to transition to.
    */
   protected void setStateFromRequest(S requestedState) {
-    if (state == requestedState) {
-      // No change
-      return;
-    }
-
-    state = requestedState;
-    doTransition();
+    currentState = requestedState;
   }
 
   /**
@@ -124,14 +125,5 @@ public abstract class StateMachine<S extends Enum<S>> extends LifecycleSubsystem
     var currentStateDuration = Timer.getFPGATimestamp() - lastTransitionTimestamp;
 
     return currentStateDuration > duration;
-  }
-
-  /** Run side effects that occur when a state transition happens. */
-  private void doTransition() {
-    DogLog.log(subsystemName + "/State", state);
-
-    lastTransitionTimestamp = Timer.getFPGATimestamp();
-
-    afterTransition(state);
   }
 }

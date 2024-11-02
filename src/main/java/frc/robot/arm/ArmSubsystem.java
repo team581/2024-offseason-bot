@@ -44,6 +44,97 @@ public class ArmSubsystem extends StateMachine<ArmState> {
     rightMotor.getConfigurator().apply(RobotConfig.get().arm().rightMotorConfig());
     RobotConfig.get().arm().feedSpotDistanceToAngle().accept(feedSpotDistanceToAngle);
     RobotConfig.get().arm().speakerDistanceToAngle().accept(speakerDistanceToAngle);
+
+    createHandler(ArmState.PRE_MATCH_HOMING)
+        .onEnter(
+            () -> {
+              leftMotor.disable();
+              rightMotor.disable();
+            });
+    createHandler(ArmState.IDLE)
+        .onEnter(
+            () -> {
+              leftMotor.setControl(
+                  motionMagicRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.IDLE))));
+              rightMotor.setControl(
+                  motionMagicRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.IDLE))));
+            });
+    createHandler(ArmState.CLIMBING_1_LINEUP)
+        .onEnter(
+            () -> {
+              leftMotor.setControl(
+                  motionMagicRequest.withPosition(
+                      Units.degreesToRotations(clamp(ArmAngle.CLIMBING_1_LINEUP))));
+              rightMotor.setControl(
+                  motionMagicRequest.withPosition(
+                      Units.degreesToRotations(clamp(ArmAngle.CLIMBING_1_LINEUP))));
+            });
+    createHandler(ArmState.CLIMBING_2_HANGING)
+        .onEnter(
+            () -> {
+              leftMotor.setControl(
+                  motionMagicRequest.withPosition(
+                      Units.degreesToRotations(clamp(ArmAngle.CLIMBING_2_HANGING))));
+              rightMotor.setControl(
+                  motionMagicRequest.withPosition(
+                      Units.degreesToRotations(clamp(ArmAngle.CLIMBING_2_HANGING))));
+            });
+    createHandler(ArmState.DROP)
+        .onEnter(
+            () -> {
+              leftMotor.setControl(
+                  pidRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.DROP))));
+              rightMotor.setControl(
+                  pidRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.DROP))));
+            });
+    createHandler(ArmState.PODIUM_SHOT)
+        .onEnter(
+            () -> {
+              leftMotor.setControl(
+                  pidRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.PODIUM))));
+              rightMotor.setControl(
+                  pidRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.PODIUM))));
+            });
+    createHandler(ArmState.SUBWOOFER_SHOT)
+        .onEnter(
+            () -> {
+              leftMotor.setControl(
+                  pidRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.SUBWOOFER))));
+              rightMotor.setControl(
+                  pidRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.SUBWOOFER))));
+            });
+    createHandler(ArmState.AMP)
+        .onEnter(
+            () -> {
+              leftMotor.setControl(
+                  motionMagicRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.AMP))));
+              rightMotor.setControl(
+                  motionMagicRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.AMP))));
+            });
+    createHandler(ArmState.PASS)
+        .onEnter(
+            () -> {
+              leftMotor.setControl(
+                  pidRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.PASS))));
+              rightMotor.setControl(
+                  pidRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.PASS))));
+            });
+    createHandler(ArmState.SPEAKER_SHOT)
+        .withPeriodic(
+            () -> {
+              var newAngle =
+                  Units.degreesToRotations(clamp(speakerDistanceToAngle.get(distanceToSpeaker)));
+              leftMotor.setControl(pidRequest.withPosition(newAngle));
+              rightMotor.setControl(pidRequest.withPosition(newAngle));
+            });
+    createHandler(ArmState.FEEDING)
+        .withPeriodic(
+            () -> {
+              var newAngle =
+                  Units.degreesToRotations(clamp(feedSpotDistanceToAngle.get(distanceToFeedSpot)));
+              leftMotor.setControl(pidRequest.withPosition(newAngle));
+              rightMotor.setControl(pidRequest.withPosition(newAngle));
+            });
   }
 
   public void setState(ArmState newState) {
@@ -99,90 +190,8 @@ public class ArmSubsystem extends StateMachine<ArmState> {
   }
 
   @Override
-  protected void afterTransition(ArmState newState) {
-    switch (newState) {
-      case PRE_MATCH_HOMING -> {
-        leftMotor.disable();
-        rightMotor.disable();
-      }
-      case IDLE -> {
-        leftMotor.setControl(
-            motionMagicRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.IDLE))));
-        rightMotor.setControl(
-            motionMagicRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.IDLE))));
-      }
-      case CLIMBING_1_LINEUP -> {
-        leftMotor.setControl(
-            motionMagicRequest.withPosition(
-                Units.degreesToRotations(clamp(ArmAngle.CLIMBING_1_LINEUP))));
-        rightMotor.setControl(
-            motionMagicRequest.withPosition(
-                Units.degreesToRotations(clamp(ArmAngle.CLIMBING_1_LINEUP))));
-      }
-      case CLIMBING_2_HANGING -> {
-        leftMotor.setControl(
-            motionMagicRequest.withPosition(
-                Units.degreesToRotations(clamp(ArmAngle.CLIMBING_2_HANGING))));
-        rightMotor.setControl(
-            motionMagicRequest.withPosition(
-                Units.degreesToRotations(clamp(ArmAngle.CLIMBING_2_HANGING))));
-      }
-
-      case DROP -> {
-        leftMotor.setControl(
-            pidRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.DROP))));
-        rightMotor.setControl(
-            pidRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.DROP))));
-      }
-
-      case PODIUM_SHOT -> {
-        leftMotor.setControl(
-            pidRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.PODIUM))));
-        rightMotor.setControl(
-            pidRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.PODIUM))));
-      }
-      case SUBWOOFER_SHOT -> {
-        leftMotor.setControl(
-            pidRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.SUBWOOFER))));
-        rightMotor.setControl(
-            pidRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.SUBWOOFER))));
-      }
-
-      case AMP -> {
-        leftMotor.setControl(
-            motionMagicRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.AMP))));
-        rightMotor.setControl(
-            motionMagicRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.AMP))));
-      }
-      case PASS -> {
-        leftMotor.setControl(
-            pidRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.PASS))));
-        rightMotor.setControl(
-            pidRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.PASS))));
-      }
-      default -> {}
-    }
-  }
-
-  @Override
   public void robotPeriodic() {
     super.robotPeriodic();
-
-    switch (getState()) {
-      case SPEAKER_SHOT -> {
-        var newAngle =
-            Units.degreesToRotations(clamp(speakerDistanceToAngle.get(distanceToSpeaker)));
-        leftMotor.setControl(pidRequest.withPosition(newAngle));
-        rightMotor.setControl(pidRequest.withPosition(newAngle));
-      }
-      case FEEDING -> {
-        double newAngle =
-            Units.degreesToRotations(clamp(feedSpotDistanceToAngle.get(distanceToFeedSpot)));
-        leftMotor.setControl(pidRequest.withPosition(newAngle));
-        rightMotor.setControl(pidRequest.withPosition(newAngle));
-      }
-      default -> {}
-    }
 
     DogLog.log("Arm/Left/StatorCurrent", leftMotor.getStatorCurrent().getValueAsDouble());
     DogLog.log("Arm/Left/SupplyCurrent", leftMotor.getSupplyCurrent().getValueAsDouble());

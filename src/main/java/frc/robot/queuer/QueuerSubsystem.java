@@ -28,6 +28,19 @@ public class QueuerSubsystem extends StateMachine<QueuerState> {
     this.motor = motor;
 
     motor.getConfigurator().apply(RobotConfig.get().queuer().motorConfig());
+
+    createHandler(QueuerState.IDLE).onEnter(() -> motor.disable());
+    createHandler(QueuerState.SHOOTING).onEnter(() -> motor.setVoltage(10));
+    createHandler(QueuerState.INTAKING).onEnter(() -> motor.setVoltage(1));
+    createHandler(QueuerState.OUTTAKING).onEnter(() -> motor.setVoltage(-4));
+    createHandler(QueuerState.AMPING).onEnter(() -> motor.setVoltage(-10));
+    createHandler(QueuerState.INTAKING_BACK).onEnter(() -> motor.setVoltage(-1));
+    createHandler(QueuerState.INTAKING_FORWARD_PUSH)
+        .onEnter(
+            () -> {
+              goalPosition = motorPosition + 2;
+              motor.setControl(pidRequest.withPosition(goalPosition));
+            });
   }
 
   public void setState(QueuerState newState) {
@@ -48,30 +61,8 @@ public class QueuerSubsystem extends StateMachine<QueuerState> {
     motorPosition = motor.getRotorPosition().getValueAsDouble();
   }
 
-  @Override
-  protected QueuerState getNextState(QueuerState currentState) {
-    // State transitions are done by robot manager, not here
-    return currentState;
-  }
-
   public boolean hasNote() {
     return debouncedSensorHasNote;
-  }
-
-  @Override
-  protected void afterTransition(QueuerState newState) {
-    switch (newState) {
-      case IDLE -> motor.disable();
-      case SHOOTING -> motor.setVoltage(10);
-      case INTAKING -> motor.setVoltage(1);
-      case OUTTAKING -> motor.setVoltage(-4);
-      case AMPING -> motor.setVoltage(-10);
-      case INTAKING_BACK -> motor.setVoltage(-1);
-      case INTAKING_FORWARD_PUSH -> {
-        goalPosition = motorPosition + 2;
-        motor.setControl(pidRequest.withPosition(goalPosition));
-      }
-    }
   }
 
   @Override

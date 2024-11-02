@@ -38,6 +38,57 @@ public class ShooterSubsystem extends StateMachine<ShooterState> {
 
     RobotConfig.get().shooter().feedSpotDistanceToRpm().accept(feedSpotDistanceToRpm);
     RobotConfig.get().shooter().speakerDistanceToRpm().accept(speakerDistanceToRpm);
+
+    createHandler(ShooterState.IDLE_STOPPED)
+        .onEnter(
+            () -> {
+              topMotor.disable();
+              bottomMotor.disable();
+            });
+    createHandler(ShooterState.IDLE_WARMUP)
+        .onEnter(
+            () -> {
+              topMotor.setControl(velocityRequest.withVelocity(ShooterRpms.IDLE_WARMUP / 60.0));
+              bottomMotor.setControl(velocityRequest.withVelocity(ShooterRpms.IDLE_WARMUP / 60.0));
+            });
+    createHandler(ShooterState.SUBWOOFER_SHOT)
+        .onEnter(
+            () -> {
+              topMotor.setControl(velocityRequest.withVelocity(ShooterRpms.SUBWOOFER / 60.0));
+              bottomMotor.setControl(velocityRequest.withVelocity(ShooterRpms.SUBWOOFER / 60.0));
+            });
+    createHandler(ShooterState.DROP)
+        .onEnter(
+            () -> {
+              topMotor.setControl(velocityRequest.withVelocity(ShooterRpms.DROP / 60.0));
+              bottomMotor.setControl(velocityRequest.withVelocity(ShooterRpms.DROP / 60.0));
+            });
+    createHandler(ShooterState.PODIUM_SHOT)
+        .onEnter(
+            () -> {
+              topMotor.setControl(velocityRequest.withVelocity(ShooterRpms.PODIUM / 60.0));
+              bottomMotor.setControl(velocityRequest.withVelocity(ShooterRpms.PODIUM / 60.0));
+            });
+    createHandler(ShooterState.PASS)
+        .onEnter(
+            () -> {
+              topMotor.setControl(velocityRequest.withVelocity(ShooterRpms.PASS / 60.0));
+              bottomMotor.setControl(velocityRequest.withVelocity(ShooterRpms.PASS / 60.0));
+            });
+    createHandler(ShooterState.SPEAKER_SHOT)
+        .withPeriodic(
+            () -> {
+              var goalRpm = speakerDistanceToRpm.get(distanceToSpeaker);
+              topMotor.setControl(velocityRequest.withVelocity(goalRpm / 60.0));
+              bottomMotor.setControl(velocityRequest.withVelocity(goalRpm / 60.0));
+            });
+    createHandler(ShooterState.FEEDING)
+        .withPeriodic(
+            () -> {
+              var goalRpm = speakerDistanceToRpm.get(distanceToFeedSpot);
+              topMotor.setControl(velocityRequest.withVelocity(goalRpm / 60.0));
+              bottomMotor.setControl(velocityRequest.withVelocity(goalRpm / 60.0));
+            });
   }
 
   public boolean atGoal() {
@@ -75,55 +126,8 @@ public class ShooterSubsystem extends StateMachine<ShooterState> {
   }
 
   @Override
-  protected void afterTransition(ShooterState newState) {
-    switch (newState) {
-      case IDLE_STOPPED -> {
-        topMotor.disable();
-        bottomMotor.disable();
-      }
-      case IDLE_WARMUP -> {
-        topMotor.setControl(velocityRequest.withVelocity(ShooterRpms.IDLE_WARMUP / 60.0));
-        bottomMotor.setControl(velocityRequest.withVelocity(ShooterRpms.IDLE_WARMUP / 60.0));
-      }
-
-      case SUBWOOFER_SHOT -> {
-        topMotor.setControl(velocityRequest.withVelocity(ShooterRpms.SUBWOOFER / 60.0));
-        bottomMotor.setControl(velocityRequest.withVelocity(ShooterRpms.SUBWOOFER / 60.0));
-      }
-
-      case DROP -> {
-        topMotor.setControl(velocityRequest.withVelocity(ShooterRpms.DROP / 60.0));
-        bottomMotor.setControl(velocityRequest.withVelocity(ShooterRpms.DROP / 60.0));
-      }
-      case PODIUM_SHOT -> {
-        topMotor.setControl(velocityRequest.withVelocity(ShooterRpms.PODIUM / 60.0));
-        bottomMotor.setControl(velocityRequest.withVelocity(ShooterRpms.PODIUM / 60.0));
-      }
-      case PASS -> {
-        topMotor.setControl(velocityRequest.withVelocity(ShooterRpms.PASS / 60.0));
-        bottomMotor.setControl(velocityRequest.withVelocity(ShooterRpms.PASS / 60.0));
-      }
-      default -> {}
-    }
-  }
-
-  @Override
   public void robotPeriodic() {
     super.robotPeriodic();
-
-    switch (getState()) {
-      case SPEAKER_SHOT -> {
-        var goalRpm = speakerDistanceToRpm.get(distanceToSpeaker);
-        topMotor.setControl(velocityRequest.withVelocity(goalRpm / 60.0));
-        bottomMotor.setControl(velocityRequest.withVelocity(goalRpm / 60.0));
-      }
-      case FEEDING -> {
-        var goalRpm = speakerDistanceToRpm.get(distanceToFeedSpot);
-        topMotor.setControl(velocityRequest.withVelocity(goalRpm / 60.0));
-        bottomMotor.setControl(velocityRequest.withVelocity(goalRpm / 60.0));
-      }
-      default -> {}
-    }
 
     DogLog.log("Shooter/Top/StatorCurrent", topMotor.getStatorCurrent().getValueAsDouble());
     DogLog.log("Shooter/Top/SupplyCurrent", topMotor.getSupplyCurrent().getValueAsDouble());
