@@ -115,7 +115,9 @@ class CompConfig {
                 feedSpotDistanceToRpm.put(123.0, 321.0);
               },
               speakerDistanceToRpm -> {
-                speakerDistanceToRpm.put(123.0, 321.0);
+                speakerDistanceToRpm.put(52.5, 4000.0);
+                speakerDistanceToRpm.put(112.5, 4000.0);
+                speakerDistanceToRpm.put(232.5, 4500.0);
               }),
           new IntakeConfig(
               19,
@@ -194,6 +196,8 @@ class CompConfig {
               },
               speakerDistanceToAngle -> {
                 speakerDistanceToAngle.put(52.5, -20.0);
+                speakerDistanceToAngle.put(112.5, -49.0);
+                speakerDistanceToAngle.put(232.5, -62.0);
               },
               -77.0,
               87.0),
