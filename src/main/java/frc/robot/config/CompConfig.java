@@ -14,6 +14,7 @@ import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.util.Units;
 import frc.robot.config.RobotConfig.ArmConfig;
 import frc.robot.config.RobotConfig.IntakeConfig;
 import frc.robot.config.RobotConfig.QueuerConfig;
@@ -112,12 +113,12 @@ class CompConfig {
                           .withSupplyCurrentLimit(45))
                   .withSlot0(new Slot0Configs().withKV(0.15).withKP(3.5).withKI(0).withKD(0)),
               feedSpotDistanceToRpm -> {
-                feedSpotDistanceToRpm.put(123.0, 321.0);
+                feedSpotDistanceToRpm.put(Units.inchesToMeters(123.0), 321.0);
               },
               speakerDistanceToRpm -> {
-                speakerDistanceToRpm.put(52.5, 4000.0);
-                speakerDistanceToRpm.put(112.5, 4000.0);
-                speakerDistanceToRpm.put(232.5, 4500.0);
+                speakerDistanceToRpm.put(Units.inchesToMeters(52.5), 4000.0);
+                speakerDistanceToRpm.put(Units.inchesToMeters(112.5), 4000.0);
+                speakerDistanceToRpm.put(Units.inchesToMeters(132.5), 4000.0);
               }),
           new IntakeConfig(
               19,
@@ -192,12 +193,13 @@ class CompConfig {
                           .withMotionMagicCruiseVelocity(3.0)
                           .withMotionMagicJerk(100)),
               feedSpotDistanceToAngle -> {
-                feedSpotDistanceToAngle.put(0.0, 0.0);
+                feedSpotDistanceToAngle.put(Units.inchesToMeters(0), 0.0);
               },
               speakerDistanceToAngle -> {
-                speakerDistanceToAngle.put(52.5, -20.0);
-                speakerDistanceToAngle.put(112.5, -49.0);
-                speakerDistanceToAngle.put(232.5, -62.0);
+                speakerDistanceToAngle.put(Units.inchesToMeters(52.5), -20.0);
+                speakerDistanceToAngle.put(Units.inchesToMeters(112.5), -49.0);
+                speakerDistanceToAngle.put(Units.inchesToMeters(132.5), -56.0);
+                speakerDistanceToAngle.put(Units.inchesToMeters(173.5), -60.0);
               },
               -77.0,
               87.0),

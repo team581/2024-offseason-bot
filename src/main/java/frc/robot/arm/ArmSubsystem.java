@@ -204,6 +204,7 @@ public class ArmSubsystem extends StateMachine<ArmState> {
     DogLog.log(
         "Arm/Right/GoalAngle",
         Units.rotationsToDegrees(rightMotor.getClosedLoopReference().getValueAsDouble()));
+    DogLog.log("Arm/DistanceToSpeaker", distanceToSpeaker);
 
     if (DriverStation.isEnabled() && getState() == ArmState.PRE_MATCH_HOMING) {
       // We are enabled and still in pre match homing
