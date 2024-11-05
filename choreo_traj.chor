@@ -2874,7 +2874,60 @@
             "defaultControlIntervalCount": 40,
             "usesDefaultFieldObstacles": true,
             "circleObstacles": [],
-            "eventMarkers": [],
+            "eventMarkers": [
+                {
+                    "name": "intake",
+                    "target": 1,
+                    "trajTargetIndex": 1,
+                    "targetTimestamp": 0.5748637636096854,
+                    "offset": 0.5,
+                    "command": {
+                        "type": "named",
+                        "data": {
+                            "name": "intakeAssist"
+                        }
+                    }
+                },
+                {
+                    "name": "intake",
+                    "target": 4,
+                    "trajTargetIndex": 4,
+                    "targetTimestamp": 3.9367832594390295,
+                    "offset": 0.2,
+                    "command": {
+                        "type": "named",
+                        "data": {
+                            "name": "intakeAssist"
+                        }
+                    }
+                },
+                {
+                    "name": "intake",
+                    "target": 7,
+                    "trajTargetIndex": 7,
+                    "targetTimestamp": 5.684430743219553,
+                    "offset": 0.2,
+                    "command": {
+                        "type": "named",
+                        "data": {
+                            "name": "intakeAssist"
+                        }
+                    }
+                },
+                {
+                    "name": "intake",
+                    "target": 10,
+                    "trajTargetIndex": 10,
+                    "targetTimestamp": 7.3392016527110515,
+                    "offset": 0.2,
+                    "command": {
+                        "type": "named",
+                        "data": {
+                            "name": "intakeAssist"
+                        }
+                    }
+                }
+            ],
             "isTrajectoryStale": false
         },
         "Red Source 4 Piece": {
