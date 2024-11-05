@@ -111,7 +111,7 @@ public class LocalizationSubsystem extends StateMachine<LocalizationState> {
    */
   public DistanceAngle getFieldRelativeDistanceAngleToPose(Pose2d target) {
 
-    DistanceAngle distanceAngleToSpeaker = distanceAngleToTarget(target,getPose());
+    DistanceAngle distanceAngleToSpeaker = distanceAngleToTarget(target, getPose());
 
     return distanceAngleToSpeaker;
   }

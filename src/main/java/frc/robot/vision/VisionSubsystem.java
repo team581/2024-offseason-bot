@@ -73,8 +73,24 @@ public class VisionSubsystem extends StateMachine<VisionState> {
     leftLimelight.sendImuData(robotHeading, angularVelocity, pitch, pitchRate, roll, rollRate);
     DogLog.log("Vision/AngularVelocity", angularVelocity);
     DogLog.log("Vision/Pitch", pitch);
+    DogLog.log("Vision/visionIsEmpty", getInterpolatedVisionResult().isEmpty());
+
+    DogLog.log("Vision/CombinedVisionState", getVisionState());
+    DogLog.log("Vision/Left/VisionState", leftLimelight.getState());
+    DogLog.log("Vision/Right/VisionState", rightLimelight.getState());
   }
 
-  // 2. Tell each Limelight class that set of data
-  // 3. Each Limelight class broadcasts to the Limelight itself
+  public VisionState getVisionState() {
+    var leftState = leftLimelight.getState();
+    var rightState = rightLimelight.getState();
+    if (leftState == VisionState.OFFLINE && rightState == VisionState.OFFLINE) {
+      return VisionState.OFFLINE;
+    } else if (leftState == VisionState.ONLINE_NO_TAGS
+        && rightState == VisionState.ONLINE_NO_TAGS) {
+      return VisionState.ONLINE_NO_TAGS;
+    } else if (leftState == VisionState.SEES_TAGS || rightState == VisionState.SEES_TAGS) {
+      return VisionState.SEES_TAGS;
+    }
+    return VisionState.DEFAULT_STATE;
+  }
 }

@@ -2,6 +2,7 @@ package frc.robot.vision;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.vision.interpolation.CameraDataset;
 import frc.robot.vision.interpolation.InterpolatedVision;
 import java.util.Optional;
@@ -10,11 +11,16 @@ public class Limelight {
   private final String limelightTableName;
   private final String name;
   private CameraDataset interpolationData;
+  private VisionState state = VisionState.ONLINE_NO_TAGS;
+  private double limelightHeartbeat = -1;
+
+  private final Timer limelightTimer = new Timer();
 
   public Limelight(String name, CameraDataset interpolationData) {
     limelightTableName = "limelight-" + name;
     this.name = name;
     this.interpolationData = interpolationData;
+    limelightTimer.start();
   }
 
   public void sendImuData(
@@ -30,6 +36,8 @@ public class Limelight {
 
   public Optional<VisionResult> getInterpolatedVisionResult() {
     var rawResult = getRawVisionResult();
+
+    updateState(rawResult);
 
     if (rawResult.isEmpty()) {
       return Optional.empty();
@@ -59,5 +67,30 @@ public class Limelight {
     }
 
     return Optional.of(new VisionResult(estimatePose.pose, estimatePose.timestampSeconds));
+  }
+
+  private void updateState(Optional<VisionResult> rawResult) {
+    var newHeartbeat = LimelightHelpers.getLimelightNTDouble(limelightTableName, "hb");
+
+    if (limelightHeartbeat != newHeartbeat) {
+      limelightTimer.restart();
+    }
+    limelightHeartbeat = newHeartbeat;
+
+    if (limelightTimer.hasElapsed(5)) {
+      state = VisionState.OFFLINE;
+      return;
+    }
+
+    if (!rawResult.isEmpty()) {
+      state = VisionState.SEES_TAGS;
+      return;
+    }
+    state = VisionState.ONLINE_NO_TAGS;
+    return;
+  }
+
+  public VisionState getState() {
+    return state;
   }
 }
