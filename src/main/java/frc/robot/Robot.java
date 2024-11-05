@@ -52,7 +52,7 @@ public class Robot extends TimedRobot {
       new RobotManager(arm, shooter, localization, vision, imu, intake, queuer, swerve);
 
   private final RobotCommands robotCommands = new RobotCommands(robotManager);
-  private final Autos autos = new Autos(robotCommands, robotManager);
+  private final Autos autos = new Autos(robotCommands, robotManager, swerve, localization);
 
   public Robot() {
     System.out.println("roboRIO serial number: " + RobotConfig.SERIAL_NUMBER);

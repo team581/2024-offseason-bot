@@ -34,27 +34,26 @@ public class AutoCommands {
     if (!USE_DYNAMIC_AUTOS) {
       return true;
     }
+
     return robotManager.queuer.hasNote()
-        || robotManager.getState().
-        || robotManager.getState() == RobotState.IDLE_WITH_GP; }
+        || robotManager.getState() == RobotState.IDLE_WITH_GP;
+  }
 
   public Command dynamicRedAmp5PieceCommand() {
     var red4To5 = PathPlannerPath.fromChoreoTrajectory("Red 4 to 5");
     var red5ToAmp = PathPlannerPath.fromChoreoTrajectory("Red 5 to Amp");
-    var red4ToAmp = PathPlannerPath.fromChoreoTrajectory("Red Amp 5 Piece.");
+    var red4ToAmp = PathPlannerPath.fromChoreoTrajectory("Red Amp 5 Piece.2");
 
     return Commands.sequence(
         Commands.either(
             followPathForAlliance(red4ToAmp, red4ToAmp)
-                .andThen(robotCommands.speakerCommand())
-                .andThen(followPathForAlliance(red5ToAmp, red5ToAmp)),
+                .andThen(robotCommands.speakerCommand()),
             followPathForAlliance(red4To5, red4To5),
-            null),
+            this::hasNote),
         Commands.either(
-            followPathForAlliance(red4ToAmp, red4ToAmp)
-                .andThen(robotCommands.speakerCommand())
-                .andThen(followPathForAlliance(red5ToAmp, red5ToAmp)),
+            followPathForAlliance(red5ToAmp, red5ToAmp)
+                .andThen(robotCommands.speakerCommand()),
             followPathForAlliance(red4To5, red4To5),
-            null));
+            this::hasNote));
   }
 }
