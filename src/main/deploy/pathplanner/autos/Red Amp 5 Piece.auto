@@ -5,7 +5,7 @@
       "x": 15.20169734954834,
       "y": 6.508597373962402
     },
-    "rotation": -7.250156174615513e-26
+    "rotation": -1.4607893201406946e-23
   },
   "command": {
     "type": "sequential",
@@ -18,15 +18,15 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "Red Amp 5 Piece.2"
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "speakerShot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Red Amp 5 Piece.2"
           }
         },
         {
@@ -36,15 +36,15 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "Red Amp 5 Piece.4"
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "speakerShot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Red Amp 5 Piece.4"
           }
         },
         {
@@ -54,9 +54,21 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "speakerShot"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Red Amp 5 Piece.6"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Red Amp 5 Piece.7"
           }
         },
         {
@@ -68,13 +80,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Red Amp 5 Piece.7"
+            "pathName": "Red Amp 5 Piece.8"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Red Amp 5 Piece.8"
+            "pathName": "Red Amp 5 Piece.9"
           }
         },
         {
