@@ -180,10 +180,10 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
     sendSwerveRequest();
   }
 
-  public void setRobotRelativeSpeeds(ChassisSpeeds speeds, boolean closedLoop) {
-    ChassisSpeeds fieldRelative =
-        ChassisSpeeds.fromRobotRelativeSpeeds(speeds, drivetrain.getState().Pose.getRotation());
-    setFieldRelativeSpeeds(fieldRelative, closedLoop);
+  public void setRobotRelativeAutoSpeeds(ChassisSpeeds speeds) {
+    setFieldRelativeAutoSpeeds(
+        ChassisSpeeds.fromRobotRelativeSpeeds(
+            speeds, Rotation2d.fromDegrees(drivetrainPigeon.getYaw().getValueAsDouble())));
   }
 
   public void setIntakeAssistTeleopSpeeds(ChassisSpeeds speeds) {
