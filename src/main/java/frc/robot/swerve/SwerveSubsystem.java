@@ -13,6 +13,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.config.RobotConfig;
 import frc.robot.fms.FmsSubsystem;
 import frc.robot.generated.TunerConstants;
@@ -189,6 +190,20 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
   public void setIntakeAssistTeleopSpeeds(ChassisSpeeds speeds) {
     intakeAssistTeleopSpeeds = speeds;
     sendSwerveRequest();
+  }
+
+ @Override
+  protected SwerveState getNextState(SwerveState currentState) {
+    // Ensure that we are in an auto state during auto, and a teleop state during teleop
+    return switch (currentState) {
+      case AUTO, TELEOP -> DriverStation.isAutonomous() ? SwerveState.AUTO : SwerveState.TELEOP;
+      case INTAKE_ASSIST_AUTO, INTAKE_ASSIST_TELEOP ->
+          DriverStation.isAutonomous()
+              ? SwerveState.INTAKE_ASSIST_AUTO
+              : SwerveState.INTAKE_ASSIST_TELEOP;
+      case AUTO_SNAPS, TELEOP_SNAPS ->
+          DriverStation.isAutonomous() ? SwerveState.AUTO_SNAPS : SwerveState.TELEOP_SNAPS;
+    };
   }
 
   public void setIntakeAssistAutoSpeeds(ChassisSpeeds speeds) {
