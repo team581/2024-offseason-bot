@@ -7,6 +7,7 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
@@ -35,6 +36,7 @@ public class LocalizationSubsystem extends StateMachine<LocalizationState> {
   private final VisionSubsystem vision;
   private final SwerveSubsystem swerve;
   private final SwerveDrivePoseEstimator poseEstimator;
+  private final SwerveDriveOdometry odometry;
   private final TimeInterpolatableBuffer<Pose2d> poseHistory =
       TimeInterpolatableBuffer.createBuffer(1.5);
   private double lastAddedVisionTimestamp = 0;
@@ -51,7 +53,13 @@ public class LocalizationSubsystem extends StateMachine<LocalizationState> {
             Rotation2d.fromDegrees(imu.getRobotHeading()),
             swerve.getModulePositions().toArray(new SwerveModulePosition[4]),
             new Pose2d());
+    odometry =
+        new SwerveDriveOdometry(
+            SwerveSubsystem.KINEMATICS,
+            Rotation2d.fromDegrees(imu.getRobotHeading()),
+            swerve.getModulePositions().toArray(new SwerveModulePosition[4]));
   }
+
 
   @Override
   protected void collectInputs() {
@@ -62,11 +70,20 @@ public class LocalizationSubsystem extends StateMachine<LocalizationState> {
     return poseEstimator.getEstimatedPosition();
   }
 
+  public Pose2d getOdometryPose() {
+    return odometry.getPoseMeters();
+  }
+
+  public void resetPose(Pose2d pose) {
+    resetPose(pose, pose);
+  }
+
   @Override
   public void robotPeriodic() {
     super.robotPeriodic();
     SwerveModulePosition[] modulePositions =
         swerve.getModulePositions().toArray(new SwerveModulePosition[4]);
+    odometry.update(Rotation2d.fromDegrees(imu.getRobotHeading()), modulePositions);
     poseEstimator.update(Rotation2d.fromDegrees(imu.getRobotHeading()), modulePositions);
 
     for (var results : latestResult) {
@@ -85,20 +102,27 @@ public class LocalizationSubsystem extends StateMachine<LocalizationState> {
     }
 
     DogLog.log("Localization/EstimatedPose", getPose());
+    DogLog.log("Localization/OdometryPose", getOdometryPose());
   }
 
   private void resetGyro(double gyroAngle) {
     Pose2d estimatedPose =
         new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(gyroAngle));
-    resetPose(estimatedPose);
+    Pose2d odometryPose =
+        new Pose2d(getOdometryPose().getTranslation(), Rotation2d.fromDegrees(gyroAngle));
+    resetPose(estimatedPose, odometryPose);
   }
 
-  public void resetPose(Pose2d estimatedPose) {
+  public void resetPose(Pose2d estimatedPose, Pose2d odometryPose) {
     imu.setAngle(estimatedPose.getRotation().getDegrees());
     poseEstimator.resetPosition(
         estimatedPose.getRotation(),
         swerve.getModulePositions().toArray(new SwerveModulePosition[4]),
         estimatedPose);
+    odometry.resetPosition(
+      odometryPose.getRotation(),
+      swerve.getModulePositions().toArray(new SwerveModulePosition[4]),
+      odometryPose);
   }
 
   public Command getZeroCommand() {
