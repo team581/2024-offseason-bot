@@ -54,7 +54,7 @@ public class Autos extends LifecycleSubsystem {
     autoChooser = new AutoChooser(autoCommands);
 
      AutoBuilder.configureHolonomic(
-        localization::getPose,
+        localization::getOdometryPose,
         localization::resetPose,
         swerve::getRobotRelativeSpeeds,
         (robotRelativeSpeeds) -> {
