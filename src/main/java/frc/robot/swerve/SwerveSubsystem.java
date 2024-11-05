@@ -93,6 +93,7 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
   private ChassisSpeeds fieldRelativeSpeeds;
   private boolean slowEnoughToFeed;
   private double goalSnapAngle = 0;
+  boolean closedLoop = false;
 
   /** The latest requested teleop speeds. */
   private ChassisSpeeds teleopSpeeds = new ChassisSpeeds();
@@ -170,6 +171,19 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
   public void setFieldRelativeAutoSpeeds(ChassisSpeeds speeds) {
     autoSpeeds = speeds;
     sendSwerveRequest();
+  }
+
+  public void setFieldRelativeSpeeds(ChassisSpeeds speeds, boolean closedLoop) {
+    this.fieldRelativeSpeeds = speeds;
+    this.closedLoop = closedLoop;
+    // Send a swerve request each time new chassis speeds are provided
+    sendSwerveRequest();
+  }
+
+  public void setRobotRelativeAutoSpeeds(ChassisSpeeds speeds) {
+    setFieldRelativeAutoSpeeds(
+        ChassisSpeeds.fromRobotRelativeSpeeds(
+            speeds, Rotation2d.fromDegrees(drivetrainPigeon.getYaw().getValueAsDouble())));
   }
 
   public void setIntakeAssistTeleopSpeeds(ChassisSpeeds speeds) {
