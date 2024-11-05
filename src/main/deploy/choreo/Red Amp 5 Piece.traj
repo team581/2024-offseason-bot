@@ -2521,42 +2521,5 @@
       "timestamp": 8.506114120093041
     }
   ],
-  "eventMarkers": [
-    {
-      "timestamp": 1.0748637636096854,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "intakeAssist"
-        }
-      }
-    },
-    {
-      "timestamp": 4.13678325943903,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "intakeAssist"
-        }
-      }
-    },
-    {
-      "timestamp": 5.8844307432195535,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "intakeAssist"
-        }
-      }
-    },
-    {
-      "timestamp": 7.539201652711052,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "intakeAssist"
-        }
-      }
-    }
-  ]
+  "eventMarkers": []
 }

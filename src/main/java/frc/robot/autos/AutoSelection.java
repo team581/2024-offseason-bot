@@ -1,10 +1,7 @@
 package frc.robot.autos;
 
 public enum AutoSelection {
-  DO_NOTHING("", ""),
-  RED_AMP_5_Piece("Red Amp 5 Piece", "");
-
-
+  DO_NOTHING("", "");
 
   public final String redAutoName;
   public final String blueAutoName;

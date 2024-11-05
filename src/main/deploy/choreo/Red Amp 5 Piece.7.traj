@@ -232,15 +232,5 @@
       "timestamp": 0.6161395728672758
     }
   ],
-  "eventMarkers": [
-    {
-      "timestamp": 0.20000000000000018,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "intakeAssist"
-        }
-      }
-    }
-  ]
+  "eventMarkers": []
 }
