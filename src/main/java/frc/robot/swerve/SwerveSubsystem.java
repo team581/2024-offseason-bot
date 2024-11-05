@@ -192,7 +192,7 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
     sendSwerveRequest();
   }
 
- @Override
+  @Override
   protected SwerveState getNextState(SwerveState currentState) {
     // Ensure that we are in an auto state during auto, and a teleop state during teleop
     return switch (currentState) {

@@ -35,8 +35,7 @@ public class AutoCommands {
       return true;
     }
 
-    return robotManager.queuer.hasNote()
-        || robotManager.getState() == RobotState.IDLE_WITH_GP;
+    return robotManager.queuer.hasNote() || robotManager.getState() == RobotState.IDLE_WITH_GP;
   }
 
   public Command dynamicRedAmp5PieceCommand() {
@@ -46,13 +45,11 @@ public class AutoCommands {
 
     return Commands.sequence(
         Commands.either(
-            followPathForAlliance(red4ToAmp, red4ToAmp)
-                .andThen(robotCommands.speakerCommand()),
+            followPathForAlliance(red4ToAmp, red4ToAmp).andThen(robotCommands.speakerCommand()),
             followPathForAlliance(red4To5, red4To5),
             this::hasNote),
         Commands.either(
-            followPathForAlliance(red5ToAmp, red5ToAmp)
-                .andThen(robotCommands.speakerCommand()),
+            followPathForAlliance(red5ToAmp, red5ToAmp).andThen(robotCommands.speakerCommand()),
             followPathForAlliance(red4To5, red4To5),
             this::hasNote));
   }

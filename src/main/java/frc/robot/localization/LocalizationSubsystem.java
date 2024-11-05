@@ -60,7 +60,6 @@ public class LocalizationSubsystem extends StateMachine<LocalizationState> {
             swerve.getModulePositions().toArray(new SwerveModulePosition[4]));
   }
 
-
   @Override
   protected void collectInputs() {
     latestResult = vision.getInterpolatedVisionResult();
@@ -120,9 +119,9 @@ public class LocalizationSubsystem extends StateMachine<LocalizationState> {
         swerve.getModulePositions().toArray(new SwerveModulePosition[4]),
         estimatedPose);
     odometry.resetPosition(
-      odometryPose.getRotation(),
-      swerve.getModulePositions().toArray(new SwerveModulePosition[4]),
-      odometryPose);
+        odometryPose.getRotation(),
+        swerve.getModulePositions().toArray(new SwerveModulePosition[4]),
+        odometryPose);
   }
 
   public Command getZeroCommand() {

@@ -5,7 +5,6 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.localization.LocalizationSubsystem;
@@ -42,7 +41,11 @@ public class Autos extends LifecycleSubsystem {
   private final SwerveSubsystem swerve;
   private final LocalizationSubsystem localization;
 
-  public Autos(RobotCommands robotCommands, RobotManager robotManager, SwerveSubsystem swerve, LocalizationSubsystem localization) {
+  public Autos(
+      RobotCommands robotCommands,
+      RobotManager robotManager,
+      SwerveSubsystem swerve,
+      LocalizationSubsystem localization) {
     super(SubsystemPriority.AUTOS);
 
     this.robotCommands = robotCommands;
@@ -53,7 +56,7 @@ public class Autos extends LifecycleSubsystem {
 
     autoChooser = new AutoChooser(autoCommands);
 
-     AutoBuilder.configureHolonomic(
+    AutoBuilder.configureHolonomic(
         localization::getOdometryPose,
         localization::resetPose,
         swerve::getRobotRelativeSpeeds,
