@@ -1,6 +1,7 @@
 package frc.robot.robot_manager;
 
 import dev.doglog.DogLog;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.FieldUtil;
 import frc.robot.arm.ArmState;
@@ -34,6 +35,8 @@ public class RobotManager extends StateMachine<RobotState> {
 
   private DistanceAngle fieldRelativeDistanceAngleToSpeaker = new DistanceAngle(0, 0, false);
   private DistanceAngle fieldRelativeDistanceAngleToFeedSpot = new DistanceAngle(0, 0, false);
+  private boolean facingSpeakerAngle = false;
+  private boolean facingFeedSpotAngle = false;
 
   private boolean confirmShotActive = false;
 
@@ -63,6 +66,13 @@ public class RobotManager extends StateMachine<RobotState> {
         localization.getFieldRelativeDistanceAngleToPose(FieldUtil.getSpeakerPose());
     fieldRelativeDistanceAngleToFeedSpot =
         localization.getFieldRelativeDistanceAngleToPose(FieldUtil.getFeedSpotPose());
+
+    var robotHeading = imu.getRobotHeading();
+
+    facingSpeakerAngle =
+        MathUtil.isNear(fieldRelativeDistanceAngleToSpeaker.targetAngle(), robotHeading, 3);
+    facingFeedSpotAngle =
+        MathUtil.isNear(fieldRelativeDistanceAngleToFeedSpot.targetAngle(), robotHeading, 3);
   }
 
   @Override
@@ -91,6 +101,7 @@ public class RobotManager extends StateMachine<RobotState> {
                   && ((DriverStation.isAutonomous()
                           && vision.getVisionState() == VisionState.OFFLINE)
                       || vision.getVisionState() == VisionState.SEES_TAGS)
+                  && facingSpeakerAngle
               ? RobotState.SPEAKER_SCORING
               : currentState;
 
@@ -98,7 +109,9 @@ public class RobotManager extends StateMachine<RobotState> {
           shooter.atGoal() && arm.atGoal() ? RobotState.AMP_SCORING : currentState;
 
       case FEEDING_PREPARE_TO_SHOOT ->
-          shooter.atGoal() && arm.atGoal() ? RobotState.FEEDING_SHOOTING : currentState;
+          shooter.atGoal() && arm.atGoal() && facingFeedSpotAngle && swerve.isSlowEnoughToFeed()
+              ? RobotState.FEEDING_SHOOTING
+              : currentState;
       case PASS_PREPARE_TO_SHOOT ->
           shooter.atGoal() && arm.atGoal() ? RobotState.PASS_SHOOTING : currentState;
       case SUBWOOFER_PREPARE_TO_SCORE ->
