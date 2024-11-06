@@ -72,7 +72,7 @@ public class Autos extends LifecycleSubsystem {
         () -> false,
         swerve);
 
-    registerCommand("speakerShot", robotCommands.speakerCommand());
+    registerCommand("speakerShot", autoCommands.speakerShotWithTimeout());
     registerCommand("intakeAssist", robotCommands.intakeAssistCommand());
     registerCommand("dynamic5Piece", autoCommands.dynamicRedAmp5PieceCommand());
   }

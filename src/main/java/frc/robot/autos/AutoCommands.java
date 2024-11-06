@@ -38,6 +38,14 @@ public class AutoCommands {
     return robotManager.queuer.hasNote() || robotManager.getState() == RobotState.IDLE_WITH_GP;
   }
 
+
+  public Command speakerShotWithTimeout() {
+    return robotCommands
+        .speakerCommand()
+        .withTimeout(3)
+        .withName("SpeakerShotWithTimeout");
+  }
+
   public Command dynamicRedAmp5PieceCommand() {
     var red4To5 = PathPlannerPath.fromChoreoTrajectory("Red 4 to 5");
     var red5ToAmp = PathPlannerPath.fromChoreoTrajectory("Red 5 to Amp");
