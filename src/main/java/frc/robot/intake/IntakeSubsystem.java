@@ -53,9 +53,11 @@ public class IntakeSubsystem extends StateMachine<IntakeState> {
       }
       case INTAKING_BACK -> {
         mainMotor.setVoltage(-1);
+        centeringMotor.disable();
       }
       case INTAKING_FORWARD_PUSH -> {
         mainMotor.setVoltage(1);
+        centeringMotor.disable();
       }
     }
   }
