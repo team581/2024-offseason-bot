@@ -122,7 +122,17 @@ public class RobotManager extends StateMachine<RobotState> {
       case UNJAM -> currentState;
       case INTAKING, INTAKE_ASSIST -> queuer.hasNote() ? RobotState.INTAKING_BACK : currentState;
       case INTAKING_BACK -> !queuer.hasNote() ? RobotState.INTAKING_FORWARD_PUSH : currentState;
-      case INTAKING_FORWARD_PUSH -> queuer.atGoal() ? RobotState.IDLE_WITH_GP : currentState;
+      case INTAKING_FORWARD_PUSH -> {
+        if (!queuer.atGoal()) {
+          yield currentState;
+        }
+
+        if (confirmShotActive) {
+          yield RobotState.SPEAKER_PREPARE_TO_SCORE;
+        }
+
+        yield RobotState.IDLE_WITH_GP;
+      }
     };
   }
 

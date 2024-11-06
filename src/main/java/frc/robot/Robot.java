@@ -166,13 +166,13 @@ public class Robot extends TimedRobot {
         .driverController
         .rightTrigger()
         .onTrue(
-            robotCommands
-                .confirmShotCommand()
-                .alongWith(
-                    Commands.runOnce(
+            
+            Commands.runOnce(
                         () -> {
                           robotManager.setConfirmShotActive(true);
-                        })))
+                        })
+                
+                .alongWith(robotCommands.confirmShotCommand()))
         .onFalse(
             Commands.runOnce(
                 () -> {
