@@ -1,7 +1,7 @@
 package frc.robot.arm;
 
 public class ArmAngle {
-  public static final double SUBWOOFER = -20.0;
+  public static final double SUBWOOFER = -20;
   public static final double DROP = -60.0;
   public static final double PODIUM = -40.0;
   public static final double IDLE = -77.0;
