@@ -350,9 +350,12 @@ public class RobotManager extends StateMachine<RobotState> {
   }
 
   public void confirmShotRequest() {
-
     switch (getState()) {
-      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
+      case CLIMBING_1_LINEUP,
+          CLIMBING_2_HANGING,
+          INTAKING,
+          INTAKING_BACK,
+          INTAKING_FORWARD_PUSH -> {}
 
       case AMP_WAITING -> setStateFromRequest(RobotState.AMP_PREPARE_TO_SCORE);
       case SPEAKER_WAITING -> setStateFromRequest(RobotState.SPEAKER_PREPARE_TO_SCORE);
