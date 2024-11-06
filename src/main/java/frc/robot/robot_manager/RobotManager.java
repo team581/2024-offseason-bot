@@ -325,7 +325,6 @@ public class RobotManager extends StateMachine<RobotState> {
       }
       case FEEDING_PREPARE_TO_SHOOT, FEEDING_SHOOTING, FEEDING_WAITING -> {
         shooter.setDistanceToFeedSpot(fieldRelativeDistanceAngleToFeedSpot.distance());
-        arm.setDistanceToFeedSpot(fieldRelativeDistanceAngleToSpeaker.distance());
         swerve.setSnapToAngle(fieldRelativeDistanceAngleToFeedSpot.targetAngle());
       }
       case INTAKING, INTAKE_ASSIST -> {
@@ -356,6 +355,12 @@ public class RobotManager extends StateMachine<RobotState> {
     DogLog.log("RobotManager/confirmShotActive", confirmShotActive);
     DogLog.log("RobotManager/isSlowEnoughToShoot", swerve.isSlowEnoughToShoot());
     DogLog.log("RobotManager/visionState", vision.getVisionState());
+        DogLog.log("RobotManager/facingspekaer", facingSpeakerAngle);
+                DogLog.log("RobotManager/goalAngleforspeaker", fieldRelativeDistanceAngleToSpeaker.targetAngle());
+                                
+
+
+
   }
 
   public void setConfirmShotActive(boolean newValue) {

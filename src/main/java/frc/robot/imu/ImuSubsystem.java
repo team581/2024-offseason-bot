@@ -2,6 +2,7 @@ package frc.robot.imu;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import dev.doglog.DogLog;
+import edu.wpi.first.math.MathUtil;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
 
@@ -21,7 +22,7 @@ public class ImuSubsystem extends StateMachine<ImuState> {
 
   @Override
   protected void collectInputs() {
-    robotHeading = imu.getYaw().getValue();
+    robotHeading = MathUtil.inputModulus(imu.getYaw().getValue(), -180, 180);
     angularVelocity = imu.getRate();
     pitch = imu.getPitch().getValueAsDouble();
     pitchRate = imu.getAngularVelocityYWorld().getValueAsDouble();
