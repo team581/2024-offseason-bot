@@ -339,7 +339,7 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
                   .withVelocityX(autoSpeeds.vxMetersPerSecond)
                   .withVelocityY(autoSpeeds.vyMetersPerSecond)
                   .withTargetDirection(Rotation2d.fromDegrees(goalSnapAngle))
-                  .withDriveRequestType(DriveRequestType.Velocity));
+                  .withDriveRequestType(DriveRequestType.OpenLoopVoltage));
 
       case INTAKE_ASSIST_AUTO -> {
         intakeAssistAutoSpeeds = IntakeAssistManager.getRobotRelativeAssistSpeeds(0, autoSpeeds);

@@ -118,7 +118,7 @@ public class ShooterSubsystem extends StateMachine<ShooterState> {
         bottomMotor.setControl(velocityRequest.withVelocity(goalRpm / 60.0));
       }
       case FEEDING -> {
-        var goalRpm = speakerDistanceToRpm.get(distanceToFeedSpot);
+        var goalRpm = feedSpotDistanceToRpm.get(distanceToFeedSpot);
         topMotor.setControl(velocityRequest.withVelocity(goalRpm / 60.0));
         bottomMotor.setControl(velocityRequest.withVelocity(goalRpm / 60.0));
       }

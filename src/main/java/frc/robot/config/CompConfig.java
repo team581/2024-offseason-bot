@@ -114,7 +114,8 @@ class CompConfig {
                           .withSupplyCurrentLimit(45))
                   .withSlot0(new Slot0Configs().withKV(0.15).withKP(3.5).withKI(0).withKD(0)),
               feedSpotDistanceToRpm -> {
-                feedSpotDistanceToRpm.put(Units.inchesToMeters(123.0), 321.0);
+                feedSpotDistanceToRpm.put(Units.inchesToMeters(438.52), 2700.0);
+                feedSpotDistanceToRpm.put(Units.inchesToMeters(275.2), 2000.0);
               },
               speakerDistanceToRpm -> {
                 speakerDistanceToRpm.put(Units.inchesToMeters(52.5), 4000.0);
@@ -198,7 +199,8 @@ class CompConfig {
                           .withMotionMagicCruiseVelocity(3.0)
                           .withMotionMagicJerk(100)),
               feedSpotDistanceToAngle -> {
-                feedSpotDistanceToAngle.put(Units.inchesToMeters(0), 0.0);
+                feedSpotDistanceToAngle.put(Units.inchesToMeters(265.35), -30.0);
+                feedSpotDistanceToAngle.put(Units.inchesToMeters(22.047), -30.0);
               },
               speakerDistanceToAngle -> {
                 speakerDistanceToAngle.put(Units.inchesToMeters(52.5), -20.0);

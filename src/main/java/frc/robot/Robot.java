@@ -184,8 +184,8 @@ public class Robot extends TimedRobot {
     hardware
         .driverController
         .rightBumper()
-        .onTrue(robotCommands.waitFeedingCommand())
-        .onFalse(robotCommands.feedingCommand());
+        .onTrue(robotCommands.feedingCommand())
+        .onFalse(robotCommands.waitFeedingCommand());
     hardware
         .driverController
         .leftBumper()
