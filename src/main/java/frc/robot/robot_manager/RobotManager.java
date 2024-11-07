@@ -3,6 +3,7 @@ package frc.robot.robot_manager;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.FieldUtil;
 import frc.robot.arm.ArmState;
 import frc.robot.arm.ArmSubsystem;
@@ -24,6 +25,7 @@ import frc.robot.vision.VisionState;
 import frc.robot.vision.VisionSubsystem;
 
 public class RobotManager extends StateMachine<RobotState> {
+  private static final double MINIMUM_SHOT_TIME = 0.5;
   public final ArmSubsystem arm;
   public final ShooterSubsystem shooter;
   public final LocalizationSubsystem localization;
@@ -32,6 +34,7 @@ public class RobotManager extends StateMachine<RobotState> {
   public final IntakeSubsystem intake;
   public final QueuerSubsystem queuer;
   public final SwerveSubsystem swerve;
+  private final Timer shotTimer = new Timer();
 
   private DistanceAngle fieldRelativeDistanceAngleToSpeaker = new DistanceAngle(0, 0, false);
   private DistanceAngle fieldRelativeDistanceAngleToFeedSpot = new DistanceAngle(0, 0, false);
@@ -91,8 +94,12 @@ public class RobotManager extends StateMachine<RobotState> {
               PODIUM_WAITING ->
           currentState;
 
-      case SPEAKER_SCORING, FEEDING_SHOOTING, PASS_SHOOTING, SUBWOOFER_SCORING, PODIUM_SCORING ->
+      case FEEDING_SHOOTING, PASS_SHOOTING, SUBWOOFER_SCORING, PODIUM_SCORING ->
           queuer.hasNote() ? currentState : RobotState.IDLE_NO_GP;
+      case SPEAKER_SCORING ->
+          queuer.hasNote() || !shotTimer.hasElapsed(MINIMUM_SHOT_TIME)
+              ? currentState
+              : RobotState.IDLE_NO_GP;
 
       case SPEAKER_PREPARE_TO_SCORE ->
           (shooter.atGoal() && arm.atGoal())
@@ -120,10 +127,8 @@ public class RobotManager extends StateMachine<RobotState> {
           shooter.atGoal() && arm.atGoal() ? RobotState.PODIUM_SCORING : currentState;
 
       case UNJAM -> currentState;
-      case INTAKING, INTAKE_ASSIST -> queuer.hasNote() ? RobotState.INTAKING_BACK : currentState;
-      case INTAKING_BACK -> !queuer.hasNote() ? RobotState.INTAKING_FORWARD_PUSH : currentState;
-      case INTAKING_FORWARD_PUSH -> {
-        if (!queuer.atGoal()) {
+      case INTAKING, INTAKE_ASSIST -> {
+        if (!queuer.hasNote()) {
           yield currentState;
         }
 
@@ -133,6 +138,19 @@ public class RobotManager extends StateMachine<RobotState> {
 
         yield RobotState.IDLE_WITH_GP;
       }
+        // case INTAKING_BACK -> !queuer.hasNote() ? RobotState.INTAKING_FORWARD_PUSH :
+        // currentState;
+        // case INTAKING_FORWARD_PUSH -> {
+        //   if (!queuer.atGoal()) {
+        //     yield currentState;
+        //   }
+
+        //   if (confirmShotActive) {
+        //     yield RobotState.SPEAKER_PREPARE_TO_SCORE;
+        //   }
+
+        //   yield RobotState.IDLE_WITH_GP;
+        // }
     };
   }
 
@@ -171,7 +189,17 @@ public class RobotManager extends StateMachine<RobotState> {
         swerve.setSnapsEnabled(true);
         swerve.setSnapToAngle(SnapUtil.getSubwooferAngle());
       }
-      case SPEAKER_PREPARE_TO_SCORE, SPEAKER_WAITING -> {
+      case SPEAKER_PREPARE_TO_SCORE -> {
+        arm.setState(ArmState.SPEAKER_SHOT);
+        shooter.setState(ShooterState.SPEAKER_SHOT);
+        intake.setState(IntakeState.IDLE);
+        queuer.setState(QueuerState.IDLE);
+        swerve.setSnapsEnabled(true);
+        swerve.setSnapToAngle(fieldRelativeDistanceAngleToSpeaker.targetAngle());
+        shotTimer.stop();
+        shotTimer.reset();
+      }
+      case SPEAKER_WAITING -> {
         arm.setState(ArmState.SPEAKER_SHOT);
         shooter.setState(ShooterState.SPEAKER_SHOT);
         intake.setState(IntakeState.IDLE);
@@ -186,6 +214,7 @@ public class RobotManager extends StateMachine<RobotState> {
         queuer.setState(QueuerState.SHOOTING);
         swerve.setSnapsEnabled(true);
         swerve.setSnapToAngle(fieldRelativeDistanceAngleToSpeaker.targetAngle());
+        shotTimer.start();
       }
       case AMP_PREPARE_TO_SCORE, AMP_WAITING -> {
         arm.setState(ArmState.AMP);
@@ -251,22 +280,22 @@ public class RobotManager extends StateMachine<RobotState> {
         swerve.setSnapsEnabled(false);
         swerve.setSnapToAngle(0);
       }
-      case INTAKING_BACK -> {
-        arm.setState(ArmState.IDLE);
-        shooter.setState(ShooterState.IDLE_STOPPED);
-        intake.setState(IntakeState.INTAKING_BACK);
-        queuer.setState(QueuerState.INTAKING_BACK);
-        swerve.setSnapsEnabled(false);
-        swerve.setSnapToAngle(0);
-      }
-      case INTAKING_FORWARD_PUSH -> {
-        arm.setState(ArmState.IDLE);
-        shooter.setState(ShooterState.IDLE_STOPPED);
-        intake.setState(IntakeState.INTAKING_FORWARD_PUSH);
-        queuer.setState(QueuerState.INTAKING_FORWARD_PUSH);
-        swerve.setSnapsEnabled(false);
-        swerve.setSnapToAngle(0);
-      }
+        // case INTAKING_BACK -> {
+        //   arm.setState(ArmState.IDLE);
+        //   shooter.setState(ShooterState.IDLE_STOPPED);
+        //   intake.setState(IntakeState.INTAKING_BACK);
+        //   queuer.setState(QueuerState.INTAKING_BACK);
+        //   swerve.setSnapsEnabled(false);
+        //   swerve.setSnapToAngle(0);
+        // }
+        // case INTAKING_FORWARD_PUSH -> {
+        //   arm.setState(ArmState.IDLE);
+        //   shooter.setState(ShooterState.IDLE_STOPPED);
+        //   intake.setState(IntakeState.INTAKING_FORWARD_PUSH);
+        //   queuer.setState(QueuerState.INTAKING_FORWARD_PUSH);
+        //   swerve.setSnapsEnabled(false);
+        //   swerve.setSnapToAngle(0);
+        // }
       case INTAKE_ASSIST -> {
         arm.setState(ArmState.IDLE);
         shooter.setState(ShooterState.IDLE_STOPPED);
@@ -344,20 +373,20 @@ public class RobotManager extends StateMachine<RobotState> {
           intake.setState(IntakeState.IDLE);
         }
       }
-      case INTAKING_BACK -> {
-        if (arm.atGoal()) {
-          intake.setState(IntakeState.INTAKING_BACK);
-        } else {
-          intake.setState(IntakeState.IDLE);
-        }
-      }
-      case INTAKING_FORWARD_PUSH -> {
-        if (arm.atGoal()) {
-          intake.setState(IntakeState.INTAKING_FORWARD_PUSH);
-        } else {
-          intake.setState(IntakeState.IDLE);
-        }
-      }
+        // case INTAKING_BACK -> {
+        //   if (arm.atGoal()) {
+        //     intake.setState(IntakeState.INTAKING_BACK);
+        //   } else {
+        //     intake.setState(IntakeState.IDLE);
+        //   }
+        // }
+        // case INTAKING_FORWARD_PUSH -> {
+        //   if (arm.atGoal()) {
+        //     intake.setState(IntakeState.INTAKING_FORWARD_PUSH);
+        //   } else {
+        //     intake.setState(IntakeState.IDLE);
+        //   }
+        // }
       default -> {}
     }
     DogLog.log("RobotManager/shooteratGoal", shooter.atGoal());
@@ -365,12 +394,12 @@ public class RobotManager extends StateMachine<RobotState> {
     DogLog.log("RobotManager/confirmShotActive", confirmShotActive);
     DogLog.log("RobotManager/isSlowEnoughToShoot", swerve.isSlowEnoughToShoot());
     DogLog.log("RobotManager/visionState", vision.getVisionState());
-        DogLog.log("RobotManager/facingspekaer", facingSpeakerAngle);
-                DogLog.log("RobotManager/goalAngleforspeaker", fieldRelativeDistanceAngleToSpeaker.targetAngle());
-                                
+    DogLog.log("RobotManager/facingspekaer", facingSpeakerAngle);
+    DogLog.log(
+        "RobotManager/goalAngleforspeaker", fieldRelativeDistanceAngleToSpeaker.targetAngle());
+    DogLog.log("RobotManager/distancetoFeedSpot", fieldRelativeDistanceAngleToFeedSpot.distance());
 
-
-
+    DogLog.log("RobotManager/minimunShotTimer", shotTimer.get());
   }
 
   public void setConfirmShotActive(boolean newValue) {
@@ -379,11 +408,10 @@ public class RobotManager extends StateMachine<RobotState> {
 
   public void confirmShotRequest() {
     switch (getState()) {
-      case CLIMBING_1_LINEUP,
-          CLIMBING_2_HANGING,
-          INTAKING,
-          INTAKING_BACK,
-          INTAKING_FORWARD_PUSH -> {}
+      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING, INTAKING, INTAKE_ASSIST
+      // INTAKING_BACK,
+      // INTAKING_FORWARD_PUSH
+      -> {}
 
       case AMP_WAITING -> setStateFromRequest(RobotState.AMP_PREPARE_TO_SCORE);
       case SPEAKER_WAITING -> setStateFromRequest(RobotState.SPEAKER_PREPARE_TO_SCORE);
@@ -399,9 +427,10 @@ public class RobotManager extends StateMachine<RobotState> {
       case CLIMBING_1_LINEUP,
           CLIMBING_2_HANGING,
           AMP_SCORING,
-          INTAKING_BACK,
-          INTAKING_FORWARD_PUSH,
-          INTAKING -> {}
+          // INTAKING_BACK,
+          // INTAKING_FORWARD_PUSH,
+          INTAKING,
+          INTAKE_ASSIST -> {}
       default -> setStateFromRequest(RobotState.AMP_WAITING);
     }
   }
@@ -411,9 +440,10 @@ public class RobotManager extends StateMachine<RobotState> {
       case CLIMBING_1_LINEUP,
           CLIMBING_2_HANGING,
           SPEAKER_SCORING,
-          INTAKING_BACK,
-          INTAKING_FORWARD_PUSH,
-          INTAKING -> {}
+          // INTAKING_BACK,
+          // INTAKING_FORWARD_PUSH,
+          INTAKING,
+          INTAKE_ASSIST -> {}
       default -> setStateFromRequest(RobotState.SUBWOOFER_WAITING);
     }
   }
@@ -423,9 +453,10 @@ public class RobotManager extends StateMachine<RobotState> {
       case CLIMBING_1_LINEUP,
           CLIMBING_2_HANGING,
           SPEAKER_SCORING,
-          INTAKING_BACK,
-          INTAKING_FORWARD_PUSH,
-          INTAKING -> {}
+          // INTAKING_BACK,
+          // INTAKING_FORWARD_PUSH,
+          INTAKING,
+          INTAKE_ASSIST -> {}
       default -> setStateFromRequest(RobotState.PODIUM_WAITING);
     }
   }
@@ -434,9 +465,10 @@ public class RobotManager extends StateMachine<RobotState> {
     switch (getState()) {
       case CLIMBING_1_LINEUP,
           CLIMBING_2_HANGING,
-          INTAKING_BACK,
-          INTAKING_FORWARD_PUSH,
-          INTAKING -> {}
+          // INTAKING_BACK,
+          // INTAKING_FORWARD_PUSH,
+          INTAKING,
+          INTAKE_ASSIST -> {}
       default -> setStateFromRequest(RobotState.SPEAKER_WAITING);
     }
   }
@@ -477,6 +509,7 @@ public class RobotManager extends StateMachine<RobotState> {
     switch (getState()) {
         // TODO: Intaking and unjam should not be IDLE_WITH_GP
       case INTAKING,
+              INTAKE_ASSIST,
               AMP_PREPARE_TO_SCORE,
               SPEAKER_PREPARE_TO_SCORE,
               FEEDING_PREPARE_TO_SHOOT,
@@ -489,9 +522,10 @@ public class RobotManager extends StateMachine<RobotState> {
               FEEDING_SHOOTING,
               PASS_SHOOTING,
               IDLE_WITH_GP,
-              UNJAM,
-              INTAKING_BACK,
-              INTAKING_FORWARD_PUSH ->
+              UNJAM
+          // INTAKING_BACK,
+          // INTAKING_FORWARD_PUSH
+          ->
           setStateFromRequest(RobotState.IDLE_WITH_GP);
       default -> setStateFromRequest(RobotState.IDLE_NO_GP);
     }
@@ -501,9 +535,10 @@ public class RobotManager extends StateMachine<RobotState> {
     switch (getState()) {
       case CLIMBING_1_LINEUP,
           CLIMBING_2_HANGING,
-          INTAKING_BACK,
-          INTAKING_FORWARD_PUSH,
-          INTAKING -> {}
+          // INTAKING_BACK,
+          // INTAKING_FORWARD_PUSH,
+          INTAKING,
+          INTAKE_ASSIST -> {}
       default -> setStateFromRequest(RobotState.PASS_PREPARE_TO_SHOOT);
     }
   }
@@ -530,9 +565,10 @@ public class RobotManager extends StateMachine<RobotState> {
     switch (getState()) {
       case CLIMBING_1_LINEUP,
           CLIMBING_2_HANGING,
-          INTAKING_BACK,
-          INTAKING_FORWARD_PUSH,
-          INTAKING -> {}
+          // INTAKING_BACK,
+          // INTAKING_FORWARD_PUSH,
+          INTAKING,
+          INTAKE_ASSIST -> {}
       default -> setStateFromRequest(RobotState.SPEAKER_PREPARE_TO_SCORE);
     }
   }
@@ -541,9 +577,10 @@ public class RobotManager extends StateMachine<RobotState> {
     switch (getState()) {
       case CLIMBING_1_LINEUP,
           CLIMBING_2_HANGING,
-          INTAKING_BACK,
-          INTAKING_FORWARD_PUSH,
-          INTAKING -> {}
+          // INTAKING_BACK,
+          // INTAKING_FORWARD_PUSH,
+          INTAKING,
+          INTAKE_ASSIST -> {}
       default -> setStateFromRequest(RobotState.AMP_PREPARE_TO_SCORE);
     }
   }
@@ -552,9 +589,10 @@ public class RobotManager extends StateMachine<RobotState> {
     switch (getState()) {
       case CLIMBING_1_LINEUP,
           CLIMBING_2_HANGING,
-          INTAKING_BACK,
-          INTAKING_FORWARD_PUSH,
-          INTAKING -> {}
+          // INTAKING_BACK,
+          // INTAKING_FORWARD_PUSH,
+          INTAKING,
+          INTAKE_ASSIST -> {}
       default -> setStateFromRequest(RobotState.FEEDING_PREPARE_TO_SHOOT);
     }
   }
@@ -563,9 +601,10 @@ public class RobotManager extends StateMachine<RobotState> {
     switch (getState()) {
       case CLIMBING_1_LINEUP,
           CLIMBING_2_HANGING,
-          INTAKING_BACK,
-          INTAKING_FORWARD_PUSH,
-          INTAKING -> {}
+          // INTAKING_BACK,
+          // INTAKING_FORWARD_PUSH,
+          INTAKING,
+          INTAKE_ASSIST -> {}
       default -> setStateFromRequest(RobotState.FEEDING_WAITING);
     }
   }
@@ -588,9 +627,10 @@ public class RobotManager extends StateMachine<RobotState> {
     switch (getState()) {
       case CLIMBING_1_LINEUP,
           CLIMBING_2_HANGING,
-          INTAKING_BACK,
-          INTAKING_FORWARD_PUSH,
-          INTAKING -> {}
+          // INTAKING_BACK,
+          // INTAKING_FORWARD_PUSH,
+          INTAKING,
+          INTAKE_ASSIST -> {}
       default -> setStateFromRequest(RobotState.SUBWOOFER_PREPARE_TO_SCORE);
     }
   }
@@ -599,9 +639,10 @@ public class RobotManager extends StateMachine<RobotState> {
     switch (getState()) {
       case CLIMBING_1_LINEUP,
           CLIMBING_2_HANGING,
-          INTAKING_BACK,
-          INTAKING_FORWARD_PUSH,
-          INTAKING -> {}
+          // INTAKING_BACK,
+          // INTAKING_FORWARD_PUSH,
+          INTAKING,
+          INTAKE_ASSIST -> {}
       default -> setStateFromRequest(RobotState.PODIUM_PREPARE_TO_SCORE);
     }
   }
