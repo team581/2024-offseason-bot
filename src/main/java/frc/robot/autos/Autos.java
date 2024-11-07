@@ -75,6 +75,7 @@ public class Autos extends LifecycleSubsystem {
     registerCommand("speakerShot", autoCommands.speakerShotWithTimeout());
     registerCommand("intakeAssist", robotCommands.intakeAssistCommand());
     registerCommand("dynamic5Piece", autoCommands.dynamicRedAmp5PieceCommand());
+    registerCommand("waitingSpeakerCommand", robotCommands.waitSpeakerCommand());
   }
 
   public Command getAutoCommand() {
