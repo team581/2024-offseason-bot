@@ -483,24 +483,21 @@ public class RobotManager extends StateMachine<RobotState> {
   }
 
   public void intakeRequest() {
-    if (!queuer.hasNote()){
-switch (getState()) {
-      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
-      default -> setStateFromRequest(RobotState.INTAKING);
+    if (!queuer.hasNote()) {
+      switch (getState()) {
+        case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
+        default -> setStateFromRequest(RobotState.INTAKING);
+      }
     }
-    }
-
-    
   }
 
   public void intakeAssistRequest() {
-    if (!queuer.hasNote()){
+    if (!queuer.hasNote()) {
       switch (getState()) {
-      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
-      default -> setStateFromRequest(RobotState.INTAKE_ASSIST);
+        case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
+        default -> setStateFromRequest(RobotState.INTAKE_ASSIST);
+      }
     }
-    }
-      
   }
 
   public void outtakeRequest() {

@@ -60,41 +60,41 @@ public enum InterpolatedVisionDataset {
                   new Translation2d(13.67, 4.106),
                   "FRONT_PODIUM_MIDDLE")),
           List.of())),
-          MADTOWN(
-            new CameraDataset(
-              List.of(
-                  new VisionInterpolationData(
-                      new Translation2d(15.2245, 5.522), new Translation2d(999, 999), "SUBWOOFER"),
-                  new VisionInterpolationData(
-                      new Translation2d(13.0745, 5.522),
-                      new Translation2d(999,999),
-                      "PODIUM_SPEAKER_INTERSECTION"),
-                  new VisionInterpolationData(
-                      new Translation2d(11.059, 6.842),
-                      new Translation2d(999,999),
-                      "WING_LINE_MIDDLE"),
-                  new VisionInterpolationData(
-                      new Translation2d(13.799, 4.202),
-                      new Translation2d(999,999),
-                      "FRONT_PODIUM_MIDDLE")),
-              List.of()),
-          new CameraDataset(
-              List.of(
-                  new VisionInterpolationData(
-                      new Translation2d(15.2245, 5.522), new Translation2d(999,999), "SUBWOOFER"),
-                  new VisionInterpolationData(
-                      new Translation2d(13.0745, 5.522),
-                      new Translation2d(999,999),
-                      "PODIUM_SPEAKER_INTERSECTION"),
-                  new VisionInterpolationData(
-                      new Translation2d(11.059, 6.842),
-                      new Translation2d(999,999),
-                      "WING_LINE_MIDDLE"),
-                  new VisionInterpolationData(
-                      new Translation2d(13.799, 4.202),
-                      new Translation2d(999,999),
-                      "FRONT_PODIUM_MIDDLE")),
-              List.of()));
+  MADTOWN(
+      new CameraDataset(
+          List.of(
+              new VisionInterpolationData(
+                  new Translation2d(15.2245, 5.522), new Translation2d(999, 999), "SUBWOOFER"),
+              new VisionInterpolationData(
+                  new Translation2d(13.0745, 5.522),
+                  new Translation2d(999, 999),
+                  "PODIUM_SPEAKER_INTERSECTION"),
+              new VisionInterpolationData(
+                  new Translation2d(11.059, 6.842),
+                  new Translation2d(999, 999),
+                  "WING_LINE_MIDDLE"),
+              new VisionInterpolationData(
+                  new Translation2d(13.799, 4.202),
+                  new Translation2d(999, 999),
+                  "FRONT_PODIUM_MIDDLE")),
+          List.of()),
+      new CameraDataset(
+          List.of(
+              new VisionInterpolationData(
+                  new Translation2d(15.2245, 5.522), new Translation2d(999, 999), "SUBWOOFER"),
+              new VisionInterpolationData(
+                  new Translation2d(13.0745, 5.522),
+                  new Translation2d(999, 999),
+                  "PODIUM_SPEAKER_INTERSECTION"),
+              new VisionInterpolationData(
+                  new Translation2d(11.059, 6.842),
+                  new Translation2d(999, 999),
+                  "WING_LINE_MIDDLE"),
+              new VisionInterpolationData(
+                  new Translation2d(13.799, 4.202),
+                  new Translation2d(999, 999),
+                  "FRONT_PODIUM_MIDDLE")),
+          List.of()));
 
   public final CameraDataset leftSet;
   public final CameraDataset rightSet;

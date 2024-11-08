@@ -82,7 +82,7 @@ public class ArmSubsystem extends StateMachine<ArmState> {
       case AMP ->
           MathUtil.isNear(ArmAngle.AMP, leftMotorAngle, 1)
               && MathUtil.isNear(ArmAngle.AMP, rightMotorAngle, 1);
-              case UNJAM ->
+      case UNJAM ->
           MathUtil.isNear(ArmAngle.UNJAM, leftMotorAngle, 1)
               && MathUtil.isNear(ArmAngle.UNJAM, rightMotorAngle, 1);
       case PASS ->

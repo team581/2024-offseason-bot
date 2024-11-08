@@ -21,7 +21,8 @@ public class SnapUtil {
   }
 
   private static final List<Double> RED_STAGE_ANGLES = List.of(0.0, 120.0, -120.0);
-  private static final List<Double> BLUE_STAGE_ANGLES = List.of(0.0 + 180.0, 120.0 - 180.0, -120+180.0);
+  private static final List<Double> BLUE_STAGE_ANGLES =
+      List.of(0.0 + 180.0, 120.0 - 180.0, -120 + 180.0);
 
   public static double getClimbingAngle(ImuSubsystem imu) {
     var usedAngles = FmsSubsystem.isRedAlliance() ? RED_STAGE_ANGLES : BLUE_STAGE_ANGLES;
@@ -31,11 +32,11 @@ public class SnapUtil {
     var closestAngle = RED_STAGE_ANGLES.get(0);
     var smallestDifference = Double.POSITIVE_INFINITY;
     for (var angle : usedAngles) {
-        if (Math.abs(angle-currentAngle)<smallestDifference){
-          closestAngle = angle;
-          smallestDifference = Math.abs(angle-currentAngle);
-        }
-    } 
+      if (Math.abs(angle - currentAngle) < smallestDifference) {
+        closestAngle = angle;
+        smallestDifference = Math.abs(angle - currentAngle);
+      }
+    }
 
     return closestAngle;
   }
