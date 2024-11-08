@@ -265,7 +265,7 @@ public class RobotManager extends StateMachine<RobotState> {
         swerve.setSnapToAngle(0);
       }
       case UNJAM -> {
-        arm.setState(ArmState.AMP);
+        arm.setState(ArmState.UNJAM);
         shooter.setState(ShooterState.PASS);
         intake.setState(IntakeState.OUTTAKING);
         queuer.setState(QueuerState.OUTTAKING);
@@ -483,17 +483,24 @@ public class RobotManager extends StateMachine<RobotState> {
   }
 
   public void intakeRequest() {
-    switch (getState()) {
+    if (!queuer.hasNote()){
+switch (getState()) {
       case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
       default -> setStateFromRequest(RobotState.INTAKING);
     }
+    }
+
+    
   }
 
   public void intakeAssistRequest() {
-    switch (getState()) {
+    if (!queuer.hasNote()){
+      switch (getState()) {
       case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
       default -> setStateFromRequest(RobotState.INTAKE_ASSIST);
     }
+    }
+      
   }
 
   public void outtakeRequest() {
