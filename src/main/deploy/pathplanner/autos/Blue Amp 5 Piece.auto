@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 15.20169734954834,
+      "x": 1.3383026504516593,
       "y": 6.508597373962402
     },
-    "rotation": -1.4607893201406946e-23
+    "rotation": 180.0
   },
   "command": {
     "type": "sequential",
@@ -14,7 +14,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Red Amp 5 Piece.1"
+            "pathName": "Blue Amp 5 Piece.1"
           }
         },
         {
@@ -26,13 +26,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Red Amp 5 Piece.2"
+            "pathName": "Blue Amp 5 Piece.2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Red Amp 5 Piece.3"
+            "pathName": "Blue Amp 5 Piece.3"
           }
         },
         {
@@ -44,13 +44,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Red Amp 5 Piece.4"
+            "pathName": "Blue Amp 5 Piece.4"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Red Amp 5 Piece.5"
+            "pathName": "Blue Amp 5 Piece.5"
           }
         },
         {
@@ -62,13 +62,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Red Amp 5 Piece.6"
+            "pathName": "Blue Amp 5 Piece.6"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Red Amp 5 Piece.7"
+            "pathName": "Blue Amp 5 Piece.7"
           }
         },
         {
@@ -80,13 +80,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Red Amp 5 Piece.8"
+            "pathName": "Blue Amp 5 Piece.8"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Red Amp 5 Piece.9"
+            "pathName": "Blue Amp 5 Piece.9"
           }
         },
         {
@@ -98,6 +98,6 @@
       ]
     }
   },
-  "folder": "Red Choreo Autos",
+  "folder": "Blue Choreo Autos",
   "choreoAuto": true
 }

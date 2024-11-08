@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 15.20169734954834,
-      "y": 6.508597373962402
+      "x": 0.7587480926513663,
+      "y": 6.674294471740723
     },
-    "rotation": -1.4607893201406946e-23
+    "rotation": -120.5792100485938
   },
   "command": {
     "type": "sequential",
@@ -14,7 +14,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Red Amp 5 Piece.1"
+            "pathName": "Blue OP.1"
           }
         },
         {
@@ -26,13 +26,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Red Amp 5 Piece.2"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Red Amp 5 Piece.3"
+            "pathName": "Blue OP.2"
           }
         },
         {
@@ -44,13 +38,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Red Amp 5 Piece.4"
+            "pathName": "Blue OP.3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Red Amp 5 Piece.5"
+            "pathName": "Blue OP.4"
           }
         },
         {
@@ -62,31 +56,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Red Amp 5 Piece.6"
+            "pathName": "Blue OP.5"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Red Amp 5 Piece.7"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "speakerShot"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Red Amp 5 Piece.8"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Red Amp 5 Piece.9"
+            "pathName": "Blue OP.6"
           }
         },
         {
@@ -98,6 +74,6 @@
       ]
     }
   },
-  "folder": "Red Choreo Autos",
+  "folder": "Blue Choreo Autos",
   "choreoAuto": true
 }
