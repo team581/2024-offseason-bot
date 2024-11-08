@@ -1,6 +1,7 @@
 package frc.robot.swerve;
 
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.TorqueCurrentConfigs;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
@@ -159,6 +160,11 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
       driveMotorConfigurator.apply(RobotConfig.get().swerve().driveMotorConfig().CurrentLimits);
       driveMotorConfigurator.apply(RobotConfig.get().swerve().driveMotorConfig().Voltage);
       driveMotorConfigurator.apply(RobotConfig.get().swerve().driveMotorConfig().OpenLoopRamps);
+      driveMotorConfigurator.apply(
+          new TorqueCurrentConfigs()
+              .withPeakForwardTorqueCurrent(80)
+              .withPeakReverseTorqueCurrent(80));
+
       MotorOutputConfigs driveMotorOutput =
           RobotConfig.get().swerve().driveMotorConfig().MotorOutput;
       driveMotorOutput.Inverted =

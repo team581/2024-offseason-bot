@@ -1,5 +1,7 @@
 package frc.robot.robot_manager;
 
+import java.sql.Driver;
+
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -470,7 +472,12 @@ public class RobotManager extends StateMachine<RobotState> {
           // INTAKING_BACK,
           // INTAKING_FORWARD_PUSH,
           INTAKING,
-          INTAKE_ASSIST -> {}
+          INTAKE_ASSIST -> {
+            if (DriverStation.isAutonomous()) {
+              // Bypass intake checks if we're in auto
+              setStateFromRequest(RobotState.SPEAKER_WAITING);
+            }
+          }
       default -> setStateFromRequest(RobotState.SPEAKER_WAITING);
     }
   }
@@ -574,7 +581,12 @@ public class RobotManager extends StateMachine<RobotState> {
           // INTAKING_BACK,
           // INTAKING_FORWARD_PUSH,
           INTAKING,
-          INTAKE_ASSIST -> {}
+          INTAKE_ASSIST -> {
+            if (DriverStation.isAutonomous()) {
+              // Bypass intake checks if we're in auto
+              setStateFromRequest(RobotState.SPEAKER_PREPARE_TO_SCORE);
+            }
+          }
       default -> setStateFromRequest(RobotState.SPEAKER_PREPARE_TO_SCORE);
     }
   }
