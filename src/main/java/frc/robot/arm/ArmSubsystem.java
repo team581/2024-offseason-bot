@@ -82,6 +82,9 @@ public class ArmSubsystem extends StateMachine<ArmState> {
       case AMP ->
           MathUtil.isNear(ArmAngle.AMP, leftMotorAngle, 1)
               && MathUtil.isNear(ArmAngle.AMP, rightMotorAngle, 1);
+              case UNJAM ->
+          MathUtil.isNear(ArmAngle.UNJAM, leftMotorAngle, 1)
+              && MathUtil.isNear(ArmAngle.UNJAM, rightMotorAngle, 1);
       case PASS ->
           MathUtil.isNear(ArmAngle.PASS, leftMotorAngle, 1)
               && MathUtil.isNear(ArmAngle.PASS, rightMotorAngle, 1);
@@ -153,6 +156,12 @@ public class ArmSubsystem extends StateMachine<ArmState> {
             motionMagicRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.AMP))));
         rightMotor.setControl(
             motionMagicRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.AMP))));
+      }
+      case UNJAM -> {
+        leftMotor.setControl(
+            motionMagicRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.UNJAM))));
+        rightMotor.setControl(
+            motionMagicRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.UNJAM))));
       }
       case PASS -> {
         leftMotor.setControl(

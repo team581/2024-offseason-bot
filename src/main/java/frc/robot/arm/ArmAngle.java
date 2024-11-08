@@ -9,4 +9,5 @@ public class ArmAngle {
   public static final double CLIMBING_2_HANGING = -31.0;
   public static final double AMP = 65.0;
   public static final double PASS = -77.0;
+  public static final double UNJAM = 0;
 }
