@@ -18,6 +18,7 @@ import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.util.Units;
 import frc.robot.config.RobotConfig.ArmConfig;
 import frc.robot.config.RobotConfig.IntakeConfig;
+import frc.robot.config.RobotConfig.LightsConfig;
 import frc.robot.config.RobotConfig.QueuerConfig;
 import frc.robot.config.RobotConfig.ShooterConfig;
 import frc.robot.config.RobotConfig.SwerveConfig;
@@ -213,7 +214,8 @@ class CompConfig {
               },
               -77.0,
               87.0),
-          new VisionConfig(4, 0.4, 0.4, InterpolatedVisionDataset.HOME));
+          new VisionConfig(4, 0.4, 0.4, InterpolatedVisionDataset.HOME),
+          new LightsConfig("rio", 3));
 
   private CompConfig() {}
 }

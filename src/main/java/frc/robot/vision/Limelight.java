@@ -11,7 +11,7 @@ public class Limelight {
   private final String limelightTableName;
   private final String name;
   private CameraDataset interpolationData;
-  private VisionState state = VisionState.ONLINE_NO_TAGS;
+  private CameraStatus state = CameraStatus.ONLINE_NO_TAGS;
   private double limelightHeartbeat = -1;
 
   private final Timer limelightTimer = new Timer();
@@ -78,19 +78,18 @@ public class Limelight {
     limelightHeartbeat = newHeartbeat;
 
     if (limelightTimer.hasElapsed(5)) {
-      state = VisionState.OFFLINE;
+      state = CameraStatus.OFFLINE;
       return;
     }
 
     if (!rawResult.isEmpty()) {
-      state = VisionState.SEES_TAGS;
+      state = CameraStatus.SEES_TAGS;
       return;
     }
-    state = VisionState.ONLINE_NO_TAGS;
-    return;
+    state = CameraStatus.ONLINE_NO_TAGS;
   }
 
-  public VisionState getState() {
+  public CameraStatus getState() {
     return state;
   }
 }
