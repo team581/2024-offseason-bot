@@ -29,7 +29,7 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
   /** Max speed allowed to make a speaker shot and feeding. */
   private static final double MAX_SPEED_SHOOTING = Units.feetToMeters(0.5);
 
-  private static final double MAX_FLOOR_SPEED_SHOOTING = Units.feetToMeters(18);
+  private static final double MAX_FLOOR_SPEED_SHOOTING = Units.feetToMeters(1.0);
 
   public static final double MaxSpeed = 4.75;
   private static final double MaxAngularRate = Units.rotationsToRadians(4);
