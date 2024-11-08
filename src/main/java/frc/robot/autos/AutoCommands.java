@@ -42,7 +42,7 @@ public class AutoCommands {
     return robotCommands.speakerCommand().withTimeout(3).withName("SpeakerShotWithTimeout");
   }
 
-  public Command dynamicRedAmp5PieceCommand() {
+  public Command dynamicAmp5PieceCommand() {
     var red4To5 = PathPlannerPath.fromChoreoTrajectory("Red 4 to 5");
     var red5ToAmp = PathPlannerPath.fromChoreoTrajectory("Red 5 to Amp");
     var red4ToAmp = PathPlannerPath.fromChoreoTrajectory("Red Amp 5 Piece.2");
