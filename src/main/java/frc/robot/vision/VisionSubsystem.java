@@ -80,17 +80,33 @@ public class VisionSubsystem extends StateMachine<VisionState> {
     DogLog.log("Vision/Right/VisionState", rightLimelight.getState());
   }
 
-  public VisionState getVisionState() {
+  public CameraStatus getVisionState() {
     var leftState = leftLimelight.getState();
     var rightState = rightLimelight.getState();
-    if (leftState == VisionState.OFFLINE && rightState == VisionState.OFFLINE) {
-      return VisionState.OFFLINE;
-    } else if (leftState == VisionState.ONLINE_NO_TAGS
-        && rightState == VisionState.ONLINE_NO_TAGS) {
-      return VisionState.ONLINE_NO_TAGS;
-    } else if (leftState == VisionState.SEES_TAGS || rightState == VisionState.SEES_TAGS) {
-      return VisionState.SEES_TAGS;
+    if (leftState == CameraStatus.OFFLINE && rightState == CameraStatus.OFFLINE) {
+      return CameraStatus.OFFLINE;
     }
-    return VisionState.DEFAULT_STATE;
+
+    if (leftState == CameraStatus.SEES_TAGS || rightState == CameraStatus.SEES_TAGS) {
+      return CameraStatus.SEES_TAGS;
+    }
+
+    return CameraStatus.ONLINE_NO_TAGS;
+  }
+
+  /** Same as the regular vision state but returns OFFLINE if any camera is offline. */
+  public CameraStatus getPessimisticVisionState() {
+    var leftState = leftLimelight.getState();
+    var rightState = rightLimelight.getState();
+
+    if (leftState == CameraStatus.OFFLINE || rightState == CameraStatus.OFFLINE) {
+      return CameraStatus.OFFLINE;
+    }
+
+    if (leftState == CameraStatus.SEES_TAGS || rightState == CameraStatus.SEES_TAGS) {
+      return CameraStatus.SEES_TAGS;
+    }
+
+    return CameraStatus.ONLINE_NO_TAGS;
   }
 }

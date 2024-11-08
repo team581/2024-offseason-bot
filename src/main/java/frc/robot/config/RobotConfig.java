@@ -15,7 +15,8 @@ public record RobotConfig(
     ShooterConfig shooter,
     IntakeConfig intake,
     ArmConfig arm,
-    VisionConfig vision,LightsConfig lights) {
+    VisionConfig vision,
+    LightsConfig lights) {
   public record SwerveConfig(
       PhoenixPIDController snapController,
       boolean invertRotation,
@@ -63,8 +64,8 @@ public record RobotConfig(
       double xyStdDev,
       double thetaStdDev,
       InterpolatedVisionDataset interpolatedVisionSet) {}
-    
-    public record LightsConfig(String canBusName, int deviceID) {}
+
+  public record LightsConfig(String canBusName, int deviceID) {}
 
   // TODO: Change this to false during events
   public static final boolean IS_DEVELOPMENT = true;

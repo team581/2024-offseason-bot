@@ -20,8 +20,8 @@ import frc.robot.swerve.SwerveState;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
+import frc.robot.vision.CameraStatus;
 import frc.robot.vision.DistanceAngle;
-import frc.robot.vision.VisionState;
 import frc.robot.vision.VisionSubsystem;
 
 public class RobotManager extends StateMachine<RobotState> {
@@ -106,8 +106,8 @@ public class RobotManager extends StateMachine<RobotState> {
                   && (DriverStation.isAutonomous() || confirmShotActive)
                   && swerve.isSlowEnoughToShoot()
                   && ((DriverStation.isAutonomous()
-                          && vision.getVisionState() == VisionState.OFFLINE)
-                      || vision.getVisionState() == VisionState.SEES_TAGS)
+                          && vision.getVisionState() == CameraStatus.OFFLINE)
+                      || vision.getVisionState() == CameraStatus.SEES_TAGS)
                   && facingSpeakerAngle
               ? RobotState.SPEAKER_SCORING
               : currentState;

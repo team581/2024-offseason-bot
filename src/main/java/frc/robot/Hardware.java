@@ -39,5 +39,6 @@ public class Hardware {
   public final CommandXboxController driverController = new CommandXboxController(0);
   public final CommandXboxController operatorController = new CommandXboxController(1);
 
-  public final CANdle candle = new CANdle(RobotConfig.get().lights().deviceID(), RobotConfig.get().lights().canBusName());
+  public final CANdle candle =
+      new CANdle(RobotConfig.get().lights().deviceID(), RobotConfig.get().lights().canBusName());
 }
