@@ -47,14 +47,18 @@ public class AutoCommands {
     var red5ToAmp = PathPlannerPath.fromChoreoTrajectory("Red 5 to Amp");
     var red4ToAmp = PathPlannerPath.fromChoreoTrajectory("Red Amp 5 Piece.2");
 
+    var blue4To5 = PathPlannerPath.fromChoreoTrajectory("Blue 4 to 5");
+    var blue5ToAmp = PathPlannerPath.fromChoreoTrajectory("Blue 5 to Amp");
+    var blue4ToAmp = PathPlannerPath.fromChoreoTrajectory("Blue Amp 5 Piece.2");
+
     return Commands.sequence(
         Commands.either(
-            followPathForAlliance(red4ToAmp, red4ToAmp).andThen(robotCommands.speakerCommand()),
-            followPathForAlliance(red4To5, red4To5),
+            followPathForAlliance(red4ToAmp, blue4ToAmp).andThen(robotCommands.speakerCommand()),
+            followPathForAlliance(red4To5, blue4To5),
             this::hasNote),
         Commands.either(
-            followPathForAlliance(red5ToAmp, red5ToAmp).andThen(robotCommands.speakerCommand()),
-            followPathForAlliance(red4To5, red4To5),
+            followPathForAlliance(red5ToAmp, blue5ToAmp).andThen(robotCommands.speakerCommand()),
+            followPathForAlliance(red4To5, blue4To5),
             this::hasNote));
   }
 }
