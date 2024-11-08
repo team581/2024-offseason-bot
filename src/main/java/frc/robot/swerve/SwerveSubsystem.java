@@ -128,6 +128,15 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
 
   public void setSnapToAngle(double angle) {
     goalSnapAngle = angle;
+
+    // We don't necessarily set auto swerve speeds every loop, so this ensures we are always snapped
+    // to the right angle during auto. Teleop doesn't need this since teleop speeds are constantly
+    // fed into swerve.
+    switch (getState()) {
+      case AUTO_SNAPS -> {
+        sendSwerveRequest();
+      }
+    }
   }
 
   public SwerveSubsystem() {
