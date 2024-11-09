@@ -62,39 +62,38 @@ public enum InterpolatedVisionDataset {
           List.of())),
   MADTOWN(
       new CameraDataset(
+        List.of(
+            new VisionInterpolationData(
+            new Translation2d(15.2245, 5.522), new Translation2d(15.15, 5.57), "RED_SUBWOOFER"),
+        new VisionInterpolationData(
+            new Translation2d(13.0745, 5.522),
+            new Translation2d(13.33, 5.56),
+            "RED_PODIUM_SPEAKER_INTERSECTION")),
           List.of(
               new VisionInterpolationData(
-                  new Translation2d(15.2245, 5.522), new Translation2d(999, 999), "SUBWOOFER"),
+                  new Translation2d(1.315, 5.522), new Translation2d(1.38, 5.54), "BLUE_SUBWOOFER"),
               new VisionInterpolationData(
-                  new Translation2d(13.0745, 5.522),
-                  new Translation2d(999, 999),
-                  "PODIUM_SPEAKER_INTERSECTION"),
-              new VisionInterpolationData(
-                  new Translation2d(11.059, 6.842),
-                  new Translation2d(999, 999),
-                  "WING_LINE_MIDDLE"),
-              new VisionInterpolationData(
-                  new Translation2d(13.799, 4.202),
-                  new Translation2d(999, 999),
-                  "FRONT_PODIUM_MIDDLE")),
-          List.of()),
+                  new Translation2d(3.144, 5.522),
+                  new Translation2d(3.2, 5.42),
+                  "BLUE_PODIUM_SPEAKER_INTERSECTION"))),
+
+
       new CameraDataset(
+        List.of(
+          new VisionInterpolationData(
+          new Translation2d(15.2245, 5.522), new Translation2d(15.15, 5.58), "RED_SUBWOOFER"),
+      new VisionInterpolationData(
+          new Translation2d(13.0745, 5.522),
+          new Translation2d(13.30, 5.54),
+          "RED_PODIUM_SPEAKER_INTERSECTION")),
+
           List.of(
               new VisionInterpolationData(
-                  new Translation2d(15.2245, 5.522), new Translation2d(999, 999), "SUBWOOFER"),
+                  new Translation2d(1.315, 5.522), new Translation2d(1.41, 5.53), "BLUE_SUBWOOFER"),
               new VisionInterpolationData(
-                  new Translation2d(13.0745, 5.522),
-                  new Translation2d(999, 999),
-                  "PODIUM_SPEAKER_INTERSECTION"),
-              new VisionInterpolationData(
-                  new Translation2d(11.059, 6.842),
-                  new Translation2d(999, 999),
-                  "WING_LINE_MIDDLE"),
-              new VisionInterpolationData(
-                  new Translation2d(13.799, 4.202),
-                  new Translation2d(999, 999),
-                  "FRONT_PODIUM_MIDDLE")),
-          List.of()));
+                  new Translation2d(3.144, 5.522),
+                  new Translation2d(3.24, 5.47),
+                  "BLUE_PODIUM_SPEAKER_INTERSECTION"))));
 
   public final CameraDataset leftSet;
   public final CameraDataset rightSet;
