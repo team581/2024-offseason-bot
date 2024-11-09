@@ -52,10 +52,10 @@ class CompConfig {
                   .withCurrentLimits(
                       new CurrentLimitsConfigs()
                           .withStatorCurrentLimitEnable(true)
-                          .withStatorCurrentLimit(110)
+                          .withStatorCurrentLimit(80)
                           .withSupplyCurrentLimitEnable(true)
-                          .withSupplyCurrentLimit(90)
-                          .withSupplyTimeThreshold(0.5))
+                          .withSupplyCurrentLimit(60)
+                          .withSupplyTimeThreshold(0.25))
                   .withOpenLoopRamps(
                       new OpenLoopRampsConfigs()
                           .withDutyCycleOpenLoopRampPeriod(0.25)
@@ -214,7 +214,7 @@ class CompConfig {
               },
               -77.0,
               87.0),
-          new VisionConfig(4, 0.4, 0.4, InterpolatedVisionDataset.HOME),
+          new VisionConfig(4, 0.4, 0.4, InterpolatedVisionDataset.MADTOWN),
           new LightsConfig("rio", 3));
 
   private CompConfig() {}
