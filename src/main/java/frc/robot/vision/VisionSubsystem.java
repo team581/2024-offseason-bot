@@ -30,7 +30,7 @@ public class VisionSubsystem extends StateMachine<VisionState> {
 
   public static final Pose2d RED_FEED_SPOT_AMP_AREA =
       new Pose2d(15.9, 7.5, Rotation2d.fromDegrees(180));
-  public static final Pose2d BLUE_FEED_SPOT_AMP_AREA = new Pose2d(7, 7, Rotation2d.fromDegrees(0));
+  public static final Pose2d BLUE_FEED_SPOT_AMP_AREA = new Pose2d(0.6, 7.5, Rotation2d.fromDegrees(0));
 
   public VisionSubsystem(ImuSubsystem imu, Limelight leftLimelight, Limelight rightLimelight) {
     super(SubsystemPriority.VISION, VisionState.DEFAULT_STATE);
