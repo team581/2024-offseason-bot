@@ -7,7 +7,7 @@ import java.util.List;
 public class SnapUtil {
 
   public static double getAmpAngle() {
-    return FmsSubsystem.isRedAlliance() ? 90 : (-90.0);
+    return FmsSubsystem.isRedAlliance() ? 90 : (90.0);
   }
 
   public static double getPodiumAngle() {
@@ -26,8 +26,8 @@ public class SnapUtil {
 
   public static double getClimbingAngle(ImuSubsystem imu) {
     var usedAngles = FmsSubsystem.isRedAlliance() ? RED_STAGE_ANGLES : BLUE_STAGE_ANGLES;
-
-    var currentAngle = imu.getRobotHeading();
+if (FmsSubsystem.isRedAlliance()){
+  var currentAngle = imu.getRobotHeading();
 
     var closestAngle = RED_STAGE_ANGLES.get(0);
     var smallestDifference = Double.POSITIVE_INFINITY;
@@ -40,6 +40,24 @@ public class SnapUtil {
 
     return closestAngle;
   }
+  else{
+    var currentAngle = imu.getRobotHeading();
+
+      var closestAngle = BLUE_STAGE_ANGLES.get(0);
+      var smallestDifference = Double.POSITIVE_INFINITY;
+      for (var angle : usedAngles) {
+        if (Math.abs(angle - currentAngle) < smallestDifference) {
+          closestAngle = angle;
+          smallestDifference = Math.abs(angle - currentAngle);
+        }
+      }
+
+      return closestAngle;
+    }
+  }
+
+
+
 
   private SnapUtil() {}
 }
