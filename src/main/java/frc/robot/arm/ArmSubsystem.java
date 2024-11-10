@@ -88,6 +88,7 @@ public class ArmSubsystem extends StateMachine<ArmState> {
       case PASS ->
           MathUtil.isNear(ArmAngle.PASS, leftMotorAngle, 1)
               && MathUtil.isNear(ArmAngle.PASS, rightMotorAngle, 1);
+      case HOLD_FOR_INTAKE->true;
     };
   }
 
@@ -168,6 +169,10 @@ public class ArmSubsystem extends StateMachine<ArmState> {
             pidRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.PASS))));
         rightMotor.setControl(
             pidRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.PASS))));
+      }
+      case HOLD_FOR_INTAKE -> {
+        leftMotor.setVoltage(-0.5);;
+        rightMotor.setVoltage(-0.5);
       }
       default -> {}
     }

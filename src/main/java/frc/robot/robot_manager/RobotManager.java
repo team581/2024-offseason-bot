@@ -127,6 +127,11 @@ public class RobotManager extends StateMachine<RobotState> {
           shooter.atGoal() && arm.atGoal() ? RobotState.PODIUM_SCORING : currentState;
 
       case UNJAM -> currentState;
+      case BEFORE_INTAKING->
+        arm.atGoal()?RobotState.INTAKING:currentState;
+        case BEFORE_INTAKING_ASSIST->
+        arm.atGoal()?RobotState.INTAKE_ASSIST:currentState;
+
       case INTAKING, INTAKE_ASSIST -> {
         if (!queuer.hasNote()) {
           yield currentState;
@@ -273,12 +278,31 @@ public class RobotManager extends StateMachine<RobotState> {
         swerve.setSnapToAngle(0);
       }
       case INTAKING -> {
-        arm.setState(ArmState.IDLE);
+        arm.setState(ArmState.HOLD_FOR_INTAKE);
         shooter.setState(ShooterState.IDLE_STOPPED);
         intake.setState(IntakeState.INTAKING);
         queuer.setState(QueuerState.INTAKING);
         swerve.setSnapsEnabled(false);
         swerve.setSnapToAngle(0);
+      }
+      case BEFORE_INTAKING -> {
+        arm.setState(ArmState.IDLE);
+        shooter.setState(ShooterState.IDLE_STOPPED);
+        intake.setState(IntakeState.IDLE);
+        queuer.setState(QueuerState.IDLE);
+        swerve.setSnapsEnabled(false);
+        swerve.setSnapToAngle(0);
+      }
+      case BEFORE_INTAKING_ASSIST -> {
+        arm.setState(ArmState.IDLE);
+        shooter.setState(ShooterState.IDLE_STOPPED);
+        intake.setState(IntakeState.IDLE);
+        queuer.setState(QueuerState.IDLE);
+        if (DriverStation.isTeleop()) {
+          swerve.setState(SwerveState.INTAKE_ASSIST_TELEOP);
+        } else {
+          swerve.setState(SwerveState.INTAKE_ASSIST_AUTO);
+        }
       }
         // case INTAKING_BACK -> {
         //   arm.setState(ArmState.IDLE);
@@ -297,7 +321,7 @@ public class RobotManager extends StateMachine<RobotState> {
         //   swerve.setSnapToAngle(0);
         // }
       case INTAKE_ASSIST -> {
-        arm.setState(ArmState.IDLE);
+        arm.setState(ArmState.HOLD_FOR_INTAKE);
         shooter.setState(ShooterState.IDLE_STOPPED);
         intake.setState(IntakeState.INTAKING);
         queuer.setState(QueuerState.INTAKING);
@@ -410,7 +434,7 @@ public class RobotManager extends StateMachine<RobotState> {
 
   public void confirmShotRequest() {
     switch (getState()) {
-      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING, INTAKING, INTAKE_ASSIST
+      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING, INTAKING, INTAKE_ASSIST,BEFORE_INTAKING
       // INTAKING_BACK,
       // INTAKING_FORWARD_PUSH
       -> {}
@@ -432,7 +456,8 @@ public class RobotManager extends StateMachine<RobotState> {
           // INTAKING_BACK,
           // INTAKING_FORWARD_PUSH,
           INTAKING,
-          INTAKE_ASSIST -> {}
+          INTAKE_ASSIST,
+          BEFORE_INTAKING -> {}
       default -> setStateFromRequest(RobotState.AMP_WAITING);
     }
   }
@@ -445,7 +470,8 @@ public class RobotManager extends StateMachine<RobotState> {
           // INTAKING_BACK,
           // INTAKING_FORWARD_PUSH,
           INTAKING,
-          INTAKE_ASSIST -> {}
+          INTAKE_ASSIST,
+          BEFORE_INTAKING -> {}
       default -> setStateFromRequest(RobotState.SUBWOOFER_WAITING);
     }
   }
@@ -458,7 +484,8 @@ public class RobotManager extends StateMachine<RobotState> {
           // INTAKING_BACK,
           // INTAKING_FORWARD_PUSH,
           INTAKING,
-          INTAKE_ASSIST -> {}
+          INTAKE_ASSIST,
+          BEFORE_INTAKING -> {}
       default -> setStateFromRequest(RobotState.PODIUM_WAITING);
     }
   }
@@ -470,7 +497,7 @@ public class RobotManager extends StateMachine<RobotState> {
           // INTAKING_BACK,
           // INTAKING_FORWARD_PUSH,
           INTAKING,
-          INTAKE_ASSIST -> {
+          INTAKE_ASSIST,BEFORE_INTAKING -> {
         if (DriverStation.isAutonomous()) {
           // Bypass intake checks if we're in auto
           setStateFromRequest(RobotState.SPEAKER_WAITING);
@@ -491,7 +518,7 @@ public class RobotManager extends StateMachine<RobotState> {
     if (!queuer.hasNote()) {
       switch (getState()) {
         case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
-        default -> setStateFromRequest(RobotState.INTAKING);
+        default -> setStateFromRequest(RobotState.BEFORE_INTAKING);
       }
     }
   }
@@ -500,7 +527,7 @@ public class RobotManager extends StateMachine<RobotState> {
     if (!queuer.hasNote()) {
       switch (getState()) {
         case CLIMBING_1_LINEUP, CLIMBING_2_HANGING -> {}
-        default -> setStateFromRequest(RobotState.INTAKE_ASSIST);
+        default -> setStateFromRequest(RobotState.BEFORE_INTAKING_ASSIST);
       }
     }
   }
@@ -549,7 +576,8 @@ public class RobotManager extends StateMachine<RobotState> {
           // INTAKING_BACK,
           // INTAKING_FORWARD_PUSH,
           INTAKING,
-          INTAKE_ASSIST -> {}
+          INTAKE_ASSIST,
+        BEFORE_INTAKING -> {}
       default -> setStateFromRequest(RobotState.PASS_PREPARE_TO_SHOOT);
     }
   }
@@ -579,7 +607,8 @@ public class RobotManager extends StateMachine<RobotState> {
           // INTAKING_BACK,
           // INTAKING_FORWARD_PUSH,
           INTAKING,
-          INTAKE_ASSIST -> {
+          INTAKE_ASSIST,
+          BEFORE_INTAKING -> {
         if (DriverStation.isAutonomous()) {
           // Bypass intake checks if we're in auto
           setStateFromRequest(RobotState.SPEAKER_PREPARE_TO_SCORE);
@@ -596,7 +625,8 @@ public class RobotManager extends StateMachine<RobotState> {
           // INTAKING_BACK,
           // INTAKING_FORWARD_PUSH,
           INTAKING,
-          INTAKE_ASSIST -> {}
+          INTAKE_ASSIST,
+          BEFORE_INTAKING -> {}
       default -> setStateFromRequest(RobotState.AMP_PREPARE_TO_SCORE);
     }
   }
@@ -608,7 +638,8 @@ public class RobotManager extends StateMachine<RobotState> {
           // INTAKING_BACK,
           // INTAKING_FORWARD_PUSH,
           INTAKING,
-          INTAKE_ASSIST -> {}
+          INTAKE_ASSIST,
+          BEFORE_INTAKING -> {}
       default -> setStateFromRequest(RobotState.FEEDING_PREPARE_TO_SHOOT);
     }
   }
@@ -620,7 +651,7 @@ public class RobotManager extends StateMachine<RobotState> {
           // INTAKING_BACK,
           // INTAKING_FORWARD_PUSH,
           INTAKING,
-          INTAKE_ASSIST -> {}
+          INTAKE_ASSIST,BEFORE_INTAKING -> {}
       default -> setStateFromRequest(RobotState.FEEDING_WAITING);
     }
   }
@@ -646,7 +677,7 @@ public class RobotManager extends StateMachine<RobotState> {
           // INTAKING_BACK,
           // INTAKING_FORWARD_PUSH,
           INTAKING,
-          INTAKE_ASSIST -> {}
+          INTAKE_ASSIST,BEFORE_INTAKING -> {}
       default -> setStateFromRequest(RobotState.SUBWOOFER_PREPARE_TO_SCORE);
     }
   }
@@ -658,7 +689,7 @@ public class RobotManager extends StateMachine<RobotState> {
           // INTAKING_BACK,
           // INTAKING_FORWARD_PUSH,
           INTAKING,
-          INTAKE_ASSIST -> {}
+          INTAKE_ASSIST,BEFORE_INTAKING -> {}
       default -> setStateFromRequest(RobotState.PODIUM_PREPARE_TO_SCORE);
     }
   }

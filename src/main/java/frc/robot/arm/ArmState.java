@@ -12,5 +12,6 @@ public enum ArmState {
   AMP,
   PASS,
   UNJAM,
-  PRE_MATCH_HOMING;
+  PRE_MATCH_HOMING,
+  HOLD_FOR_INTAKE;
 }
