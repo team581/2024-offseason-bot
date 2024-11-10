@@ -26,7 +26,6 @@ import frc.robot.util.Stopwatch;
 import frc.robot.util.scheduling.LifecycleSubsystemManager;
 import frc.robot.vision.Limelight;
 import frc.robot.vision.VisionSubsystem;
-import frc.robot.vision.interpolation.InterpolatedVisionDataset;
 
 public class Robot extends TimedRobot {
   private Command autonomousCommand;
