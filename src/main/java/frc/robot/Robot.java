@@ -43,9 +43,9 @@ public class Robot extends TimedRobot {
   private final SwerveSubsystem swerve = new SwerveSubsystem();
   private final ImuSubsystem imu = new ImuSubsystem(swerve.drivetrainPigeon);
   private final Limelight leftLimelight =
-      new Limelight("left", InterpolatedVisionDataset.HOME.leftSet);
+      new Limelight("left", RobotConfig.get().vision().interpolatedVisionSet().leftSet);
   private final Limelight rightLimelight =
-      new Limelight("right", InterpolatedVisionDataset.HOME.rightSet);
+      new Limelight("right", RobotConfig.get().vision().interpolatedVisionSet().rightSet);
 
   private final VisionSubsystem vision = new VisionSubsystem(imu, leftLimelight, rightLimelight);
   private final LocalizationSubsystem localization = new LocalizationSubsystem(imu, vision, swerve);
