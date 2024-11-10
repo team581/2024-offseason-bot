@@ -4,6 +4,7 @@ import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.imu.ImuSubsystem;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
@@ -54,8 +55,10 @@ public class VisionSubsystem extends StateMachine<VisionState> {
 
     interpolatedVisionResult.clear();
 
-    if (leftInterpolatedVisionResult.isPresent()) {
-      interpolatedVisionResult.add(leftInterpolatedVisionResult.get());
+    if (!DriverStation.isAutonomous()){
+      if (leftInterpolatedVisionResult.isPresent()) {
+        interpolatedVisionResult.add(leftInterpolatedVisionResult.get());
+      }
     }
     if (rightInterpolatedVisionResult.isPresent()) {
       interpolatedVisionResult.add(rightInterpolatedVisionResult.get());
