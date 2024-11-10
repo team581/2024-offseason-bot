@@ -127,10 +127,8 @@ public class RobotManager extends StateMachine<RobotState> {
           shooter.atGoal() && arm.atGoal() ? RobotState.PODIUM_SCORING : currentState;
 
       case UNJAM -> currentState;
-      case BEFORE_INTAKING->
-        arm.atGoal()?RobotState.INTAKING:currentState;
-        case BEFORE_INTAKING_ASSIST->
-        arm.atGoal()?RobotState.INTAKE_ASSIST:currentState;
+      case BEFORE_INTAKING -> arm.atGoal() ? RobotState.INTAKING : currentState;
+      case BEFORE_INTAKING_ASSIST -> arm.atGoal() ? RobotState.INTAKE_ASSIST : currentState;
 
       case INTAKING, INTAKE_ASSIST -> {
         if (!queuer.hasNote()) {
@@ -434,7 +432,12 @@ public class RobotManager extends StateMachine<RobotState> {
 
   public void confirmShotRequest() {
     switch (getState()) {
-      case CLIMBING_1_LINEUP, CLIMBING_2_HANGING, INTAKING, INTAKE_ASSIST,BEFORE_INTAKING
+      case CLIMBING_1_LINEUP,
+          CLIMBING_2_HANGING,
+          INTAKING,
+          INTAKE_ASSIST,
+          BEFORE_INTAKING,
+          BEFORE_INTAKING_ASSIST
       // INTAKING_BACK,
       // INTAKING_FORWARD_PUSH
       -> {}
@@ -457,7 +460,8 @@ public class RobotManager extends StateMachine<RobotState> {
           // INTAKING_FORWARD_PUSH,
           INTAKING,
           INTAKE_ASSIST,
-          BEFORE_INTAKING -> {}
+          BEFORE_INTAKING,
+          BEFORE_INTAKING_ASSIST -> {}
       default -> setStateFromRequest(RobotState.AMP_WAITING);
     }
   }
@@ -471,7 +475,8 @@ public class RobotManager extends StateMachine<RobotState> {
           // INTAKING_FORWARD_PUSH,
           INTAKING,
           INTAKE_ASSIST,
-          BEFORE_INTAKING -> {}
+          BEFORE_INTAKING,
+          BEFORE_INTAKING_ASSIST -> {}
       default -> setStateFromRequest(RobotState.SUBWOOFER_WAITING);
     }
   }
@@ -485,7 +490,8 @@ public class RobotManager extends StateMachine<RobotState> {
           // INTAKING_FORWARD_PUSH,
           INTAKING,
           INTAKE_ASSIST,
-          BEFORE_INTAKING -> {}
+          BEFORE_INTAKING,
+          BEFORE_INTAKING_ASSIST -> {}
       default -> setStateFromRequest(RobotState.PODIUM_WAITING);
     }
   }
@@ -497,7 +503,9 @@ public class RobotManager extends StateMachine<RobotState> {
           // INTAKING_BACK,
           // INTAKING_FORWARD_PUSH,
           INTAKING,
-          INTAKE_ASSIST,BEFORE_INTAKING -> {
+          INTAKE_ASSIST,
+          BEFORE_INTAKING,
+          BEFORE_INTAKING_ASSIST -> {
         if (DriverStation.isAutonomous()) {
           // Bypass intake checks if we're in auto
           setStateFromRequest(RobotState.SPEAKER_WAITING);
@@ -577,7 +585,8 @@ public class RobotManager extends StateMachine<RobotState> {
           // INTAKING_FORWARD_PUSH,
           INTAKING,
           INTAKE_ASSIST,
-        BEFORE_INTAKING -> {}
+          BEFORE_INTAKING,
+          BEFORE_INTAKING_ASSIST -> {}
       default -> setStateFromRequest(RobotState.PASS_PREPARE_TO_SHOOT);
     }
   }
@@ -608,7 +617,8 @@ public class RobotManager extends StateMachine<RobotState> {
           // INTAKING_FORWARD_PUSH,
           INTAKING,
           INTAKE_ASSIST,
-          BEFORE_INTAKING -> {
+          BEFORE_INTAKING,
+          BEFORE_INTAKING_ASSIST -> {
         if (DriverStation.isAutonomous()) {
           // Bypass intake checks if we're in auto
           setStateFromRequest(RobotState.SPEAKER_PREPARE_TO_SCORE);
@@ -626,7 +636,8 @@ public class RobotManager extends StateMachine<RobotState> {
           // INTAKING_FORWARD_PUSH,
           INTAKING,
           INTAKE_ASSIST,
-          BEFORE_INTAKING -> {}
+          BEFORE_INTAKING,
+          BEFORE_INTAKING_ASSIST -> {}
       default -> setStateFromRequest(RobotState.AMP_PREPARE_TO_SCORE);
     }
   }
@@ -639,7 +650,8 @@ public class RobotManager extends StateMachine<RobotState> {
           // INTAKING_FORWARD_PUSH,
           INTAKING,
           INTAKE_ASSIST,
-          BEFORE_INTAKING -> {}
+          BEFORE_INTAKING,
+          BEFORE_INTAKING_ASSIST -> {}
       default -> setStateFromRequest(RobotState.FEEDING_PREPARE_TO_SHOOT);
     }
   }
@@ -651,7 +663,9 @@ public class RobotManager extends StateMachine<RobotState> {
           // INTAKING_BACK,
           // INTAKING_FORWARD_PUSH,
           INTAKING,
-          INTAKE_ASSIST,BEFORE_INTAKING -> {}
+          INTAKE_ASSIST,
+          BEFORE_INTAKING,
+          BEFORE_INTAKING_ASSIST -> {}
       default -> setStateFromRequest(RobotState.FEEDING_WAITING);
     }
   }
@@ -677,7 +691,9 @@ public class RobotManager extends StateMachine<RobotState> {
           // INTAKING_BACK,
           // INTAKING_FORWARD_PUSH,
           INTAKING,
-          INTAKE_ASSIST,BEFORE_INTAKING -> {}
+          INTAKE_ASSIST,
+          BEFORE_INTAKING,
+          BEFORE_INTAKING_ASSIST -> {}
       default -> setStateFromRequest(RobotState.SUBWOOFER_PREPARE_TO_SCORE);
     }
   }
@@ -689,7 +705,9 @@ public class RobotManager extends StateMachine<RobotState> {
           // INTAKING_BACK,
           // INTAKING_FORWARD_PUSH,
           INTAKING,
-          INTAKE_ASSIST,BEFORE_INTAKING -> {}
+          INTAKE_ASSIST,
+          BEFORE_INTAKING,
+          BEFORE_INTAKING_ASSIST -> {}
       default -> setStateFromRequest(RobotState.PODIUM_PREPARE_TO_SCORE);
     }
   }

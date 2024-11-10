@@ -55,7 +55,9 @@ public class ArmSubsystem extends StateMachine<ArmState> {
 
   public boolean atGoal() {
     return switch (getState()) {
-      case IDLE, PRE_MATCH_HOMING -> true;
+      case  PRE_MATCH_HOMING -> true;
+      case IDLE-> MathUtil.isNear(ArmAngle.IDLE, leftMotorAngle, 1)
+      && MathUtil.isNear(ArmAngle.IDLE, rightMotorAngle, 1);
       case SPEAKER_SHOT ->
           MathUtil.isNear(speakerDistanceToAngle.get(distanceToSpeaker), leftMotorAngle, 1)
               && MathUtil.isNear(speakerDistanceToAngle.get(distanceToSpeaker), rightMotorAngle, 1);
@@ -88,7 +90,7 @@ public class ArmSubsystem extends StateMachine<ArmState> {
       case PASS ->
           MathUtil.isNear(ArmAngle.PASS, leftMotorAngle, 1)
               && MathUtil.isNear(ArmAngle.PASS, rightMotorAngle, 1);
-      case HOLD_FOR_INTAKE->true;
+      case HOLD_FOR_INTAKE -> true;
     };
   }
 
@@ -171,7 +173,8 @@ public class ArmSubsystem extends StateMachine<ArmState> {
             pidRequest.withPosition(Units.degreesToRotations(clamp(ArmAngle.PASS))));
       }
       case HOLD_FOR_INTAKE -> {
-        leftMotor.setVoltage(-0.5);;
+        leftMotor.setVoltage(-0.5);
+        ;
         rightMotor.setVoltage(-0.5);
       }
       default -> {}
