@@ -271,7 +271,7 @@ public class RobotManager extends StateMachine<RobotState> {
         arm.setState(ArmState.UNJAM);
         shooter.setState(ShooterState.PASS);
         intake.setState(IntakeState.OUTTAKING);
-        queuer.setState(QueuerState.OUTTAKING);
+        queuer.setState(QueuerState.SHOOTING);
         swerve.setSnapsEnabled(false);
         swerve.setSnapToAngle(0);
       }
