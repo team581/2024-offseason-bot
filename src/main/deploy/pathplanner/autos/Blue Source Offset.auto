@@ -1,0 +1,73 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.4266119384765617,
+      "y": 2.058690309524536
+    },
+    "rotation": 180.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Blue Source Offset.1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Blue Source Offset.2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "speakerShot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Blue Source Offset.3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Blue Source Offset.4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "speakerShot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Blue Source Offset.5"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Blue Source Offset.6"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "speakerShot"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Blue Choreo Autos",
+  "choreoAuto": true
+}
