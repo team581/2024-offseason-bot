@@ -92,7 +92,9 @@ class CompConfig {
                           .withStatorCurrentLimit(20))
                   .withSlot0(new Slot0Configs().withKV(0).withKP(1.0).withKI(0).withKD(0).withKG(0))
                   .withMotorOutput(
-                      new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive).withNeutralMode(NeutralModeValue.Brake)),
+                      new MotorOutputConfigs()
+                          .withInverted(InvertedValue.Clockwise_Positive)
+                          .withNeutralMode(NeutralModeValue.Brake)),
               new Debouncer(0.2, DebounceType.kFalling)),
           new ShooterConfig(
               18,
