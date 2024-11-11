@@ -6,7 +6,7 @@ public enum AutoSelection {
   AMP_5_PIECE("Red Amp 5 Piece", "Blue Amp 5 Piece"),
   SOURCE_4_PIECE("Red Source 4 Piece", "Blue Source 4 Piece"),
   SOURCE_OFFSET("Red Source Offset", "Blue Source Offset"),
-  MID_5_PIECE("Red 5 Piece 6 to 1","Blue 5 Piece 6 to 1"),
+  MID_5_PIECE("Red 5 Piece 6 to 1", "Blue 5 Piece 6 to 1"),
   OP("Red OP", "Blue OP");
 
   public final String redAutoName;

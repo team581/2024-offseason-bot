@@ -55,9 +55,10 @@ public class ArmSubsystem extends StateMachine<ArmState> {
 
   public boolean atGoal() {
     return switch (getState()) {
-      case  PRE_MATCH_HOMING -> true;
-      case IDLE-> MathUtil.isNear(ArmAngle.IDLE, leftMotorAngle, 1)
-      && MathUtil.isNear(ArmAngle.IDLE, rightMotorAngle, 1);
+      case PRE_MATCH_HOMING -> true;
+      case IDLE ->
+          MathUtil.isNear(ArmAngle.IDLE, leftMotorAngle, 1)
+              && MathUtil.isNear(ArmAngle.IDLE, rightMotorAngle, 1);
       case SPEAKER_SHOT ->
           MathUtil.isNear(speakerDistanceToAngle.get(distanceToSpeaker), leftMotorAngle, 1)
               && MathUtil.isNear(speakerDistanceToAngle.get(distanceToSpeaker), rightMotorAngle, 1);
