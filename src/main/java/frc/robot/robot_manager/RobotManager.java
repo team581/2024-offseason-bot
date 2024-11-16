@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.robot.FieldUtil;
 import frc.robot.arm.ArmState;
 import frc.robot.arm.ArmSubsystem;
+import frc.robot.autos.trailblazer.Trailblazer;
 import frc.robot.imu.ImuSubsystem;
 import frc.robot.intake.IntakeState;
 import frc.robot.intake.IntakeSubsystem;
@@ -34,6 +35,7 @@ public class RobotManager extends StateMachine<RobotState> {
   public final IntakeSubsystem intake;
   public final QueuerSubsystem queuer;
   public final SwerveSubsystem swerve;
+  public final Trailblazer trailblazer = new Trailblazer();
   private final Timer shotTimer = new Timer();
 
   private DistanceAngle fieldRelativeDistanceAngleToSpeaker = new DistanceAngle(0, 0, false);
