@@ -12,8 +12,8 @@ public class AutoVelocityConstraint implements AutoPointConstraint {
   }
 
   @Override
-  public ChassisSpeeds transform(ChassisSpeeds input) {
-    // TODO: Implement
+  public ChassisSpeeds transformVelocityGoal(ChassisSpeeds input) {
+    // TODO: Implement https://github.com/team581/2024-offseason-bot/issues/96
     return input;
   }
 }

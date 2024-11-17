@@ -7,11 +7,12 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.autos.BaseAuto;
 import frc.robot.autos.trailblazer.AutoPoint;
 import frc.robot.autos.trailblazer.AutoSegment;
+import frc.robot.autos.trailblazer.Trailblazer;
 import frc.robot.robot_manager.RobotManager;
 
-public class Op345Auto extends BaseAuto {
-  public Op345Auto(RobotManager robotManager) {
-    super(robotManager);
+public class RedOp345Auto extends BaseAuto {
+  protected RedOp345Auto(RobotManager robotManager, Trailblazer trailblazer) {
+    super(robotManager, trailblazer);
   }
 
   public Command getAutoCommand() {

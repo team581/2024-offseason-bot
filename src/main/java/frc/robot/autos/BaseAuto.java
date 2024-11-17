@@ -11,9 +11,9 @@ public abstract class BaseAuto {
   protected final RobotCommands actions;
   protected final Trailblazer trailblazer;
 
-  protected BaseAuto(RobotManager robotManager) {
+  protected BaseAuto(RobotManager robotManager, Trailblazer trailblazer) {
     this.robotManager = robotManager;
-    this.trailblazer = robotManager.trailblazer;
+    this.trailblazer = trailblazer;
     this.actions = new RobotCommands(robotManager);
     this.autoCommands = new AutoCommands(actions, robotManager);
   }

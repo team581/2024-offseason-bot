@@ -5,10 +5,10 @@ import java.util.List;
 
 public class AutoSegment {
   public final List<AutoPoint> points;
-  public final List<AutoPointConstraint> globalConstraints;
+  public final List<AutoPointConstraint> defaultConstraints;
 
   public AutoSegment(List<AutoPointConstraint> globalConstraints, List<AutoPoint> points) {
-    this.globalConstraints = globalConstraints;
+    this.defaultConstraints = globalConstraints;
     this.points = points;
   }
 

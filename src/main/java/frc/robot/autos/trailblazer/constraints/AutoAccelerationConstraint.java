@@ -1,8 +1,8 @@
 package frc.robot.autos.trailblazer.constraints;
 
-import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
-public class AutoAccelerationConstraint {
+public class AutoAccelerationConstraint implements AutoPointConstraint {
   private final double maxLinearAcceleration;
   private final double maxAngularAcceleration;
 
@@ -11,8 +11,9 @@ public class AutoAccelerationConstraint {
     this.maxAngularAcceleration = maxAngularAcceleration;
   }
 
-  public Pose2d transform(Pose2d input) {
-    // TODO: Implement
+  @Override
+  public ChassisSpeeds transformVelocityGoal(ChassisSpeeds input) {
+    // TODO: Implement https://github.com/team581/2024-offseason-bot/issues/97
     return input;
   }
 }
