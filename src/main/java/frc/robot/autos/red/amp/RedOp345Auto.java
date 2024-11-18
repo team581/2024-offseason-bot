@@ -11,7 +11,7 @@ import frc.robot.autos.trailblazer.Trailblazer;
 import frc.robot.robot_manager.RobotManager;
 
 public class RedOp345Auto extends BaseAuto {
-  protected RedOp345Auto(RobotManager robotManager, Trailblazer trailblazer) {
+  public RedOp345Auto(RobotManager robotManager, Trailblazer trailblazer) {
     super(robotManager, trailblazer);
   }
 
