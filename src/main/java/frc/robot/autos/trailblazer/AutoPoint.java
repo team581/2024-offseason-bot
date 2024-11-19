@@ -3,47 +3,52 @@ package frc.robot.autos.trailblazer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.autos.trailblazer.constraints.AutoPointConstraint;
-import java.util.List;
+import frc.robot.autos.trailblazer.constraints.AutoConstraintOptions;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public class AutoPoint {
   public final Supplier<Pose2d> poseSupplier;
-  public final List<AutoPointConstraint> constraints;
+  public final Optional<AutoConstraintOptions> constraints;
   public final Command command;
 
   public AutoPoint(
-      Supplier<Pose2d> poseSupplier, Command command, List<AutoPointConstraint> constraints) {
+      Supplier<Pose2d> poseSupplier, Command command, Optional<AutoConstraintOptions> constraints) {
     this.poseSupplier = poseSupplier;
     this.command = command;
     this.constraints = constraints;
   }
 
-  public AutoPoint(Supplier<Pose2d> poseSupplier, Command command) {
-    this(poseSupplier, command, List.of());
+  public AutoPoint(
+      Supplier<Pose2d> poseSupplier, Command command, AutoConstraintOptions constraints) {
+    this(poseSupplier, command, Optional.of(constraints));
   }
 
-  public AutoPoint(Supplier<Pose2d> poseSupplier, List<AutoPointConstraint> constraints) {
+  public AutoPoint(Supplier<Pose2d> poseSupplier, Command command) {
+    this(poseSupplier, command, Optional.empty());
+  }
+
+  public AutoPoint(Supplier<Pose2d> poseSupplier, AutoConstraintOptions constraints) {
     this(poseSupplier, Commands.none(), constraints);
   }
 
   public AutoPoint(Supplier<Pose2d> poseSupplier) {
-    this(poseSupplier, Commands.none(), List.of());
+    this(poseSupplier, Commands.none(), Optional.empty());
   }
 
-  public AutoPoint(Pose2d pose, Command command, List<AutoPointConstraint> constraints) {
+  public AutoPoint(Pose2d pose, Command command, AutoConstraintOptions constraints) {
     this(() -> pose, command, constraints);
   }
 
   public AutoPoint(Pose2d pose, Command command) {
-    this(pose, command, List.of());
+    this(() -> pose, command);
   }
 
-  public AutoPoint(Pose2d pose, List<AutoPointConstraint> constraints) {
+  public AutoPoint(Pose2d pose, AutoConstraintOptions constraints) {
     this(pose, Commands.none(), constraints);
   }
 
   public AutoPoint(Pose2d pose) {
-    this(pose, Commands.none(), List.of());
+    this(pose, Commands.none());
   }
 }

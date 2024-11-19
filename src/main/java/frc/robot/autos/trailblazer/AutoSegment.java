@@ -1,6 +1,6 @@
 package frc.robot.autos.trailblazer;
 
-import frc.robot.autos.trailblazer.constraints.AutoPointConstraint;
+import frc.robot.autos.trailblazer.constraints.AutoConstraintOptions;
 import java.util.List;
 
 /**
@@ -13,22 +13,18 @@ public class AutoSegment {
    * Constraints to apply to any points that don't have their own constraints specified. If a point
    * specifies its own constraints, this field will be ignored.
    */
-  public final List<AutoPointConstraint> defaultConstraints;
+  public final AutoConstraintOptions defaultConstraints;
 
-  public AutoSegment(List<AutoPointConstraint> defaultConstraints, List<AutoPoint> points) {
+  public AutoSegment(AutoConstraintOptions defaultConstraints, List<AutoPoint> points) {
     this.defaultConstraints = defaultConstraints;
     this.points = points;
   }
 
-  public AutoSegment(List<AutoPointConstraint> defaultConstraints, AutoPoint... points) {
+  public AutoSegment(AutoConstraintOptions defaultConstraints, AutoPoint... points) {
     this(defaultConstraints, List.of(points));
   }
 
-  public AutoSegment(List<AutoPoint> points) {
-    this(List.of(), points);
-  }
-
   public AutoSegment(AutoPoint... points) {
-    this(List.of(), points);
+    this(new AutoConstraintOptions(), points);
   }
 }
