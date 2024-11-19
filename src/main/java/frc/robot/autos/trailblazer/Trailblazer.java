@@ -1,6 +1,7 @@
 package frc.robot.autos.trailblazer;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -39,6 +40,7 @@ public class Trailblazer {
   private final PathFollower pathFollower =
       new PidPathFollower(
           new PIDController(0, 0, 0), new PIDController(0, 0, 0), new PIDController(0, 0, 0));
+  private AutoPoint previousAutoPoint = new AutoPoint(new Pose2d());
 
   public Trailblazer(SwerveSubsystem swerve, LocalizationSubsystem localization) {
     this.swerve = swerve;
@@ -47,22 +49,21 @@ public class Trailblazer {
 
   public Command followSegment(AutoSegment segment) {
     return Commands.runOnce(() -> pathTracker.resetAndSetPoints(segment.points))
-        .andThen(
-            Commands.sequence(
-                segment.points.stream()
-                    .map(point -> followPoint(point, segment.defaultConstraints))
-                    .toArray(Command[]::new)));
-  }
-
-  private Command followPoint(AutoPoint point, List<AutoPointConstraint> segmentConstraints) {
-    return point.command.alongWith(
-        Commands.run(
+        .alongWith(
+            Commands.run(
                 () -> {
-                  var constrainedVelocityGoal = getSwerveSetpoint(point, segmentConstraints);
+                  var currentAutoPoint = pathTracker.getCurrentPoint();
+                  var constrainedVelocityGoal =
+                      getSwerveSetpoint(currentAutoPoint, segment.defaultConstraints);
                   swerve.setFieldRelativeAutoSpeeds(constrainedVelocityGoal);
+
+                  if (previousAutoPoint != currentAutoPoint) {
+                    // Currently tracked point has changed, trigger side effects
+                    currentAutoPoint.command.schedule();
+                    previousAutoPoint = currentAutoPoint;
+                  }
                 },
-                swerve)
-            .until(() -> pathTracker.isFinished(point)));
+                swerve));
   }
 
   private ChassisSpeeds getSwerveSetpoint(

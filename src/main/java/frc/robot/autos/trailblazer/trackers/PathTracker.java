@@ -27,10 +27,17 @@ public interface PathTracker {
   public Pose2d getTargetPose(Pose2d currentPose, ChassisSpeeds currentFieldRelativeRobotSpeeds);
 
   /**
-   * Check whether the robot has finished following the given point.
+   * Get the input auto point that is currently most relevant to whatever the tracker is doing. Used
+   * for triggering side effects.
    *
-   * @param point The point to check.
-   * @return Whether the robot has finished following the given point.
+   * @return The point being tracked.
    */
-  public boolean isFinished(AutoPoint point);
+  public AutoPoint getCurrentPoint();
+
+  /**
+   * Check whether the robot has finished following all the points.
+   *
+   * @return Whether the robot has finished following all the points.
+   */
+  public boolean isFinished();
 }

@@ -20,7 +20,12 @@ public class HeuristicPathTracker implements PathTracker {
   }
 
   @Override
-  public boolean isFinished(AutoPoint point) {
+  public AutoPoint getCurrentPoint() {
+    return null;
+  }
+
+  @Override
+  public boolean isFinished() {
     return false;
   }
 }
