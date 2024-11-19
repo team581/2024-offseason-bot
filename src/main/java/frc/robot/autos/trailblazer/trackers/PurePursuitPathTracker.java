@@ -14,4 +14,9 @@ public class PurePursuitPathTracker implements PathTracker {
   public Pose2d getTargetPose(Pose2d currentPose, ChassisSpeeds currentFieldRelativeRobotSpeeds) {
     return null;
   }
+
+  @Override
+  public boolean isFinished(AutoPoint point) {
+    return false;
+  }
 }

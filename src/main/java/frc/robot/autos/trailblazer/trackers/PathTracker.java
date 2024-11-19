@@ -25,4 +25,12 @@ public interface PathTracker {
    * @return
    */
   public Pose2d getTargetPose(Pose2d currentPose, ChassisSpeeds currentFieldRelativeRobotSpeeds);
+
+  /**
+   * Check whether the robot has finished following the given point.
+   *
+   * @param point The point to check.
+   * @return Whether the robot has finished following the given point.
+   */
+  public boolean isFinished(AutoPoint point);
 }

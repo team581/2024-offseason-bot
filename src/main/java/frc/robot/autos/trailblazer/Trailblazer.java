@@ -57,11 +57,12 @@ public class Trailblazer {
   private Command followPoint(AutoPoint point, List<AutoPointConstraint> segmentConstraints) {
     return point.command.alongWith(
         Commands.run(
-            () -> {
-              var constrainedVelocityGoal = getSwerveSetpoint(point, segmentConstraints);
-              swerve.setFieldRelativeAutoSpeeds(constrainedVelocityGoal);
-            },
-            swerve));
+                () -> {
+                  var constrainedVelocityGoal = getSwerveSetpoint(point, segmentConstraints);
+                  swerve.setFieldRelativeAutoSpeeds(constrainedVelocityGoal);
+                },
+                swerve)
+            .until(() -> pathTracker.isFinished(point)));
   }
 
   private ChassisSpeeds getSwerveSetpoint(
