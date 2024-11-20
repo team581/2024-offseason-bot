@@ -2,7 +2,6 @@ package frc.robot.autos.trailblazer;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -31,7 +30,7 @@ public class Trailblazer {
   private final PathFollower pathFollower =
       new PidPathFollower(
           new PIDController(0, 0, 0), new PIDController(0, 0, 0), new PIDController(0, 0, 0));
-  private AutoPoint previousAutoPoint = new AutoPoint(new Pose2d());
+  private int previousAutoPointIndex = -1;
 
   public Trailblazer(SwerveSubsystem swerve, LocalizationSubsystem localization) {
     this.swerve = swerve;
@@ -46,17 +45,25 @@ public class Trailblazer {
                   pathTracker.updateRobotState(
                       localization.getPose(), swerve.getFieldRelativeSpeeds());
 
-                  var currentAutoPoint = pathTracker.getCurrentPoint();
+                  var currentAutoPointIndex = pathTracker.getCurrentPointIndex();
+                  var currentAutoPoint = segment.points.get(currentAutoPointIndex);
 
                   var constrainedVelocityGoal =
                       getSwerveSetpoint(currentAutoPoint, segment.defaultConstraints);
                   swerve.setFieldRelativeAutoSpeeds(constrainedVelocityGoal);
 
-                  if (previousAutoPoint != currentAutoPoint) {
+                  DogLog.log("Trailblazer/Tracker/CurrentPointIndex", currentAutoPointIndex);
+                  if (previousAutoPointIndex != currentAutoPointIndex) {
                     // Currently tracked point has changed, trigger side effects
-                    currentAutoPoint.command.schedule();
-                    previousAutoPoint = currentAutoPoint;
-                    DogLog.timestamp("Trailblazer/Tracker/NewPoint");
+
+                    // Each of the points in (previous, current]
+                    var pointsToRunSideEffectsFor =
+                        segment.points.subList(
+                            previousAutoPointIndex + 1, currentAutoPointIndex + 1);
+                    for (var passedPoint : pointsToRunSideEffectsFor) {
+                      passedPoint.command.schedule();
+                    }
+                    previousAutoPointIndex = currentAutoPointIndex;
                   }
                 },
                 swerve))

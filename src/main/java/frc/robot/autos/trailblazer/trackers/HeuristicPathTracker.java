@@ -23,8 +23,8 @@ public class HeuristicPathTracker implements PathTracker {
   }
 
   @Override
-  public AutoPoint getCurrentPoint() {
-    return null;
+  public int getCurrentPointIndex() {
+    return 0;
   }
 
   @Override

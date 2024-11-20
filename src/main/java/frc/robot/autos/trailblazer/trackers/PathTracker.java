@@ -34,12 +34,12 @@ public interface PathTracker {
   public Pose2d getTargetPose();
 
   /**
-   * Get the input auto point that is currently most relevant to whatever the tracker is doing. Used
-   * for triggering side effects.
+   * Get the index of the input auto point that is currently most relevant to whatever the tracker
+   * is doing. Used for triggering side effects.
    *
-   * @return The point being tracked.
+   * @return The index point being tracked.
    */
-  public AutoPoint getCurrentPoint();
+  public int getCurrentPointIndex();
 
   /**
    * Check whether the robot has finished following all the points.
