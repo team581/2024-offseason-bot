@@ -30,7 +30,7 @@ public class Trailblazer {
   private final PathTracker pathTracker = new HeuristicPathTracker();
   private final PathFollower pathFollower =
       new PidPathFollower(
-          new PIDController(0, 0, 0), new PIDController(0, 0, 0), new PIDController(0, 0, 0));
+          new PIDController(4, 0, 0), new PIDController(4, 0, 0), new PIDController(2.5, 0, 0));
   private int previousAutoPointIndex = -1;
 
   public Trailblazer(SwerveSubsystem swerve, LocalizationSubsystem localization) {
