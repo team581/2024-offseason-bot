@@ -1,5 +1,6 @@
 package frc.robot.autos.trailblazer;
 
+import dev.doglog.DogLog;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -52,6 +53,7 @@ public class Trailblazer {
                     // Currently tracked point has changed, trigger side effects
                     currentAutoPoint.command.schedule();
                     previousAutoPoint = currentAutoPoint;
+                    DogLog.timestamp("Trailblazer/Tracker/NewPoint");
                   }
                 },
                 swerve))
@@ -65,10 +67,17 @@ public class Trailblazer {
     var currentPose = localization.getPose();
     var fieldRelativeRobotSpeeds = swerve.getFieldRelativeSpeeds();
     var originalTargetPose = pathTracker.getTargetPose(currentPose, fieldRelativeRobotSpeeds);
+    DogLog.log("Trailblazer/Tracker/RawOutput", originalTargetPose);
     var constrainedTargetPose =
         AutoConstraintCalculator.constrainTargetPose(originalTargetPose, usedConstraints);
+    DogLog.log("Trailblazer/Tracker/UsedOutput", constrainedTargetPose);
 
     var originalVelocityGoal = pathFollower.calculateSpeeds(currentPose, constrainedTargetPose);
-    return AutoConstraintCalculator.constrainVelocityGoal(originalVelocityGoal, usedConstraints);
+    DogLog.log("Trailblazer/Follower/RawOutput", originalVelocityGoal);
+    var constrainedVelocityGoal =
+        AutoConstraintCalculator.constrainVelocityGoal(originalVelocityGoal, usedConstraints);
+    DogLog.log("Trailblazer/Follower/UsedOutput", constrainedVelocityGoal);
+
+    return constrainedVelocityGoal;
   }
 }
