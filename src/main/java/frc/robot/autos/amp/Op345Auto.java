@@ -24,6 +24,10 @@ public class Op345Auto extends BaseAuto {
   protected Command getRedAutoCommand() {
     return Commands.sequence(
         Commands.print("example command on auto start"),
+        Commands.runOnce(
+            () ->
+                robotManager.localization.resetPose(
+                    new Pose2d(15.811, 6.713, new Rotation2d(-170.80)))),
         trailblazer.followSegment(
             new AutoSegment(
                 new AutoPoint(new Pose2d(15.811, 6.713, new Rotation2d(-170.80))),
