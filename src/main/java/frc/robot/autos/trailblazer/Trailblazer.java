@@ -43,6 +43,9 @@ public class Trailblazer {
         .alongWith(
             Commands.run(
                 () -> {
+                  pathTracker.updateRobotState(
+                      localization.getPose(), swerve.getFieldRelativeSpeeds());
+
                   var currentAutoPoint = pathTracker.getCurrentPoint();
 
                   var constrainedVelocityGoal =
@@ -64,15 +67,14 @@ public class Trailblazer {
       AutoPoint point, AutoConstraintOptions segmentConstraints) {
     var usedConstraints = resolveConstraints(point, segmentConstraints);
 
-    var currentPose = localization.getPose();
-    var fieldRelativeRobotSpeeds = swerve.getFieldRelativeSpeeds();
-    var originalTargetPose = pathTracker.getTargetPose(currentPose, fieldRelativeRobotSpeeds);
+    var originalTargetPose = pathTracker.getTargetPose();
     DogLog.log("Trailblazer/Tracker/RawOutput", originalTargetPose);
     var constrainedTargetPose =
         AutoConstraintCalculator.constrainTargetPose(originalTargetPose, usedConstraints);
     DogLog.log("Trailblazer/Tracker/UsedOutput", constrainedTargetPose);
 
-    var originalVelocityGoal = pathFollower.calculateSpeeds(currentPose, constrainedTargetPose);
+    var originalVelocityGoal =
+        pathFollower.calculateSpeeds(localization.getPose(), constrainedTargetPose);
     DogLog.log("Trailblazer/Follower/RawOutput", originalVelocityGoal);
     var constrainedVelocityGoal =
         AutoConstraintCalculator.constrainVelocityGoal(originalVelocityGoal, usedConstraints);

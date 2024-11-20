@@ -15,7 +15,10 @@ public class HeuristicPathTracker implements PathTracker {
   }
 
   @Override
-  public Pose2d getTargetPose(Pose2d currentPose, ChassisSpeeds currentFieldRelativeRobotSpeeds) {
+  public void updateRobotState(Pose2d currentPose, ChassisSpeeds currentFieldRelativeRobotSpeeds) {}
+
+  @Override
+  public Pose2d getTargetPose() {
     return null;
   }
 

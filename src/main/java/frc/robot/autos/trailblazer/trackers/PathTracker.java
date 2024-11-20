@@ -19,12 +19,19 @@ public interface PathTracker {
   public void resetAndSetPoints(List<AutoPoint> points);
 
   /**
+   * Runs once per loop cycle to update the tracker with the current robot state.
+   *
+   * @param currentPose The current pose of the robot.
+   * @param currentFieldRelativeRobotSpeeds The current field relative speeds of the robot.
+   */
+  public void updateRobotState(Pose2d currentPose, ChassisSpeeds currentFieldRelativeRobotSpeeds);
+
+  /**
    * Calculate the pose the robot should drive to next, based on its progress following the path.
    *
-   * @param currentPose
-   * @return
+   * @return The pose the robot should drive to next.
    */
-  public Pose2d getTargetPose(Pose2d currentPose, ChassisSpeeds currentFieldRelativeRobotSpeeds);
+  public Pose2d getTargetPose();
 
   /**
    * Get the input auto point that is currently most relevant to whatever the tracker is doing. Used

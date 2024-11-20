@@ -11,7 +11,10 @@ public class PurePursuitPathTracker implements PathTracker {
   public void resetAndSetPoints(List<AutoPoint> points) {}
 
   @Override
-  public Pose2d getTargetPose(Pose2d currentPose, ChassisSpeeds currentFieldRelativeRobotSpeeds) {
+  public void updateRobotState(Pose2d currentPose, ChassisSpeeds currentFieldRelativeRobotSpeeds) {}
+
+  @Override
+  public Pose2d getTargetPose() {
     return null;
   }
 
