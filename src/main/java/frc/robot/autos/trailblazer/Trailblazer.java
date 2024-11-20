@@ -54,7 +54,8 @@ public class Trailblazer {
                     previousAutoPoint = currentAutoPoint;
                   }
                 },
-                swerve));
+                swerve))
+        .until(pathTracker::isFinished);
   }
 
   private ChassisSpeeds getSwerveSetpoint(
