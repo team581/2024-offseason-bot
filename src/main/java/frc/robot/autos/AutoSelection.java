@@ -1,19 +1,18 @@
 package frc.robot.autos;
 
+import frc.robot.autos.amp.Op345Auto;
+import frc.robot.autos.trailblazer.Trailblazer;
+import frc.robot.robot_manager.RobotManager;
+import java.util.function.BiFunction;
+
 public enum AutoSelection {
-  DO_NOTHING("", ""),
+  DO_NOTHING(DoNothingAuto::new),
 
-  AMP_5_PIECE("Red Amp 5 Piece", "Blue Amp 5 Piece"),
-  SOURCE_4_PIECE("Red Source 4 Piece", "Blue Source 4 Piece"),
-  SOURCE_OFFSET("Red Source Offset", "Blue Source Offset"),
-  MID_5_PIECE("Red 5 Piece 6 to 1", "Blue 5 Piece 6 to 1"),
-  OP("Red OP", "Blue OP");
+  OP(Op345Auto::new);
 
-  public final String redAutoName;
-  public final String blueAutoName;
+  public final BiFunction<RobotManager, Trailblazer, BaseAuto> auto;
 
-  private AutoSelection(String redAutoName, String blueAutoName) {
-    this.redAutoName = redAutoName;
-    this.blueAutoName = blueAutoName;
+  private AutoSelection(BiFunction<RobotManager, Trailblazer, BaseAuto> auto) {
+    this.auto = auto;
   }
 }
