@@ -1,4 +1,4 @@
-package frc.robot.autos.red.amp;
+package frc.robot.autos.amp;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -8,15 +8,20 @@ import frc.robot.autos.BaseAuto;
 import frc.robot.autos.trailblazer.AutoPoint;
 import frc.robot.autos.trailblazer.AutoSegment;
 import frc.robot.autos.trailblazer.Trailblazer;
-import frc.robot.robot_manager.RobotCommands;
 import frc.robot.robot_manager.RobotManager;
 
-public class RedOp345Auto extends BaseAuto {
-  public RedOp345Auto(RobotManager robotManager, Trailblazer trailblazer, RobotCommands actions) {
+public class Op345Auto extends BaseAuto {
+  public Op345Auto(RobotManager robotManager, Trailblazer trailblazer) {
     super(robotManager, trailblazer);
   }
 
-  public Command getAutoCommand() {
+  @Override
+  protected Command getBlueAutoCommand() {
+    return Commands.none();
+  }
+
+  @Override
+  protected Command getRedAutoCommand() {
     return Commands.sequence(
         Commands.print("example command on auto start"),
         trailblazer.followSegment(

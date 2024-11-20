@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.arm.ArmSubsystem;
 import frc.robot.autos.Autos;
+import frc.robot.autos.trailblazer.Trailblazer;
 import frc.robot.config.RobotConfig;
 import frc.robot.fms.FmsSubsystem;
 import frc.robot.generated.BuildConstants;
@@ -52,7 +53,8 @@ public class Robot extends TimedRobot {
       new RobotManager(arm, shooter, localization, vision, imu, intake, queuer, swerve);
 
   private final RobotCommands robotCommands = new RobotCommands(robotManager);
-  private final Autos autos = new Autos(robotCommands, robotManager, swerve, localization);
+  private final Trailblazer trailblazer = new Trailblazer(swerve, localization);
+  private final Autos autos = new Autos(robotManager, trailblazer);
 
   private final LightsSubsystem lights = new LightsSubsystem(robotManager, hardware.candle);
 
