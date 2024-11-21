@@ -5,6 +5,7 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TorqueCurrentConfigs;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain.SwerveDriveState;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
@@ -13,7 +14,6 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
@@ -26,7 +26,6 @@ import frc.robot.util.ControllerHelpers;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
 import java.security.InvalidParameterException;
-import java.util.List;
 
 public class SwerveSubsystem extends StateMachine<SwerveState> {
   /** Max speed allowed to make a speaker shot and feeding. */
@@ -84,12 +83,11 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
   private Notifier simNotifier = null;
 
   private boolean slowEnoughToShoot = false;
-  private List<SwerveModulePosition> modulePositions;
-  private ChassisSpeeds robotRelativeSpeeds;
-  private ChassisSpeeds fieldRelativeSpeeds;
+  private SwerveDriveState drivetrainState = new SwerveDriveState();
+  private ChassisSpeeds robotRelativeSpeeds = new ChassisSpeeds();
+  private ChassisSpeeds fieldRelativeSpeeds = new ChassisSpeeds();
   private boolean slowEnoughToFeed;
   private double goalSnapAngle = 0;
-  boolean closedLoop = false;
 
   /** The latest requested teleop speeds. */
   private ChassisSpeeds teleopSpeeds = new ChassisSpeeds();
@@ -112,8 +110,8 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
     return slowEnoughToFeed;
   }
 
-  public List<SwerveModulePosition> getModulePositions() {
-    return modulePositions;
+  public SwerveDriveState getDrivetrainState() {
+    return drivetrainState;
   }
 
   public void setSnapToAngle(double angle) {
@@ -134,7 +132,6 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
     driveToAngle.HeadingController = RobotConfig.get().swerve().snapController();
     driveToAngle.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
     driveToAngle.HeadingController.setTolerance(0.02);
-    modulePositions = calculateModulePositions();
 
     // The CTR SwerveModule class will overwrite your torque current limits and the stator current
     // limit with the configured slip current. This logic allows us to exercise more precise control
@@ -240,28 +237,16 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
 
   @Override
   protected void collectInputs() {
-    modulePositions = calculateModulePositions();
-    robotRelativeSpeeds = calculateRobotRelativeSpeeds();
+    drivetrainState = drivetrain.getState();
+    robotRelativeSpeeds = drivetrainState.speeds;
     fieldRelativeSpeeds = calculateFieldRelativeSpeeds();
     slowEnoughToShoot = calculateMovingSlowEnoughForSpeakerShot(robotRelativeSpeeds);
     slowEnoughToFeed = calculateMovingSlowEnoughForFloorShot(robotRelativeSpeeds);
   }
 
-  private List<SwerveModulePosition> calculateModulePositions() {
-    return List.of(
-        frontLeft.getPosition(true),
-        frontRight.getPosition(true),
-        backLeft.getPosition(true),
-        backRight.getPosition(true));
-  }
-
-  private ChassisSpeeds calculateRobotRelativeSpeeds() {
-    return drivetrain.getState().speeds;
-  }
-
   private ChassisSpeeds calculateFieldRelativeSpeeds() {
     return ChassisSpeeds.fromRobotRelativeSpeeds(
-        robotRelativeSpeeds, drivetrain.getState().Pose.getRotation());
+        robotRelativeSpeeds, drivetrainState.Pose.getRotation());
   }
 
   private static boolean calculateMovingSlowEnoughForSpeakerShot(ChassisSpeeds speeds) {
@@ -364,6 +349,9 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
     super.robotPeriodic();
 
     DogLog.log("Swerve/SnapAngle", goalSnapAngle);
+    DogLog.log("Swerve/ModuleStates", drivetrainState.ModuleStates);
+    DogLog.log("Swerve/ModuleTargets", drivetrainState.ModuleTargets);
+    DogLog.log("Swerve/RobotRelativeSpeeds", drivetrainState.speeds);
   }
 
   private void startSimThread() {

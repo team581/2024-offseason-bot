@@ -50,7 +50,7 @@ public class LocalizationSubsystem extends StateMachine<LocalizationState> {
   }
 
   public Pose2d getPose() {
-    return swerve.drivetrain.getState().Pose;
+    return swerve.getDrivetrainState().Pose;
   }
 
   @Override
