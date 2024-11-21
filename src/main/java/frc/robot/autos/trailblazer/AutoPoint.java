@@ -8,6 +8,10 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 public class AutoPoint {
+  private static Command emptyCommand() {
+    return Commands.none().withName("AutoPointEmptyCommand");
+  }
+
   public final Supplier<Pose2d> poseSupplier;
   public final Optional<AutoConstraintOptions> constraints;
   public final Command command;
@@ -29,11 +33,11 @@ public class AutoPoint {
   }
 
   public AutoPoint(Supplier<Pose2d> poseSupplier, AutoConstraintOptions constraints) {
-    this(poseSupplier, Commands.none(), constraints);
+    this(poseSupplier, emptyCommand(), constraints);
   }
 
   public AutoPoint(Supplier<Pose2d> poseSupplier) {
-    this(poseSupplier, Commands.none(), Optional.empty());
+    this(poseSupplier, emptyCommand(), Optional.empty());
   }
 
   public AutoPoint(Pose2d pose, Command command, AutoConstraintOptions constraints) {
@@ -45,10 +49,10 @@ public class AutoPoint {
   }
 
   public AutoPoint(Pose2d pose, AutoConstraintOptions constraints) {
-    this(pose, Commands.none(), constraints);
+    this(pose, emptyCommand(), constraints);
   }
 
   public AutoPoint(Pose2d pose) {
-    this(pose, Commands.none());
+    this(pose, emptyCommand());
   }
 }
