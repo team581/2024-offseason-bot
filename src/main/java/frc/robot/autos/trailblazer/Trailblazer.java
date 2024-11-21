@@ -2,6 +2,7 @@ package frc.robot.autos.trailblazer;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -38,36 +39,59 @@ public class Trailblazer {
   }
 
   public Command followSegment(AutoSegment segment) {
-    return Commands.runOnce(() -> pathTracker.resetAndSetPoints(segment.points))
-        .alongWith(
-            Commands.run(
+    return followSegment(segment, true);
+  }
+
+  public Command followSegment(AutoSegment segment, boolean shouldEnd) {
+    var command =
+        Commands.runOnce(
                 () -> {
-                  pathTracker.updateRobotState(
-                      localization.getPose(), swerve.getFieldRelativeSpeeds());
+                  pathTracker.resetAndSetPoints(segment.points);
 
-                  var currentAutoPointIndex = pathTracker.getCurrentPointIndex();
-                  var currentAutoPoint = segment.points.get(currentAutoPointIndex);
+                  DogLog.log(
+                      "Trailblazer/CurrentSegment/InitialPoints",
+                      segment.points.stream()
+                          .map(point -> point.poseSupplier.get())
+                          .toArray(Pose2d[]::new));
+                })
+            .alongWith(
+                Commands.run(
+                    () -> {
+                      pathTracker.updateRobotState(
+                          localization.getPose(), swerve.getFieldRelativeSpeeds());
 
-                  var constrainedVelocityGoal =
-                      getSwerveSetpoint(currentAutoPoint, segment.defaultConstraints);
-                  swerve.setFieldRelativeAutoSpeeds(constrainedVelocityGoal);
+                      var currentAutoPointIndex = pathTracker.getCurrentPointIndex();
+                      var currentAutoPoint = segment.points.get(currentAutoPointIndex);
 
-                  DogLog.log("Trailblazer/Tracker/CurrentPointIndex", currentAutoPointIndex);
-                  if (previousAutoPointIndex != currentAutoPointIndex) {
-                    // Currently tracked point has changed, trigger side effects
+                      var constrainedVelocityGoal =
+                          getSwerveSetpoint(currentAutoPoint, segment.defaultConstraints);
+                      swerve.setFieldRelativeAutoSpeeds(constrainedVelocityGoal);
 
-                    // Each of the points in (previous, current]
-                    var pointsToRunSideEffectsFor =
-                        segment.points.subList(
-                            previousAutoPointIndex + 1, currentAutoPointIndex + 1);
-                    for (var passedPoint : pointsToRunSideEffectsFor) {
-                      passedPoint.command.schedule();
-                    }
-                    previousAutoPointIndex = currentAutoPointIndex;
-                  }
-                },
-                swerve))
-        .until(pathTracker::isFinished);
+                      DogLog.log("Trailblazer/Tracker/CurrentPointIndex", currentAutoPointIndex);
+                      if (previousAutoPointIndex != currentAutoPointIndex) {
+                        // Currently tracked point has changed, trigger side effects
+
+                        // Each of the points in (previous, current]
+                        var pointsToRunSideEffectsFor =
+                            segment.points.subList(
+                                previousAutoPointIndex + 1, currentAutoPointIndex + 1);
+                        for (var passedPoint : pointsToRunSideEffectsFor) {
+                          DogLog.log(
+                              "Trailblazer/Tracker/CommandTriggered",
+                              passedPoint.command.getName());
+                          passedPoint.command.schedule();
+                        }
+                        previousAutoPointIndex = currentAutoPointIndex;
+                      }
+                    },
+                    swerve))
+            .withName("FollowSegmentIndefinitely");
+
+    if (shouldEnd) {
+      return command.until(pathTracker::isFinished).withName("FollowSegmentUntilFinished");
+    }
+
+    return command;
   }
 
   private ChassisSpeeds getSwerveSetpoint(
