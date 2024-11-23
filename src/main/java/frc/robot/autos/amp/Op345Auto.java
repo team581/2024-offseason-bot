@@ -46,8 +46,10 @@ public class Op345Auto extends BaseAuto {
                     autoCommands.speakerShotWithTimeout()),
                 new AutoPoint(
                     new Pose2d(11.03, 6.88, new Rotation2d(30.17)), actions.intakeAssistCommand()),
-                new AutoPoint(new Pose2d(10.14, 6.41, new Rotation2d(25.43)), actions.intakeAssistCommand()),
-                new AutoPoint(new Pose2d(8.32, 8.32, new Rotation2d(24.67)), actions.intakeAssistCommand()),
+                new AutoPoint(
+                    new Pose2d(10.14, 6.41, new Rotation2d(25.43)), actions.intakeAssistCommand()),
+                new AutoPoint(
+                    new Pose2d(8.32, 8.32, new Rotation2d(24.67)), actions.intakeAssistCommand()),
                 new AutoPoint(
                     new Pose2d(12.64, 7.06, new Rotation2d(-21.67)),
                     autoCommands.speakerShotWithTimeout()))));
