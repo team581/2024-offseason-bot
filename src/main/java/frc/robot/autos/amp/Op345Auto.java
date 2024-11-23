@@ -27,31 +27,34 @@ public class Op345Auto extends BaseAuto {
         Commands.runOnce(
             () ->
                 robotManager.localization.resetPose(
-                    new Pose2d(15.78, 6.67, new Rotation2d(-58.39)))),
+                    new Pose2d(15.78, 6.67, Rotation2d.fromDegrees(-60.48)))),
         trailblazer.followSegment(
             new AutoSegment(
-                new AutoPoint(new Pose2d(15.78, 6.67, new Rotation2d(-58.39))),
+                new AutoPoint(new Pose2d(15.78, 6.67, Rotation2d.fromDegrees(-60.48))),
                 new AutoPoint(
-                    new Pose2d(14.676, 6.767, new Rotation2d(-26.85)),
+                    new Pose2d(14.676, 6.767, Rotation2d.fromDegrees(-26.85)),
                     Commands.sequence(
                         autoCommands.speakerShotWithTimeout(), actions.intakeAssistCommand())),
-                new AutoPoint(new Pose2d(13.68, 6.99, new Rotation2d(0.0))),
+                new AutoPoint(new Pose2d(13.68, 6.99, Rotation2d.fromDegrees(0.0))),
                 new AutoPoint(
-                    new Pose2d(12.64, 7.06, new Rotation2d(-21.67)),
+                    new Pose2d(12.64, 7.06, Rotation2d.fromDegrees(-21.67)),
                     Commands.sequence(
                         autoCommands.speakerShotWithTimeout(), actions.intakeAssistCommand())),
-                new AutoPoint(new Pose2d(8.52, 7.46, new Rotation2d(0.0))),
+                new AutoPoint(new Pose2d(8.52, 7.46, Rotation2d.fromDegrees(0.0))),
                 new AutoPoint(
-                    new Pose2d(12.64, 7.06, new Rotation2d(-21.67)),
+                    new Pose2d(12.64, 7.06, Rotation2d.fromDegrees(-21.67)),
                     autoCommands.speakerShotWithTimeout()),
                 new AutoPoint(
-                    new Pose2d(11.03, 6.88, new Rotation2d(30.17)), actions.intakeAssistCommand()),
+                    new Pose2d(11.03, 6.88, Rotation2d.fromDegrees(30.17)),
+                    actions.intakeAssistCommand()),
                 new AutoPoint(
-                    new Pose2d(10.14, 6.41, new Rotation2d(25.43)), actions.intakeAssistCommand()),
+                    new Pose2d(10.14, 6.41, Rotation2d.fromDegrees(25.43)),
+                    actions.intakeAssistCommand()),
                 new AutoPoint(
-                    new Pose2d(8.32, 5.79, new Rotation2d(24.67)), actions.intakeAssistCommand()),
+                    new Pose2d(8.32, 5.79, Rotation2d.fromDegrees(24.67)),
+                    actions.intakeAssistCommand()),
                 new AutoPoint(
-                    new Pose2d(12.64, 7.06, new Rotation2d(-21.67)),
+                    new Pose2d(12.64, 7.06, Rotation2d.fromDegrees(-21.67)),
                     autoCommands.speakerShotWithTimeout()))));
   }
 }
