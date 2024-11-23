@@ -3,7 +3,10 @@ package frc.robot.autos.trailblazer.trackers;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.robot.autos.trailblazer.AutoPoint;
+
 import java.util.List;
+
+import dev.doglog.DogLog;
 
 // TODO: Implement https://github.com/team581/2024-offseason-bot/issues/94
 public class HeuristicPathTracker implements PathTracker {
@@ -11,6 +14,7 @@ public class HeuristicPathTracker implements PathTracker {
   private Pose2d currentPose = new Pose2d();
   private double proximityRadius = 0.5;
   private int currentPointIndex = 0;
+
 
   @Override
   public void resetAndSetPoints(List<AutoPoint> points) {
@@ -29,6 +33,11 @@ public class HeuristicPathTracker implements PathTracker {
     }
     AutoPoint currentPoint = points.get(getCurrentPointIndex());
     Pose2d currentTargetPose = currentPoint.poseSupplier.get();
+
+   /// DogLog.log("Autos/Trailblazer/CurrentWaypoint", currentPoint);
+    DogLog.log("Autos/Trailblazer/NextPointIndex", currentPointIndex);
+    DogLog.log("Autos/Trailblazer/CurrentTargetPose", currentTargetPose);
+
     double distanceToTarget =
         currentPose.getTranslation().getDistance(currentTargetPose.getTranslation());
 
@@ -36,7 +45,12 @@ public class HeuristicPathTracker implements PathTracker {
       currentPointIndex++;
     }
 
-    return points.get(currentPointIndex).poseSupplier.get();
+    var targetPose = points.get(currentPointIndex).poseSupplier.get();
+
+    DogLog.log("Autos/Trailblazer/TargetPose", targetPose);
+    DogLog.log("Autos/Trailblazer/DistanceToTarget", distanceToTarget);
+
+    return targetPose;
   }
 
   @Override
@@ -48,4 +62,5 @@ public class HeuristicPathTracker implements PathTracker {
   public boolean isFinished() {
     return false;
   }
+
 }
