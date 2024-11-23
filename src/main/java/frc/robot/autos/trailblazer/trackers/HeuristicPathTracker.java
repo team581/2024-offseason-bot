@@ -29,12 +29,12 @@ public class HeuristicPathTracker implements PathTracker {
     }
     AutoPoint currentPoint = points.get(getCurrentPointIndex());
     Pose2d currentTargetPose = currentPoint.poseSupplier.get();
-    double distanceToTarget = currentPose.getTranslation().getDistance(currentTargetPose.getTranslation());
+    double distanceToTarget =
+        currentPose.getTranslation().getDistance(currentTargetPose.getTranslation());
 
-    if (distanceToTarget < proximityRadius && currentPointIndex < points.size() -1) {
+    if (distanceToTarget < proximityRadius && currentPointIndex < points.size() - 1) {
       currentPointIndex++;
     }
-
 
     return points.get(currentPointIndex).poseSupplier.get();
   }
