@@ -13,8 +13,9 @@ public class HeuristicPathTracker implements PathTracker {
   private double proximityRadius = 0.5;
   private int currentPointIndex = 0;
   private double endPointProximityRadius = 0.1;
- // private double distanceToTarget;
- // private Pose2d currentTargetPose = new Pose2d();
+
+  // private double distanceToTarget;
+  // private Pose2d currentTargetPose = new Pose2d();
 
   @Override
   public void resetAndSetPoints(List<AutoPoint> points) {
@@ -41,9 +42,9 @@ public class HeuristicPathTracker implements PathTracker {
 
   @Override
   public Pose2d getTargetPose() {
-    //if (isFinished() == true) {
-   //   return currentTargetPose;
-   // }
+    // if (isFinished() == true) {
+    //   return currentTargetPose;
+    // }
 
     var targetPose = points.get(currentPointIndex).poseSupplier.get();
 
