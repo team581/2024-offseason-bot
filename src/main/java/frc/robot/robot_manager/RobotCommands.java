@@ -22,7 +22,8 @@ public class RobotCommands {
 
   public Command intakeAssistCommand() {
     return Commands.runOnce(robot::intakeAssistRequest, requirements)
-        .andThen(robot.waitForState(RobotState.IDLE_WITH_GP));
+        .andThen(robot.waitForState(RobotState.IDLE_WITH_GP))
+        .withName("IntakeAssistCommand");
   }
 
   public Command outtakeCommand() {
