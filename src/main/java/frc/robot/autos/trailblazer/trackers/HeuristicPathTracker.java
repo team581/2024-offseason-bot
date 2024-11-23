@@ -12,6 +12,9 @@ public class HeuristicPathTracker implements PathTracker {
   private Pose2d currentPose = new Pose2d();
   private double proximityRadius = 0.5;
   private int currentPointIndex = 0;
+  private double endPointProximityRadius = 0.1;
+ // private double distanceToTarget;
+ // private Pose2d currentTargetPose = new Pose2d();
 
   @Override
   public void resetAndSetPoints(List<AutoPoint> points) {
@@ -21,19 +24,9 @@ public class HeuristicPathTracker implements PathTracker {
   @Override
   public void updateRobotState(Pose2d currentPose, ChassisSpeeds currentFieldRelativeRobotSpeeds) {
     this.currentPose = currentPose;
-  }
 
-  @Override
-  public Pose2d getTargetPose() {
-    if (isFinished() == true) {
-      return null;
-    }
     AutoPoint currentPoint = points.get(getCurrentPointIndex());
     Pose2d currentTargetPose = currentPoint.poseSupplier.get();
-
-    /// DogLog.log("Autos/Trailblazer/CurrentWaypoint", currentPoint);
-    DogLog.log("Autos/Trailblazer/NextPointIndex", currentPointIndex);
-    DogLog.log("Autos/Trailblazer/CurrentTargetPose", currentTargetPose);
 
     double distanceToTarget =
         currentPose.getTranslation().getDistance(currentTargetPose.getTranslation());
@@ -41,11 +34,20 @@ public class HeuristicPathTracker implements PathTracker {
     if (distanceToTarget < proximityRadius && currentPointIndex < points.size() - 1) {
       currentPointIndex++;
     }
+    DogLog.log("Autos/Trailblazer/CurrentTargetPose", currentTargetPose);
+    DogLog.log("Autos/Trailblazer/DistanceToTarget", distanceToTarget);
+    DogLog.log("Autos/Trailblazer/NextPointIndex", currentPointIndex);
+  }
+
+  @Override
+  public Pose2d getTargetPose() {
+    //if (isFinished() == true) {
+   //   return currentTargetPose;
+   // }
 
     var targetPose = points.get(currentPointIndex).poseSupplier.get();
 
     DogLog.log("Autos/Trailblazer/TargetPose", targetPose);
-    DogLog.log("Autos/Trailblazer/DistanceToTarget", distanceToTarget);
 
     return targetPose;
   }
@@ -57,6 +59,10 @@ public class HeuristicPathTracker implements PathTracker {
 
   @Override
   public boolean isFinished() {
+    // if (distanceToTarget <= endPointProximityRadius && currentPointIndex >= points.size() - 1) {
+    //   DogLog.log("Autos/Trailblazer/isFinished", isFinished());
+    //   return true;
+    // }
     return false;
   }
 }
