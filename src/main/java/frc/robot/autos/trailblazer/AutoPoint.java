@@ -7,6 +7,7 @@ import frc.robot.autos.trailblazer.constraints.AutoConstraintOptions;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+// TODO: Convert to record
 public class AutoPoint {
   private static Command emptyCommand() {
     return Commands.none().withName("AutoPointEmptyCommand");
