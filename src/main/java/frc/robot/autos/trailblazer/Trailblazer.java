@@ -100,12 +100,9 @@ public class Trailblazer {
 
     var originalTargetPose = pathTracker.getTargetPose();
     DogLog.log("Trailblazer/Tracker/RawOutput", originalTargetPose);
-    var constrainedTargetPose =
-        AutoConstraintCalculator.constrainTargetPose(originalTargetPose, usedConstraints);
-    DogLog.log("Trailblazer/Tracker/UsedOutput", constrainedTargetPose);
 
     var originalVelocityGoal =
-        pathFollower.calculateSpeeds(localization.getPose(), constrainedTargetPose);
+        pathFollower.calculateSpeeds(localization.getPose(), originalTargetPose);
     DogLog.log("Trailblazer/Follower/RawOutput", originalVelocityGoal);
     var constrainedVelocityGoal =
         AutoConstraintCalculator.constrainVelocityGoal(originalVelocityGoal, usedConstraints);

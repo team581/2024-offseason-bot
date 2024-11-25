@@ -4,13 +4,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
 public class AutoConstraintCalculator {
-  public static Pose2d constrainTargetPose(Pose2d inputPose, AutoConstraintOptions options) {
-    if (options.collisionAvoidance()) {
-      // TODO: Implement collision avoidance
-    }
-
-    return inputPose;
-  }
 
   public static ChassisSpeeds constrainVelocityGoal(
       ChassisSpeeds inputSpeeds, AutoConstraintOptions options) {
