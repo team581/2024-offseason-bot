@@ -3,12 +3,8 @@ package frc.robot.imu;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
-import frc.robot.arm.ArmState;
-import frc.robot.config.RobotConfig;
 import frc.robot.util.scheduling.SubsystemPriority;
 import frc.robot.util.state_machines.StateMachine;
-import frc.robot.vision.Limelight;
-import frc.robot.vision.VisionSubsystem;
 
 public class ImuSubsystem extends StateMachine<ImuState> {
   private final Pigeon2 imu;
@@ -22,8 +18,6 @@ public class ImuSubsystem extends StateMachine<ImuState> {
   public ImuSubsystem(Pigeon2 imu) {
     super(SubsystemPriority.IMU, ImuState.DEFAULT_STATE);
     this.imu = imu;
-          setAngle(Limelight.getYaw().getValueAsDouble());
-
   }
 
   @Override
@@ -70,10 +64,5 @@ public class ImuSubsystem extends StateMachine<ImuState> {
     DogLog.log("Imu/RobotHeading", robotHeading);
     DogLog.log("Imu/AngularVelocity", angularVelocity);
     DogLog.log("Imu/Pitch", pitch);
-     if (DriverStation.isDisabled()) {
-   if (!MathUtil.isNear(LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2.getYaw().getValueAsDouble(),robotHeading,1)){
-setAngle(LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2.getYaw().getValueAsDouble());
-   }
-    }
   }
 }
