@@ -5,25 +5,62 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
 public class AutoConstraintCalculator {
 
+  public static ChassisSpeeds constrainLinearVelocity(
+      ChassisSpeeds inputSpeeds,
+      AutoConstraintOptions options){
+    // TODO: Implement linear velocity constraint
+    return inputSpeeds;
+  }
+
+  public static ChassisSpeeds constrainRotationalVelocity(
+      ChassisSpeeds inputSpeeds,
+      AutoConstraintOptions options) {
+    // TODO: Implement rotational velocity constraint
+    return inputSpeeds;
+  }
+
+  public static ChassisSpeeds constrainLinearAcceleration(
+      ChassisSpeeds inputSpeeds,
+      ChassisSpeeds previousSpeeds,
+      double timeBetweenPreviousAndInputSpeeds,
+      AutoConstraintOptions options){
+    // TODO: Implement linear acceleration constraint
+    return inputSpeeds;
+  }
+
+  public static ChassisSpeeds constrainRotationalAcceleration(
+      ChassisSpeeds inputSpeeds,
+      ChassisSpeeds previousSpeeds,
+      double timeBetweenPreviousAndInputSpeeds,
+      AutoConstraintOptions options){
+    // TODO: Implement angular acceleration constraint
+    return inputSpeeds;
+  }
+
   public static ChassisSpeeds constrainVelocityGoal(
-      ChassisSpeeds inputSpeeds, AutoConstraintOptions options) {
+      ChassisSpeeds inputSpeeds, 
+      ChassisSpeeds previousSpeeds,
+      double timeBetweenPreviousAndInputSpeeds,
+      AutoConstraintOptions options) {
+    ChassisSpeeds constrainedSpeeds = inputSpeeds;
+
     if (options.maxLinearVelocity() != 0) {
-      // TODO: Implement linear velocity constraint
+      constrainedSpeeds = constrainLinearVelocity(constrainedSpeeds, options);
     }
 
     if (options.maxAngularVelocity() != 0) {
-      // TODO: Implement angular velocity constraint
+      constrainedSpeeds = constrainRotationalVelocity(constrainedSpeeds, options);
     }
 
     if (options.maxLinearAcceleration() != 0) {
-      // TODO: Implement linear acceleration constraint
+      constrainedSpeeds = constrainLinearAcceleration(constrainedSpeeds, previousSpeeds, timeBetweenPreviousAndInputSpeeds, options);
     }
 
     if (options.maxAngularAcceleration() != 0) {
-      // TODO: Implement angular acceleration constraint
+      constrainedSpeeds = constrainRotationalAcceleration(constrainedSpeeds, previousSpeeds, timeBetweenPreviousAndInputSpeeds, options);
     }
 
-    return inputSpeeds;
+    return constrainedSpeeds;
   }
 
   private AutoConstraintCalculator() {}
