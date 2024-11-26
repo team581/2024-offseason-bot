@@ -2,6 +2,7 @@ package frc.robot.vision;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.vision.interpolation.CameraDataset;
 import frc.robot.vision.interpolation.InterpolatedVision;
@@ -9,16 +10,18 @@ import java.util.Optional;
 
 public class Limelight {
   private final String limelightTableName;
-  private final String name;
+  public final String name;
+  public final Pose3d robotRelativePose;
   private CameraDataset interpolationData;
   private CameraStatus state = CameraStatus.ONLINE_NO_TAGS;
   private double limelightHeartbeat = -1;
 
   private final Timer limelightTimer = new Timer();
 
-  public Limelight(String name, CameraDataset interpolationData) {
+  public Limelight(String name, Pose3d robotRelativePose, CameraDataset interpolationData) {
     limelightTableName = "limelight-" + name;
     this.name = name;
+    this.robotRelativePose = robotRelativePose;
     this.interpolationData = interpolationData;
     limelightTimer.start();
   }
