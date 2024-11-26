@@ -11,7 +11,6 @@ import java.util.Optional;
 public class Limelight {
   private final String limelightTableName;
   public final String name;
-  public final Pose3d robotRelativePose;
   private CameraDataset interpolationData;
   private CameraStatus state = CameraStatus.ONLINE_NO_TAGS;
   private double limelightHeartbeat = -1;
@@ -21,7 +20,6 @@ public class Limelight {
   public Limelight(String name, Pose3d robotRelativePose, CameraDataset interpolationData) {
     limelightTableName = "limelight-" + name;
     this.name = name;
-    this.robotRelativePose = robotRelativePose;
     this.interpolationData = interpolationData;
     limelightTimer.start();
   }
