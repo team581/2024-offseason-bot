@@ -15,6 +15,8 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.config.RobotConfig.ArmConfig;
 import frc.robot.config.RobotConfig.IntakeConfig;
@@ -216,7 +218,13 @@ class CompConfig {
               },
               -77.0,
               87.0),
-          new VisionConfig(4, 0.4, 0.4, InterpolatedVisionDataset.MADTOWN),
+          new VisionConfig(
+              4,
+              0.4,
+              0.4,
+              InterpolatedVisionDataset.MADTOWN,
+              // right is positive x, up is positive y, forward is positive z
+              new Pose3d(0, -1.0, -1.5, new Rotation3d(0.0, 0.0, 0.0))),
           new LightsConfig("rio", 3));
 
   private CompConfig() {}

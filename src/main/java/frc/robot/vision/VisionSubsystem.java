@@ -2,9 +2,7 @@ package frc.robot.vision;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.config.RobotConfig;
@@ -25,10 +23,6 @@ public class VisionSubsystem extends StateMachine<VisionState> {
   private double pitchRate;
   private double roll;
   private double rollRate;
-
-  // right is positive x, up is positive y, forward is positive z
-  private final Pose3d robotPoseCalibrationTargetSpaceMetersRadians =
-      new Pose3d(0, -1.0, -1.5, new Rotation3d(0.0, 0.0, 0.0));
 
   public static final Pose2d ORIGINAL_RED_SPEAKER =
       new Pose2d(
@@ -77,63 +71,6 @@ public class VisionSubsystem extends StateMachine<VisionState> {
     return interpolatedVisionResult;
   }
 
-  private void logCalibrationValues() {
-    var leftCameraPoseTargetSpace = LimelightHelpers.getCameraPose3d_TargetSpace("limelight");
-    var rightCameraPoseTargetSpace = LimelightHelpers.getCameraPose3d_TargetSpace("limelight");
-
-    var leftCameraRobotRelativePose =
-        getRobotRelativeCameraOffset(
-            robotPoseCalibrationTargetSpaceMetersRadians, leftCameraPoseTargetSpace);
-    var rightCameraRobotRelativePose =
-        getRobotRelativeCameraOffset(
-            robotPoseCalibrationTargetSpaceMetersRadians, rightCameraPoseTargetSpace);
-
-    DogLog.log("Calibration/LeftCamera/Right", leftCameraRobotRelativePose.getX());
-    DogLog.log("Calibration/LeftCamera/Up", leftCameraRobotRelativePose.getY());
-    DogLog.log("Calibration/LeftCamera/Forward", leftCameraRobotRelativePose.getZ());
-    DogLog.log("Calibration/LeftCamera/Roll", leftCameraRobotRelativePose.getRotation().getX());
-    DogLog.log("Calibration/LeftCamera/Pitch", leftCameraRobotRelativePose.getRotation().getY());
-    DogLog.log("Calibration/LeftCamera/Yaw", leftCameraRobotRelativePose.getRotation().getZ());
-
-    DogLog.log("Calibration/RightCamera/Right", rightCameraRobotRelativePose.getX());
-    DogLog.log("Calibration/RightCamera/Up", rightCameraRobotRelativePose.getY());
-    DogLog.log("Calibration/RightCamera/Forward", rightCameraRobotRelativePose.getZ());
-    DogLog.log("Calibration/RightCamera/Roll", rightCameraRobotRelativePose.getRotation().getX());
-    DogLog.log("Calibration/RightCamera/Pitch", rightCameraRobotRelativePose.getRotation().getY());
-    DogLog.log("Calibration/RightCamera/Yaw", rightCameraRobotRelativePose.getRotation().getZ());
-  }
-
-  private Pose3d getRobotRelativeCameraOffset(
-      Pose3d robotPoseTargetSpace, Pose3d seenCameraPoseTargetSpace) {
-    // Positive X = Right
-    var cameraLeftRight = seenCameraPoseTargetSpace.getX();
-    // Positive Y = Down, so flipped for common sense
-    var cameraUpDown = -1 * (seenCameraPoseTargetSpace.getY());
-    // Positive Z = Backward, so flipped for common sense
-    var cameraForwardBackward = -1 * (seenCameraPoseTargetSpace.getZ());
-    // Pitch rotates around left right axis (x according to LL coordinate systems)
-    var cameraPitch = Units.degreesToRadians(seenCameraPoseTargetSpace.getRotation().getX());
-    // Roll rotates around forward backward axis (Z according to LL coordinate systems)
-    var cameraRoll = Units.degreesToRadians(seenCameraPoseTargetSpace.getRotation().getZ());
-    // Yaw rotates around up down axis (y according to LL coordinate systems)
-    var cameraYaw = Units.degreesToRadians(seenCameraPoseTargetSpace.getRotation().getY());
-
-    var robotLeftRight = robotPoseTargetSpace.getX();
-    var robotUpDown = robotPoseTargetSpace.getY();
-    var robotForwardBackward = robotPoseTargetSpace.getZ();
-    var robotPitch = robotPoseTargetSpace.getRotation().getY();
-    var robotRoll = robotPoseTargetSpace.getRotation().getX();
-    var robotYaw = robotPoseTargetSpace.getRotation().getZ();
-
-    var right = cameraLeftRight - robotLeftRight;
-    var up = cameraUpDown - robotUpDown;
-    var forward = cameraForwardBackward - robotForwardBackward;
-    var roll = cameraRoll - robotRoll;
-    var pitch = cameraPitch - robotPitch;
-    var yaw = cameraYaw - robotYaw;
-    return new Pose3d(right, up, forward, new Rotation3d(roll, pitch, yaw));
-  }
-
   @Override
   public void robotPeriodic() {
     super.robotPeriodic();
@@ -148,7 +85,8 @@ public class VisionSubsystem extends StateMachine<VisionState> {
     DogLog.log("Vision/Right/VisionState", rightLimelight.getState());
 
     if (RobotConfig.IS_CALIBRATION) {
-      logCalibrationValues();
+      leftLimelight.logCalibrationValues();
+      rightLimelight.logCalibrationValues();
     }
   }
 

@@ -4,6 +4,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.mechanisms.swerve.utility.PhoenixPIDController;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import frc.robot.vision.interpolation.InterpolatedVisionDataset;
 import java.util.function.Consumer;
@@ -63,7 +64,8 @@ public record RobotConfig(
       int translationHistoryArraySize,
       double xyStdDev,
       double thetaStdDev,
-      InterpolatedVisionDataset interpolatedVisionSet) {}
+      InterpolatedVisionDataset interpolatedVisionSet,
+      Pose3d robotPoseCalibrationTargetSpace) {}
 
   public record LightsConfig(String canBusName, int deviceID) {}
 
