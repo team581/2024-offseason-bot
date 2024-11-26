@@ -65,6 +65,8 @@ public record RobotConfig(
       double xyStdDev,
       double thetaStdDev,
       InterpolatedVisionDataset interpolatedVisionSet,
+      // Pose of robot (center of bottom of bellypan) relative to the center of callibration rig
+      // AprilTag
       Pose3d robotPoseCalibrationTargetSpace) {}
 
   public record LightsConfig(String canBusName, int deviceID) {}
@@ -72,7 +74,7 @@ public record RobotConfig(
   // TODO: Change this to false during events
   public static final boolean IS_DEVELOPMENT = true;
 
-  public static final boolean IS_CALIBRATION = false;
+  public static final boolean IS_CAMERA_POSITION_CALIBRATION = false;
 
   public static final String SERIAL_NUMBER = System.getenv("serialnum");
 

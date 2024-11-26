@@ -84,9 +84,9 @@ public class VisionSubsystem extends StateMachine<VisionState> {
     DogLog.log("Vision/Left/VisionState", leftLimelight.getState());
     DogLog.log("Vision/Right/VisionState", rightLimelight.getState());
 
-    if (RobotConfig.IS_CALIBRATION) {
-      leftLimelight.logCalibrationValues();
-      rightLimelight.logCalibrationValues();
+    if (RobotConfig.IS_CAMERA_POSITION_CALIBRATION) {
+      leftLimelight.logCameraPositionCalibrationValues();
+      rightLimelight.logCameraPositionCalibrationValues();
     }
   }
 
