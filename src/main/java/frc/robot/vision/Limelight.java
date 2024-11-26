@@ -57,18 +57,19 @@ public class Limelight {
     var robotPoseTargetSpace = RobotConfig.get().vision().robotPoseCalibrationTargetSpace();
     var leftCameraRobotRelativePose =
         getRobotRelativeCameraPosition(robotPoseTargetSpace, cameraPoseTargetSpace);
-    DogLog.log("CameraPositionCalibration/" + name + "/Right", leftCameraRobotRelativePose.getX());
-    DogLog.log("CameraPositionCalibration/" + name + "/Up", leftCameraRobotRelativePose.getY());
     DogLog.log(
-        "CameraPositionCalibration/" + name + "/Forward", leftCameraRobotRelativePose.getZ());
+        "CameraPositionCalibration/" + name + "/LL Right", leftCameraRobotRelativePose.getX());
+    DogLog.log("CameraPositionCalibration/" + name + "/LL Up", leftCameraRobotRelativePose.getY());
     DogLog.log(
-        "CameraPositionCalibration/" + name + "/Roll",
+        "CameraPositionCalibration/" + name + "/LL Forward", leftCameraRobotRelativePose.getZ());
+    DogLog.log(
+        "CameraPositionCalibration/" + name + "/LL Roll",
         Units.radiansToDegrees(leftCameraRobotRelativePose.getRotation().getX()));
     DogLog.log(
-        "CameraPositionCalibration/" + name + "/Pitch",
+        "CameraPositionCalibration/" + name + "/LL Pitch",
         Units.radiansToDegrees(leftCameraRobotRelativePose.getRotation().getY()));
     DogLog.log(
-        "CameraPositionCalibration/" + name + "/Yaw",
+        "CameraPositionCalibration/" + name + "/LL Yaw",
         Units.radiansToDegrees(leftCameraRobotRelativePose.getRotation().getZ()));
   }
 
