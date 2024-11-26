@@ -27,7 +27,8 @@ public class VisionSubsystem extends StateMachine<VisionState> {
   private double rollRate;
 
   // right is positive x, up is positive y, forward is positive z
-  private final Pose3d robotPoseCalibrationTargetSpaceMetersRadians = new Pose3d(0, -1.0, -1.5, new Rotation3d(0.0, 0.0, 0.0));
+  private final Pose3d robotPoseCalibrationTargetSpaceMetersRadians =
+      new Pose3d(0, -1.0, -1.5, new Rotation3d(0.0, 0.0, 0.0));
 
   public static final Pose2d ORIGINAL_RED_SPEAKER =
       new Pose2d(
@@ -80,9 +81,12 @@ public class VisionSubsystem extends StateMachine<VisionState> {
     var leftCameraPoseTargetSpace = LimelightHelpers.getCameraPose3d_TargetSpace("limelight");
     var rightCameraPoseTargetSpace = LimelightHelpers.getCameraPose3d_TargetSpace("limelight");
 
-    var leftCameraRobotRelativePose = getRobotRelativeCameraOffset(robotPoseCalibrationTargetSpaceMetersRadians,
-        leftCameraPoseTargetSpace);
-    var rightCameraRobotRelativePose = getRobotRelativeCameraOffset(robotPoseCalibrationTargetSpaceMetersRadians, rightCameraPoseTargetSpace);
+    var leftCameraRobotRelativePose =
+        getRobotRelativeCameraOffset(
+            robotPoseCalibrationTargetSpaceMetersRadians, leftCameraPoseTargetSpace);
+    var rightCameraRobotRelativePose =
+        getRobotRelativeCameraOffset(
+            robotPoseCalibrationTargetSpaceMetersRadians, rightCameraPoseTargetSpace);
 
     DogLog.log("Calibration/LeftCamera/Right", leftCameraRobotRelativePose.getX());
     DogLog.log("Calibration/LeftCamera/Up", leftCameraRobotRelativePose.getY());
@@ -99,26 +103,27 @@ public class VisionSubsystem extends StateMachine<VisionState> {
     DogLog.log("Calibration/RightCamera/Yaw", rightCameraRobotRelativePose.getRotation().getZ());
   }
 
-  private Pose3d getRobotRelativeCameraOffset(Pose3d robotPoseTargetSpace, Pose3d seenCameraPoseTargetSpace) {
-      // Positive X = Right
-      var cameraLeftRight = seenCameraPoseTargetSpace.getX();
-      // Positive Y = Down, so flipped for common sense
-      var cameraUpDown = -1 * (seenCameraPoseTargetSpace.getY());
-      // Positive Z = Backward, so flipped for common sense
-      var cameraForwardBackward = -1 * (seenCameraPoseTargetSpace.getZ());
-      // Pitch rotates around left right axis (x according to LL coordinate systems)
-      var cameraPitch = Units.degreesToRadians(seenCameraPoseTargetSpace.getRotation().getX());
-      // Roll rotates around forward backward axis (Z according to LL coordinate systems)
-      var cameraRoll = Units.degreesToRadians(seenCameraPoseTargetSpace.getRotation().getZ());
-      // Yaw rotates around up down axis (y according to LL coordinate systems)
-      var cameraYaw = Units.degreesToRadians(seenCameraPoseTargetSpace.getRotation().getY());
+  private Pose3d getRobotRelativeCameraOffset(
+      Pose3d robotPoseTargetSpace, Pose3d seenCameraPoseTargetSpace) {
+    // Positive X = Right
+    var cameraLeftRight = seenCameraPoseTargetSpace.getX();
+    // Positive Y = Down, so flipped for common sense
+    var cameraUpDown = -1 * (seenCameraPoseTargetSpace.getY());
+    // Positive Z = Backward, so flipped for common sense
+    var cameraForwardBackward = -1 * (seenCameraPoseTargetSpace.getZ());
+    // Pitch rotates around left right axis (x according to LL coordinate systems)
+    var cameraPitch = Units.degreesToRadians(seenCameraPoseTargetSpace.getRotation().getX());
+    // Roll rotates around forward backward axis (Z according to LL coordinate systems)
+    var cameraRoll = Units.degreesToRadians(seenCameraPoseTargetSpace.getRotation().getZ());
+    // Yaw rotates around up down axis (y according to LL coordinate systems)
+    var cameraYaw = Units.degreesToRadians(seenCameraPoseTargetSpace.getRotation().getY());
 
-      var robotLeftRight = robotPoseTargetSpace.getX();
-      var robotUpDown = robotPoseTargetSpace.getY();
-      var robotForwardBackward = robotPoseTargetSpace.getZ();
-      var robotPitch = robotPoseTargetSpace.getRotation().getY();
-      var robotRoll = robotPoseTargetSpace.getRotation().getX();
-      var robotYaw = robotPoseTargetSpace.getRotation().getZ();
+    var robotLeftRight = robotPoseTargetSpace.getX();
+    var robotUpDown = robotPoseTargetSpace.getY();
+    var robotForwardBackward = robotPoseTargetSpace.getZ();
+    var robotPitch = robotPoseTargetSpace.getRotation().getY();
+    var robotRoll = robotPoseTargetSpace.getRotation().getX();
+    var robotYaw = robotPoseTargetSpace.getRotation().getZ();
 
     var right = cameraLeftRight - robotLeftRight;
     var up = cameraUpDown - robotUpDown;

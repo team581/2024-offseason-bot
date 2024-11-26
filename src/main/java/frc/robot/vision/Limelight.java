@@ -17,7 +17,7 @@ public class Limelight {
 
   private final Timer limelightTimer = new Timer();
 
-  public Limelight(String name, Pose3d robotRelativePose, CameraDataset interpolationData) {
+  public Limelight(String name, CameraDataset interpolationData) {
     limelightTableName = "limelight-" + name;
     this.name = name;
     this.interpolationData = interpolationData;
