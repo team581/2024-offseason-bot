@@ -4,6 +4,7 @@ import dev.doglog.DogLog;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.autos.trailblazer.constraints.AutoConstraintCalculator;
@@ -32,6 +33,8 @@ public class Trailblazer {
       new PidPathFollower(
           new PIDController(4, 0, 0), new PIDController(4, 0, 0), new PIDController(2.5, 0, 0));
   private int previousAutoPointIndex = -1;
+  private ChassisSpeeds previousSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
+  private double previousTimestamp = 0.0;
 
   public Trailblazer(SwerveSubsystem swerve, LocalizationSubsystem localization) {
     this.swerve = swerve;
@@ -96,6 +99,10 @@ public class Trailblazer {
 
   private ChassisSpeeds getSwerveSetpoint(
       AutoPoint point, AutoConstraintOptions segmentConstraints) {
+    double currentTimestamp = Timer.getFPGATimestamp();
+    if (previousTimestamp == 0.0){
+      previousTimestamp = currentTimestamp - 0.02;
+    }
     var usedConstraints = resolveConstraints(point, segmentConstraints);
 
     var originalTargetPose = pathTracker.getTargetPose();
@@ -105,8 +112,11 @@ public class Trailblazer {
         pathFollower.calculateSpeeds(localization.getPose(), originalTargetPose);
     DogLog.log("Trailblazer/Follower/RawOutput", originalVelocityGoal);
     var constrainedVelocityGoal =
-        AutoConstraintCalculator.constrainVelocityGoal(originalVelocityGoal, usedConstraints);
+        AutoConstraintCalculator.constrainVelocityGoal(originalVelocityGoal, previousSpeeds, currentTimestamp - previousTimestamp, usedConstraints);
     DogLog.log("Trailblazer/Follower/UsedOutput", constrainedVelocityGoal);
+  
+    previousTimestamp = currentTimestamp;
+    previousSpeeds = constrainedVelocityGoal;
 
     return constrainedVelocityGoal;
   }

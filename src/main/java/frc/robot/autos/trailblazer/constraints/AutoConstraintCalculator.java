@@ -25,6 +25,9 @@ public class AutoConstraintCalculator {
       double timeBetweenPreviousAndInputSpeeds,
       AutoConstraintOptions options){
     // TODO: Implement linear acceleration constraint
+    // Could approach this by seeing if the acceleration exceeds the max acceleration.
+    // If it does, calculate the maximum velocity to achieve the max acceleration and
+    // use the same velocity clamp function as above.
     return inputSpeeds;
   }
 
