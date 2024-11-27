@@ -100,7 +100,7 @@ public class Trailblazer {
   private ChassisSpeeds getSwerveSetpoint(
       AutoPoint point, AutoConstraintOptions segmentConstraints) {
     double currentTimestamp = Timer.getFPGATimestamp();
-    if (previousTimestamp == 0.0){
+    if (previousTimestamp == 0.0) {
       previousTimestamp = currentTimestamp - 0.02;
     }
     var usedConstraints = resolveConstraints(point, segmentConstraints);
@@ -112,9 +112,13 @@ public class Trailblazer {
         pathFollower.calculateSpeeds(localization.getPose(), originalTargetPose);
     DogLog.log("Trailblazer/Follower/RawOutput", originalVelocityGoal);
     var constrainedVelocityGoal =
-        AutoConstraintCalculator.constrainVelocityGoal(originalVelocityGoal, previousSpeeds, currentTimestamp - previousTimestamp, usedConstraints);
+        AutoConstraintCalculator.constrainVelocityGoal(
+            originalVelocityGoal,
+            previousSpeeds,
+            currentTimestamp - previousTimestamp,
+            usedConstraints);
     DogLog.log("Trailblazer/Follower/UsedOutput", constrainedVelocityGoal);
-  
+
     previousTimestamp = currentTimestamp;
     previousSpeeds = constrainedVelocityGoal;
 
