@@ -216,7 +216,14 @@ class CompConfig {
               },
               -77.0,
               87.0),
-          new VisionConfig(4, 0.4, 0.4, InterpolatedVisionDataset.MADTOWN),
+          new VisionConfig(
+              4,
+              0.4,
+              Double.POSITIVE_INFINITY,
+              InterpolatedVisionDataset.MADTOWN,
+              0.4,
+              Double.POSITIVE_INFINITY,
+              InterpolatedVisionDataset.MADTOWN),
           new LightsConfig("rio", 3));
 
   private CompConfig() {}

@@ -16,6 +16,8 @@ public class VisionSubsystem extends StateMachine<VisionState> {
   private final Limelight leftLimelight;
   private final Limelight rightLimelight;
   private final List<VisionResult> interpolatedVisionResult = new ArrayList<>();
+  private final List<VisionResult> interpolatedVisionResultMegaTag1 = new ArrayList<>();
+
   private double robotHeading;
   private double pitch;
   private double angularVelocity;
@@ -54,6 +56,10 @@ public class VisionSubsystem extends StateMachine<VisionState> {
     var leftInterpolatedVisionResult = leftLimelight.getInterpolatedVisionResult();
     var rightInterpolatedVisionResult = rightLimelight.getInterpolatedVisionResult();
 
+    var leftInterpolatedVisionResultMegaTag1 = leftLimelight.getInterpolatedVisionResultMegaTag1();
+    var rightInterpolatedVisionResultMegaTag1 =
+        rightLimelight.getInterpolatedVisionResultMegaTag1();
+
     interpolatedVisionResult.clear();
 
     if (!DriverStation.isAutonomous()) {
@@ -64,10 +70,24 @@ public class VisionSubsystem extends StateMachine<VisionState> {
     if (rightInterpolatedVisionResult.isPresent()) {
       interpolatedVisionResult.add(rightInterpolatedVisionResult.get());
     }
+    interpolatedVisionResultMegaTag1.clear();
+
+    if (!DriverStation.isAutonomous()) {
+      if (leftInterpolatedVisionResultMegaTag1.isPresent()) {
+        interpolatedVisionResultMegaTag1.add(leftInterpolatedVisionResultMegaTag1.get());
+      }
+    }
+    if (rightInterpolatedVisionResultMegaTag1.isPresent()) {
+      interpolatedVisionResultMegaTag1.add(rightInterpolatedVisionResultMegaTag1.get());
+    }
   }
 
   public List<VisionResult> getInterpolatedVisionResult() {
     return interpolatedVisionResult;
+  }
+
+  public List<VisionResult> getInterpolatedVisionResultMegaTag1() {
+    return interpolatedVisionResultMegaTag1;
   }
 
   @Override

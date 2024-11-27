@@ -63,7 +63,10 @@ public record RobotConfig(
       int translationHistoryArraySize,
       double xyStdDev,
       double thetaStdDev,
-      InterpolatedVisionDataset interpolatedVisionSet) {}
+      InterpolatedVisionDataset interpolatedVisionSet,
+      double xyStdDev1,
+      double thetaStdDev1,
+      InterpolatedVisionDataset interpolatedVisionSet1) {}
 
   public record LightsConfig(String canBusName, int deviceID) {}
 

@@ -48,8 +48,43 @@ public class Limelight {
     return Optional.of(new VisionResult(interpolatedPose, rawResult.get().timestamp()));
   }
 
+  public Optional<VisionResult> getInterpolatedVisionResultMegaTag1() {
+    var rawResult = getRawVisionResultMegaTag1();
+
+    updateState(rawResult);
+
+    if (rawResult.isEmpty()) {
+      return Optional.empty();
+    }
+
+    Pose2d interpolatedPose =
+        InterpolatedVision.interpolatePose(rawResult.get().pose(), interpolationData);
+    return Optional.of(new VisionResult(interpolatedPose, rawResult.get().timestamp()));
+  }
+
   private Optional<VisionResult> getRawVisionResult() {
     var estimatePose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightTableName);
+
+    if (estimatePose == null) {
+      return Optional.empty();
+    }
+
+    DogLog.log("Vision/" + name + "/RawLimelightPose", estimatePose.pose);
+
+    if (estimatePose.tagCount == 0) {
+      return Optional.empty();
+    }
+
+    // This prevents pose estimator from having crazy poses if the Limelight loses power
+    if (estimatePose.pose.getX() == 0.0 && estimatePose.pose.getY() == 0.0) {
+      return Optional.empty();
+    }
+
+    return Optional.of(new VisionResult(estimatePose.pose, estimatePose.timestampSeconds));
+  }
+
+  Optional<VisionResult> getRawVisionResultMegaTag1() {
+    var estimatePose = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightTableName);
 
     if (estimatePose == null) {
       return Optional.empty();

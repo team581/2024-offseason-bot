@@ -31,6 +31,11 @@ public class LocalizationSubsystem extends StateMachine<LocalizationState> {
           RobotConfig.get().vision().xyStdDev(),
           RobotConfig.get().vision().xyStdDev(),
           RobotConfig.get().vision().thetaStdDev());
+  private static final Vector<N3> VISION_STD_DEVS_1 =
+      VecBuilder.fill(
+          RobotConfig.get().vision().xyStdDev(),
+          RobotConfig.get().vision().xyStdDev(),
+          RobotConfig.get().vision().thetaStdDev());
   private final ImuSubsystem imu;
   private final VisionSubsystem vision;
   private final SwerveSubsystem swerve;
@@ -38,6 +43,7 @@ public class LocalizationSubsystem extends StateMachine<LocalizationState> {
       TimeInterpolatableBuffer.createBuffer(1.5);
   private double lastAddedVisionTimestamp = 0;
   private List<VisionResult> latestResult = new ArrayList<>();
+  private List<VisionResult> latestResultMegaTag1 = new ArrayList<>();
 
   public LocalizationSubsystem(ImuSubsystem imu, VisionSubsystem vision, SwerveSubsystem swerve) {
     super(SubsystemPriority.LOCALIZATION, LocalizationState.DEFAULT_STATE);
@@ -49,10 +55,15 @@ public class LocalizationSubsystem extends StateMachine<LocalizationState> {
   @Override
   protected void collectInputs() {
     latestResult = vision.getInterpolatedVisionResult();
+    latestResultMegaTag1 = vision.getInterpolatedVisionResultMegaTag1();
   }
 
   public Pose2d getPose() {
     return swerve.getDrivetrainState().Pose;
+  }
+
+  public Pose2d getPoseMegaTag1() {
+    return (Pose2d) vision.getInterpolatedVisionResultMegaTag1();
   }
 
   @Override
@@ -73,10 +84,26 @@ public class LocalizationSubsystem extends StateMachine<LocalizationState> {
 
       poseHistory.addSample(Timer.getFPGATimestamp(), getPose());
     }
-    if (DriverStation.isDisabled()) {
-      if (!MathUtil.isNear(getPose().getRotation().getDegrees(), imu.getRobotHeading(), 1)) {
-        imu.setAngle(getPose().getRotation().getDegrees());
+
+    if (DriverStation.isDisabled()
+        && !MathUtil.isNear(
+            getPoseMegaTag1().getRotation().getDegrees(),
+            imu.getRobotHeading(),
+            1.0,
+            -180.0,
+            180.0)) {
+      for (var results : latestResultMegaTag1) {
+        Pose2d visionPose = results.pose();
+
+        double visionTimestamp = results.timestamp();
+
+        swerve.drivetrain.addVisionMeasurement(visionPose, visionTimestamp, VISION_STD_DEVS_1);
+        lastAddedVisionTimestamp = visionTimestamp;
+
+        poseHistory.addSample(Timer.getFPGATimestamp(), getPose());
       }
+
+      imu.setAngle(getPoseMegaTag1().getRotation().getDegrees());
     }
 
     DogLog.log("Localization/EstimatedPose", getPose());
