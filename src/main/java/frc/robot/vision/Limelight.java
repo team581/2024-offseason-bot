@@ -55,22 +55,22 @@ public class Limelight {
   public void logCameraPositionCalibrationValues() {
     var cameraPoseTargetSpace = LimelightHelpers.getCameraPose3d_TargetSpace(limelightTableName);
     var robotPoseTargetSpace = RobotConfig.get().vision().robotPoseCalibrationTargetSpace();
-    var leftCameraRobotRelativePose =
+    var cameraRobotRelativePose =
         getRobotRelativeCameraPosition(robotPoseTargetSpace, cameraPoseTargetSpace);
     DogLog.log(
-        "CameraPositionCalibration/" + name + "/LL Right", leftCameraRobotRelativePose.getX());
-    DogLog.log("CameraPositionCalibration/" + name + "/LL Up", leftCameraRobotRelativePose.getY());
+        "CameraPositionCalibration/" + name + "/LL Right", cameraRobotRelativePose.getX());
+    DogLog.log("CameraPositionCalibration/" + name + "/LL Up", cameraRobotRelativePose.getY());
     DogLog.log(
-        "CameraPositionCalibration/" + name + "/LL Forward", leftCameraRobotRelativePose.getZ());
+        "CameraPositionCalibration/" + name + "/LL Forward", cameraRobotRelativePose.getZ());
     DogLog.log(
         "CameraPositionCalibration/" + name + "/LL Roll",
-        Units.radiansToDegrees(leftCameraRobotRelativePose.getRotation().getX()));
+        Units.radiansToDegrees(cameraRobotRelativePose.getRotation().getX()));
     DogLog.log(
         "CameraPositionCalibration/" + name + "/LL Pitch",
-        Units.radiansToDegrees(leftCameraRobotRelativePose.getRotation().getY()));
+        Units.radiansToDegrees(cameraRobotRelativePose.getRotation().getY()));
     DogLog.log(
         "CameraPositionCalibration/" + name + "/LL Yaw",
-        Units.radiansToDegrees(leftCameraRobotRelativePose.getRotation().getZ()));
+        Units.radiansToDegrees(cameraRobotRelativePose.getRotation().getZ()));
   }
 
   private Pose3d getRobotRelativeCameraPosition(
@@ -79,14 +79,14 @@ public class Limelight {
     var cameraLeftRight = seenCameraPoseTargetSpace.getX();
     // Positive Y = Down, so flipped for common sense
     var cameraUpDown = -1 * (seenCameraPoseTargetSpace.getY());
-    // Positive Z = Backward, so flipped for common sense
-    var cameraForwardBackward = -1 * (seenCameraPoseTargetSpace.getZ());
+    // Positive Z = Forward
+    var cameraForwardBackward = seenCameraPoseTargetSpace.getZ();
     // Pitch rotates around left right axis (x according to LL coordinate systems)
     var cameraPitch = seenCameraPoseTargetSpace.getRotation().getX();
     // Roll rotates around forward backward axis (Z according to LL coordinate systems)
     var cameraRoll = seenCameraPoseTargetSpace.getRotation().getZ();
     // Yaw rotates around up down axis (y according to LL coordinate systems)
-    var cameraYaw = seenCameraPoseTargetSpace.getRotation().getY();
+    var cameraYaw = -1 * (seenCameraPoseTargetSpace.getRotation().getY());
 
     var robotLeftRight = robotPoseTargetSpace.getX();
     var robotUpDown = robotPoseTargetSpace.getY();
@@ -101,6 +101,7 @@ public class Limelight {
     var roll = cameraRoll - robotRoll;
     var pitch = cameraPitch - robotPitch;
     var yaw = cameraYaw - robotYaw;
+
     return new Pose3d(right, up, forward, new Rotation3d(roll, pitch, yaw));
   }
 
