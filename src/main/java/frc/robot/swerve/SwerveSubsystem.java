@@ -226,29 +226,16 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
       leftX *= -1.0;
       leftY *= -1.0;
     }
-     DogLog.log("Swerve/leftX", leftX);
-      DogLog.log("Swerve/LeftY", leftY);
 
-    // raw input -> polar conversion
-    if(leftX != 0 || leftY != 0){
-    double r = Math.sqrt(Math.pow(leftX, 2) + Math.pow(leftY, 2));
-    double polarTheta = Math.atan(leftY/leftX);
-      DogLog.log("Swerve/radius", r);
-      DogLog.log("Swerve/polartheta", polarTheta);
+      //https://stackoverflow.com/a/32391780
+      var mappedX = 1/2* Math.sqrt( 2 + Math.pow(leftX, 2) - Math.pow(leftY, 2) + 2*leftX*Math.sqrt(2)) - 1/2* Math.sqrt( 2 + Math.pow(leftX, 2) - Math.pow(leftY, 2) - 2*leftX*Math.sqrt(2));
+    var mappedY =  1/2* Math.sqrt( 2 - Math.pow(leftX, 2) + Math.pow(leftY, 2) + 2*leftY*Math.sqrt(2)) - 1/2* Math.sqrt( 2 - Math.pow(leftX, 2) + Math.pow(leftY, 2) - 2*leftY*Math.sqrt(2));
 
-    // polar -> xytheta
-    double polarX = (r * Math.cos(polarTheta) * Math.sqrt(Math.pow(Math.sin(polarTheta), 2) + 1));
-    double polarY = (r * Math.sin(polarTheta) * Math.sqrt(Math.pow(Math.sin(polarTheta), 2) + 1));
-      DogLog.log("Swerve/polarx", polarX);
-      DogLog.log("Swerve/polary", polarY);
-    }
-
-    // xytheta -> swerve
     teleopSpeeds =
         new ChassisSpeeds(
           0,0,0
-        //    -1.0 * polarY * MaxSpeed,
-        //    polarX * MaxSpeed,
+        //    -1.0 *mappedY * MaxSpeed,
+        //    mappedX * MaxSpeed,
          //   rightX * TELEOP_MAX_ANGULAR_RATE.getRadians()
          );
 
