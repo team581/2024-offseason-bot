@@ -13,6 +13,7 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.signals.InvertedValue;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -225,12 +226,31 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
       leftX *= -1.0;
       leftY *= -1.0;
     }
+     DogLog.log("Swerve/leftX", leftX);
+      DogLog.log("Swerve/LeftY", leftY);
 
+    // raw input -> polar conversion
+    if(leftX != 0 || leftY != 0){
+    double r = Math.sqrt(Math.pow(leftX, 2) + Math.pow(leftY, 2));
+    double polarTheta = Math.atan(leftY/leftX);
+      DogLog.log("Swerve/radius", r);
+      DogLog.log("Swerve/polartheta", polarTheta);
+
+    // polar -> xytheta
+    double polarX = (r * Math.cos(polarTheta) * );
+    double polarY = (r * Math.sin(polarTheta));
+      DogLog.log("Swerve/polarx", polarX);
+      DogLog.log("Swerve/polary", polarY);
+    }
+    
+    // xytheta -> swerve
     teleopSpeeds =
         new ChassisSpeeds(
-            -1.0 * leftY * MaxSpeed,
-            leftX * MaxSpeed,
-            rightX * TELEOP_MAX_ANGULAR_RATE.getRadians());
+          0,0,0
+        //    -1.0 * polarY * MaxSpeed,
+        //    polarX * MaxSpeed,
+         //   rightX * TELEOP_MAX_ANGULAR_RATE.getRadians()
+         );
 
     sendSwerveRequest();
   }
