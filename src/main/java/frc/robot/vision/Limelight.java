@@ -57,11 +57,9 @@ public class Limelight {
     var robotPoseTargetSpace = RobotConfig.get().vision().robotPoseCalibrationTargetSpace();
     var cameraRobotRelativePose =
         getRobotRelativeCameraPosition(robotPoseTargetSpace, cameraPoseTargetSpace);
-    DogLog.log(
-        "CameraPositionCalibration/" + name + "/LL Right", cameraRobotRelativePose.getX());
+    DogLog.log("CameraPositionCalibration/" + name + "/LL Right", cameraRobotRelativePose.getX());
     DogLog.log("CameraPositionCalibration/" + name + "/LL Up", cameraRobotRelativePose.getY());
-    DogLog.log(
-        "CameraPositionCalibration/" + name + "/LL Forward", cameraRobotRelativePose.getZ());
+    DogLog.log("CameraPositionCalibration/" + name + "/LL Forward", cameraRobotRelativePose.getZ());
     DogLog.log(
         "CameraPositionCalibration/" + name + "/LL Roll",
         Units.radiansToDegrees(cameraRobotRelativePose.getRotation().getX()));
