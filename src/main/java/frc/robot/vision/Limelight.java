@@ -53,7 +53,7 @@ public class Limelight {
   }
 
   public void logCameraPositionCalibrationValues() {
-    var cameraPoseTargetSpace = LimelightHelpers.getCameraPose3d_TargetSpace(name);
+    var cameraPoseTargetSpace = LimelightHelpers.getCameraPose3d_TargetSpace(limelightTableName);
     var robotPoseTargetSpace = RobotConfig.get().vision().robotPoseCalibrationTargetSpace();
     var leftCameraRobotRelativePose =
         getRobotRelativeCameraPosition(robotPoseTargetSpace, cameraPoseTargetSpace);
