@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class AutoConstraintCalculatorTest {
-
   private static double round(double input) {
     return Math.round(input * 100.0) / 100.0;
   }
@@ -42,10 +41,12 @@ public class AutoConstraintCalculatorTest {
     return equals;
   }
 
+  /** Verify that linear constraints are being applied as expected. */
   @Test
   void verifyLinearVelocityConstraint() {
-    /** Verify that linear constraints are being applied as expected. */
-    ChassisSpeeds unconstrainedSpeeds, expectedConstrainedSpeeds, outputConstrainedSpeeds;
+    ChassisSpeeds unconstrainedSpeeds;
+    ChassisSpeeds expectedConstrainedSpeeds;
+    ChassisSpeeds outputConstrainedSpeeds;
     ChassisSpeeds previousSpeeds = new ChassisSpeeds();
     AutoConstraintOptions options;
 
@@ -88,10 +89,12 @@ public class AutoConstraintCalculatorTest {
     Assertions.assertTrue(isEqual(outputConstrainedSpeeds, expectedConstrainedSpeeds));
   }
 
+  /** Verify that rotational constraints are being applied as expected. */
   @Test
   void verifyRotationalVelocityConstraints() {
-    /** Verify that rotational constraints are being applied as expected. */
-    ChassisSpeeds unconstrainedSpeeds, expectedConstrainedSpeeds, outputConstrainedSpeeds;
+    ChassisSpeeds unconstrainedSpeeds;
+    ChassisSpeeds expectedConstrainedSpeeds;
+    ChassisSpeeds outputConstrainedSpeeds;
     ChassisSpeeds previousSpeeds = new ChassisSpeeds();
     AutoConstraintOptions options;
 
@@ -105,13 +108,13 @@ public class AutoConstraintCalculatorTest {
     Assertions.assertTrue(isEqual(outputConstrainedSpeeds, expectedConstrainedSpeeds));
   }
 
+  /** Verify that acceleration linear constraints are being applied as expected. */
   @Test
   void verifyLinearAccelerationConstraints() {
-    /** Verify that acceleration linear constraints are being applied as expected. */
-    ChassisSpeeds unconstrainedSpeeds,
-        expectedConstrainedSpeeds,
-        outputConstrainedSpeeds,
-        previousSpeeds;
+    ChassisSpeeds unconstrainedSpeeds;
+    ChassisSpeeds expectedConstrainedSpeeds;
+    ChassisSpeeds outputConstrainedSpeeds;
+    ChassisSpeeds previousSpeeds;
     double timeBetweenPreviousAndInputSpeeds;
     AutoConstraintOptions options;
 
@@ -156,13 +159,13 @@ public class AutoConstraintCalculatorTest {
     Assertions.assertTrue(isEqual(outputConstrainedSpeeds, expectedConstrainedSpeeds));
   }
 
+  /** Verify that rotational accelerations constraints are being applied as expected. */
   @Test
   void verifyRotationalAccelerationConstraints() {
-    /** Verify that rotational accelerations constraints are being applied as expected. */
-    ChassisSpeeds unconstrainedSpeeds,
-        expectedConstrainedSpeeds,
-        outputConstrainedSpeeds,
-        previousSpeeds;
+    ChassisSpeeds unconstrainedSpeeds;
+    ChassisSpeeds expectedConstrainedSpeeds;
+    ChassisSpeeds outputConstrainedSpeeds;
+    ChassisSpeeds previousSpeeds;
     double timeBetweenPreviousAndInputSpeeds;
     AutoConstraintOptions options;
 
@@ -185,9 +188,9 @@ public class AutoConstraintCalculatorTest {
     Assertions.assertTrue(isEqual(outputConstrainedSpeeds, expectedConstrainedSpeeds));
   }
 
+  /** Verify that all constraints being applied on a complex problem at once works. */
   @Test
   void verifyAllConstraintsAtOnce() {
-    /** Verify that all constraints being applied on a complex problem at once works. */
     // TODO: Craft a test that tests all constraints being applied and used.
   }
 }
