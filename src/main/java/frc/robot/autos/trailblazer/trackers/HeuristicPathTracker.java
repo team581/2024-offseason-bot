@@ -10,12 +10,11 @@ import java.util.List;
 public class HeuristicPathTracker implements PathTracker {
   private List<AutoPoint> points = List.of();
   private Pose2d currentPose = new Pose2d();
+  private Pose2d currentTargetPose = new Pose2d();
   private double proximityRadius = 0.5;
-  private int currentPointIndex = 0;
   private double endPointProximityRadius = 0.1;
-
-  // private double distanceToTarget;
-  // private Pose2d currentTargetPose = new Pose2d();
+  private int currentPointIndex = 0;
+  private double distanceToTarget;
 
   @Override
   public void resetAndSetPoints(List<AutoPoint> points) {
@@ -42,10 +41,6 @@ public class HeuristicPathTracker implements PathTracker {
 
   @Override
   public Pose2d getTargetPose() {
-    // if (isFinished() == true) {
-    //   return currentTargetPose;
-    // }
-
     var targetPose = points.get(currentPointIndex).poseSupplier.get();
 
     DogLog.log("Autos/Trailblazer/TargetPose", targetPose);
@@ -60,10 +55,9 @@ public class HeuristicPathTracker implements PathTracker {
 
   @Override
   public boolean isFinished() {
-    // if (distanceToTarget <= endPointProximityRadius && currentPointIndex >= points.size() - 1) {
-    //   DogLog.log("Autos/Trailblazer/isFinished", isFinished());
-    //   return true;
-    // }
+    if (distanceToTarget <= endPointProximityRadius && currentPointIndex > points.size() - 1) {
+      return true;
+    }
     return false;
   }
 }
