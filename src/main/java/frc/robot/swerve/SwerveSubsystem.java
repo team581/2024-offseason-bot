@@ -237,12 +237,12 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
       DogLog.log("Swerve/polartheta", polarTheta);
 
     // polar -> xytheta
-    double polarX = (r * Math.cos(polarTheta) * );
-    double polarY = (r * Math.sin(polarTheta));
+    double polarX = (r * Math.cos(polarTheta) * Math.sqrt(Math.pow(Math.sin(polarTheta), 2) + 1));
+    double polarY = (r * Math.sin(polarTheta) * Math.sqrt(Math.pow(Math.sin(polarTheta), 2) + 1));
       DogLog.log("Swerve/polarx", polarX);
       DogLog.log("Swerve/polary", polarY);
     }
-    
+
     // xytheta -> swerve
     teleopSpeeds =
         new ChassisSpeeds(
