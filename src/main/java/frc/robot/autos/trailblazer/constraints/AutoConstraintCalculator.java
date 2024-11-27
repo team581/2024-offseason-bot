@@ -1,35 +1,69 @@
 package frc.robot.autos.trailblazer.constraints;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
 public class AutoConstraintCalculator {
-  public static Pose2d constrainTargetPose(Pose2d inputPose, AutoConstraintOptions options) {
-    if (options.collisionAvoidance()) {
-      // TODO: Implement collision avoidance
-    }
-
-    return inputPose;
-  }
 
   public static ChassisSpeeds constrainVelocityGoal(
-      ChassisSpeeds inputSpeeds, AutoConstraintOptions options) {
+      ChassisSpeeds inputSpeeds,
+      ChassisSpeeds previousSpeeds,
+      double timeBetweenPreviousAndInputSpeeds,
+      AutoConstraintOptions options) {
+    ChassisSpeeds constrainedSpeeds = inputSpeeds;
+
     if (options.maxLinearVelocity() != 0) {
-      // TODO: Implement linear velocity constraint
+      constrainedSpeeds = constrainLinearVelocity(constrainedSpeeds, options);
     }
 
     if (options.maxAngularVelocity() != 0) {
-      // TODO: Implement angular velocity constraint
+      constrainedSpeeds = constrainRotationalVelocity(constrainedSpeeds, options);
     }
 
     if (options.maxLinearAcceleration() != 0) {
-      // TODO: Implement linear acceleration constraint
+      constrainedSpeeds =
+          constrainLinearAcceleration(
+              constrainedSpeeds, previousSpeeds, timeBetweenPreviousAndInputSpeeds, options);
     }
 
     if (options.maxAngularAcceleration() != 0) {
-      // TODO: Implement angular acceleration constraint
+      constrainedSpeeds =
+          constrainRotationalAcceleration(
+              constrainedSpeeds, previousSpeeds, timeBetweenPreviousAndInputSpeeds, options);
     }
 
+    return constrainedSpeeds;
+  }
+
+  private static ChassisSpeeds constrainLinearVelocity(
+      ChassisSpeeds inputSpeeds, AutoConstraintOptions options) {
+    // TODO: Implement linear velocity constraint
+    return inputSpeeds;
+  }
+
+  private static ChassisSpeeds constrainRotationalVelocity(
+      ChassisSpeeds inputSpeeds, AutoConstraintOptions options) {
+    // TODO: Implement rotational velocity constraint
+    return inputSpeeds;
+  }
+
+  private static ChassisSpeeds constrainLinearAcceleration(
+      ChassisSpeeds inputSpeeds,
+      ChassisSpeeds previousSpeeds,
+      double timeBetweenPreviousAndInputSpeeds,
+      AutoConstraintOptions options) {
+    // TODO: Implement linear acceleration constraint
+    // Could approach this by seeing if the acceleration exceeds the max acceleration.
+    // If it does, calculate the maximum velocity to achieve the max acceleration and
+    // use the same velocity clamp function as above.
+    return inputSpeeds;
+  }
+
+  private static ChassisSpeeds constrainRotationalAcceleration(
+      ChassisSpeeds inputSpeeds,
+      ChassisSpeeds previousSpeeds,
+      double timeBetweenPreviousAndInputSpeeds,
+      AutoConstraintOptions options) {
+    // TODO: Implement angular acceleration constraint
     return inputSpeeds;
   }
 
