@@ -224,7 +224,7 @@ class CompConfig {
               0.4,
               InterpolatedVisionDataset.MADTOWN,
               // right is positive x, up is positive y, forward is positive z
-              new Pose3d(0, -1.0, -1.5, new Rotation3d(0.0, 0.0, 0.0))),
+              new Pose3d(0.0, Units.inchesToMeters(-57.128),Units.inchesToMeters(-64.750), new Rotation3d(0.0, 0.0, 0.0))),
           new LightsConfig("rio", 3));
 
   private CompConfig() {}
