@@ -44,7 +44,6 @@ public class Limelight {
     updateState(rawResult);
 
     if (rawResult.isEmpty()) {
-      DogLog.logFault(limelightTableName+" RawVisionResultEmpty");
       return Optional.empty();
     }
 
@@ -108,7 +107,6 @@ public class Limelight {
     var estimatePose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightTableName);
 
     if (estimatePose == null) {
-      DogLog.logFault(limelightTableName+" EstimatePoseNull");
       return Optional.empty();
     }
 
@@ -138,6 +136,7 @@ public class Limelight {
 
     if (limelightTimer.hasElapsed(5)) {
       state = CameraStatus.OFFLINE;
+      DogLog.logFault(limelightTableName+" Offline");
       return;
     }
 
