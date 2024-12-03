@@ -44,6 +44,7 @@ public class Limelight {
     updateState(rawResult);
 
     if (rawResult.isEmpty()) {
+      DogLog.logFault(limelightTableName+" RawVisionResultEmpty");
       return Optional.empty();
     }
 
@@ -107,17 +108,20 @@ public class Limelight {
     var estimatePose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightTableName);
 
     if (estimatePose == null) {
+      DogLog.logFault(limelightTableName+" EstimatePoseNull");
       return Optional.empty();
     }
 
     DogLog.log("Vision/" + name + "/RawLimelightPose", estimatePose.pose);
 
     if (estimatePose.tagCount == 0) {
+      DogLog.logFault(limelightTableName+" EstimatePoseZeroTagCount");
       return Optional.empty();
     }
 
     // This prevents pose estimator from having crazy poses if the Limelight loses power
     if (estimatePose.pose.getX() == 0.0 && estimatePose.pose.getY() == 0.0) {
+      DogLog.logFault(limelightTableName+" EstimatePoseXYZero");
       return Optional.empty();
     }
 
