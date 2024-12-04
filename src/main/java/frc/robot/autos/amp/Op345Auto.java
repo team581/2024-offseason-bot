@@ -39,7 +39,11 @@ public class Op345Auto extends BaseAuto {
                 new AutoPoint(new Pose2d(12.64, 7.06, Rotation2d.fromDegrees(-21.67))))),
         Commands.sequence(autoCommands.speakerShotWithTimeout(), actions.intakeAssistCommand()),
         trailblazer.followSegment(
-            new AutoSegment(new AutoPoint(new Pose2d(8.52, 7.46, Rotation2d.fromDegrees(0.0))))),
-        autoCommands.speakerShotWithTimeout());
+            new AutoSegment(
+                new AutoPoint(new Pose2d(8.52, 7.46, Rotation2d.fromDegrees(0.0))),
+                new AutoPoint(new Pose2d(12.58, 6.01, Rotation2d.fromDegrees(-6.63))))),
+        Commands.sequence(autoCommands.speakerShotWithTimeout(), actions.intakeAssistCommand()),
+        trailblazer.followSegment(
+            new AutoSegment(new AutoPoint(new Pose2d(10.71, 6.37, Rotation2d.fromDegrees(0.0))))));
   }
 }
