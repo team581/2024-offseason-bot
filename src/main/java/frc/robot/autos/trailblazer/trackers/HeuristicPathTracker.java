@@ -55,7 +55,7 @@ public class HeuristicPathTracker implements PathTracker {
 
   @Override
   public boolean isFinished() {
-    if (distanceToTarget <= endPointProximityRadius && currentPointIndex > points.size() - 1) {
+    if (distanceToTarget <= endPointProximityRadius) {
       return true;
     }
     return false;
