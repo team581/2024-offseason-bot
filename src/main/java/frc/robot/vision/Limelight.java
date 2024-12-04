@@ -113,13 +113,13 @@ public class Limelight {
     DogLog.log("Vision/" + name + "/RawLimelightPose", estimatePose.pose);
 
     if (estimatePose.tagCount == 0) {
-      DogLog.logFault(limelightTableName+" EstimatePoseZeroTagCount");
+      DogLog.logFault(limelightTableName + " EstimatePoseZeroTagCount");
       return Optional.empty();
     }
 
     // This prevents pose estimator from having crazy poses if the Limelight loses power
     if (estimatePose.pose.getX() == 0.0 && estimatePose.pose.getY() == 0.0) {
-      DogLog.logFault(limelightTableName+" EstimatePoseXYZero");
+      DogLog.logFault(limelightTableName + " EstimatePoseXYZero");
       return Optional.empty();
     }
 
@@ -135,8 +135,10 @@ public class Limelight {
     limelightHeartbeat = newHeartbeat;
 
     if (limelightTimer.hasElapsed(5)) {
+      if (state != CameraStatus.OFFLINE) {
+        DogLog.logFault(limelightTableName + " Offline");
+      }
       state = CameraStatus.OFFLINE;
-      DogLog.logFault(limelightTableName+" Offline");
       return;
     }
 
