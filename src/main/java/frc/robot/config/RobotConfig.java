@@ -74,7 +74,7 @@ public record RobotConfig(
   // TODO: Change this to false during events
   public static final boolean IS_DEVELOPMENT = true;
 
-  public static final boolean IS_CAMERA_POSITION_CALIBRATION = true;
+  public static final boolean IS_CAMERA_POSITION_CALIBRATION = false;
 
   public static final String SERIAL_NUMBER = System.getenv("serialnum");
 
