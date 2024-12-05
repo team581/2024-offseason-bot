@@ -1,10 +1,11 @@
-package frc.robot.autos.trailblazer.trackers;
+package frc.robot.autos.trailblazer.trackers.pure_pursuit;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.robot.autos.trailblazer.AutoPoint;
+import frc.robot.autos.trailblazer.trackers.PathTracker;
 import java.util.List;
 
 // TODO: Implement https://github.com/team581/2024-offseason-bot/issues/95
