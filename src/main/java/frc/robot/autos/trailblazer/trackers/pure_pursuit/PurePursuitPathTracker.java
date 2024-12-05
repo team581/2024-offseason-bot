@@ -45,10 +45,11 @@ public class PurePursuitPathTracker implements PathTracker {
     var startY = currentTargetWaypoint.getY();
     var endX = nextTargetWaypoint.getX();
     var endY = nextTargetWaypoint.getY();
-    double pathSlope = (endY - startY) / (endX - startX);
     var perpendicularPoint =
         getPerpendicularPoint(currentTargetWaypoint, nextTargetWaypoint, currentRobotPose);
-    var lookaheadPoint = getLookaheadPoint(perpendicularPoint, pathSlope, LOOKAHEAD_DISTANCE);
+    var lookaheadPoint =
+        getLookaheadPoint(
+            currentTargetWaypoint, nextTargetWaypoint, perpendicularPoint, LOOKAHEAD_DISTANCE);
 
     var lookaheadX = lookaheadPoint.getX();
     var lookaheadY = lookaheadPoint.getY();
@@ -63,7 +64,8 @@ public class PurePursuitPathTracker implements PathTracker {
       // Check if lookaheadpoint is outside on the starting side of the line
       if (distanceToStart < distanceToEnd) {
         // Target pose just becomes start point + lookahead
-        return getLookaheadPoint(currentTargetWaypoint, pathSlope, LOOKAHEAD_DISTANCE);
+        return getLookaheadPoint(
+            currentTargetWaypoint, nextTargetWaypoint, currentTargetWaypoint, LOOKAHEAD_DISTANCE);
       }
 
       // Otherwise, the lookahead point is past the end point, which means we need to go around
@@ -76,10 +78,12 @@ public class PurePursuitPathTracker implements PathTracker {
       // check if we're at corner
       if (getCurrentPointIndex() < points.size() - 2) {
         var futurePoint = points.get(getCurrentPointIndex() + 2).poseSupplier.get();
-        double futureSlope = (futurePoint.getY() - endY) / (futurePoint.getX() - endX);
         currentPointIndex++;
         return getLookaheadPoint(
-            nextTargetWaypoint, futureSlope, LOOKAHEAD_DISTANCE - perpDistanceToEnd);
+            nextTargetWaypoint,
+            futurePoint,
+            nextTargetWaypoint,
+            LOOKAHEAD_DISTANCE - perpDistanceToEnd);
       }
       // otherwise just return the end point
       else {
@@ -109,6 +113,12 @@ public class PurePursuitPathTracker implements PathTracker {
     var x3 = robotPose.getX();
     var y3 = robotPose.getY();
 
+    if (y1 == y2) {
+      return new Pose2d(x3, y1, new Rotation2d());
+    }
+    if (x1 == x2) {
+      return new Pose2d(x1, y3, new Rotation2d());
+    }
     // Find the slope of the path and y-int
     double pathSlope = (y2 - y1) / (x2 - x1);
     double yInt = y1 - pathSlope * x1;
@@ -124,12 +134,25 @@ public class PurePursuitPathTracker implements PathTracker {
     return new Pose2d(perpX, perpY, new Rotation2d());
   }
 
-  private Pose2d getLookaheadPoint(Pose2d pointOnPath, double pathSlope, double lookaheadDistance) {
-    double lookaheadPointX =
-        pointOnPath.getX() + lookaheadDistance / Math.sqrt(1 + pathSlope * pathSlope);
-    double lookaheadPointY =
-        pointOnPath.getY() + pathSlope * (lookaheadDistance / Math.sqrt(1 + pathSlope * pathSlope));
-    return new Pose2d(lookaheadPointX, lookaheadPointY, new Rotation2d());
+  private Pose2d getLookaheadPoint(
+      Pose2d startPoint, Pose2d endPoint, Pose2d pointOnPath, double lookaheadDistance) {
+    var x1 = startPoint.getX();
+    var y1 = startPoint.getY();
+
+    var x2 = endPoint.getX();
+    var y2 = endPoint.getY();
+
+    var x = pointOnPath.getX();
+    var y = pointOnPath.getY();
+
+    var xLookahead =
+        x
+            + lookaheadDistance
+                * ((x2 - x1) / (Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))));
+    var yLookahead =
+        y
+            + lookaheadDistance
+                * ((y2 - y1) / (Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))));
+    return new Pose2d(xLookahead, yLookahead, new Rotation2d());
   }
-  ;
 }
