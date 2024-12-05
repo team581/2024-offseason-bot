@@ -24,12 +24,8 @@ public class PurePursuitUtilsTest {
     var robotPose = new Pose2d(0, 2, new Rotation2d());
     var result = PurePursuitUtils.getPerpendicularPoint(startPoint, endPoint, robotPose);
 
-    var expectedX = -0.5;
-    var expectedY = 1.5;
-    var resultX = result.getX();
-    var resultY = result.getY();
-    Assertions.assertEquals(expectedX, resultX);
-    Assertions.assertEquals(expectedY, resultY);
+    var expected = new Pose2d(-0.5, 1.5, new Rotation2d());
+    Assertions.assertEquals(expected, result);
   }
 
   @Test
@@ -39,11 +35,7 @@ public class PurePursuitUtilsTest {
     var pointOnPath = new Pose2d(4, 2, new Rotation2d());
     var result = PurePursuitUtils.getLookaheadPoint(startPoint, endPoint, pointOnPath, 1.0);
 
-    var expectedX = 4;
-    var expectedY = 3;
-    var resultX = result.getX();
-    var resultY = result.getY();
-    Assertions.assertEquals(expectedX, resultX);
-    Assertions.assertEquals(expectedY, resultY);
+    var expected = new Pose2d(4, 3, new Rotation2d());
+    Assertions.assertEquals(expected, result);
   }
 }
