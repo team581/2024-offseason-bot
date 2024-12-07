@@ -1,22 +1,12 @@
 package frc.robot.autos.trailblazer.trackers.pure_pursuit;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+
 public class PurePursuitUtilsTest {
-  @Test
-  void addTwoNumbers() {
-    var a = 1.0;
-    var b = 3.0;
-
-    var result = PurePursuitUtils.add(a, b);
-    var expected = 4.0;
-
-    Assertions.assertEquals(expected, result);
-  }
-
   @Test
   void getPerpindicularWaypoint() {
     var startPoint = new Pose2d(-4, 5, new Rotation2d());
