@@ -1,45 +1,67 @@
 package frc.robot.autos.trailblazer.trackers.pure_pursuit;
 
+import java.util.List;
+
 import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.robot.autos.trailblazer.AutoPoint;
 import frc.robot.autos.trailblazer.trackers.PathTracker;
-import java.util.List;
 
 // TODO: Implement https://github.com/team581/2024-offseason-bot/issues/95
 public class PurePursuitPathTracker implements PathTracker {
   private static final double LOOKAHEAD_DISTANCE = 1.0;
+  private static final double FINISHED_THRESHOLD = 0.05;
   private List<AutoPoint> points = List.of();
   private Pose2d currentRobotPose = new Pose2d();
+  private Pose2d startingRobotPose = new Pose2d();
+  private boolean startingRobotPoseUpdated = false;
   private Pose2d currentTargetWaypoint = new Pose2d();
   private Pose2d nextTargetWaypoint = new Pose2d();
   private int currentPointIndex = 0;
 
   @Override
   public void resetAndSetPoints(List<AutoPoint> points) {
+    currentPointIndex = 0;
     this.points = points;
+    startingRobotPoseUpdated = false;
   }
 
   @Override
   public void updateRobotState(Pose2d currentPose, ChassisSpeeds currentFieldRelativeRobotSpeeds) {
     this.currentRobotPose = currentPose;
-    DogLog.log("Autos/Trailblazer/CurrentTargetPose", currentTargetWaypoint);
-    DogLog.log("Autos/Trailblazer/NextPointIndex", currentPointIndex);
+    DogLog.log(
+        "Autos/Trailblazer/PurePursuitPathTracker/CurrentPointIndex", getCurrentPointIndex());
+        DogLog.log(
+            "Autos/Trailblazer/PurePursuitPathTracker/StartingRobotPose/Point", startingRobotPose);
+            DogLog.log(
+              "Autos/Trailblazer/PurePursuitPathTracker/StartingRobotPose/Updated", startingRobotPoseUpdated);
+
+    if (!startingRobotPoseUpdated) {
+      startingRobotPose = currentPose;
+      startingRobotPoseUpdated = true;
+    }
   }
 
   @Override
   public Pose2d getTargetPose() {
-    if (points.size() < 2) {
-      return points.get(0).poseSupplier.get();
+    DogLog.log("Autos/Trailblazer/PurePursuitPathTracker/Size", points.size());
+
+    if (points.isEmpty()) {
+      return new Pose2d();
     }
 
-    currentTargetWaypoint = points.get(getCurrentPointIndex()).poseSupplier.get();
+    if (points.size() == 1) {
+      currentTargetWaypoint = startingRobotPose;
+    } else {
+      currentTargetWaypoint = points.get(getCurrentPointIndex()).poseSupplier.get();
+    }
+
     if (getCurrentPointIndex() < points.size() - 1) {
       nextTargetWaypoint = points.get(getCurrentPointIndex() + 1).poseSupplier.get();
     } else {
-      return points.get(getCurrentPointIndex()).poseSupplier.get();
+      nextTargetWaypoint = points.get(getCurrentPointIndex()).poseSupplier.get();
     }
     var startX = currentTargetWaypoint.getX();
     var startY = currentTargetWaypoint.getY();
@@ -62,35 +84,38 @@ public class PurePursuitPathTracker implements PathTracker {
       var distanceToEnd =
           Math.sqrt(Math.pow(lookaheadX - endX, 2) + Math.pow(lookaheadY - endY, 2));
       // Check if lookaheadpoint is outside on the starting side of the line
-      if (distanceToStart < distanceToEnd) {
-        // Target pose just becomes start point + lookahead
-        return getLookaheadPoint(
-            currentTargetWaypoint, nextTargetWaypoint, currentTargetWaypoint, LOOKAHEAD_DISTANCE);
-      }
+      if (distanceToStart > distanceToEnd) {
 
-      // Otherwise, the lookahead point is past the end point, which means we need to go around
-      // corner.
-      // TODO: Fix for case of perp point is also past end point
-      var perpDistanceToEnd =
-          Math.sqrt(
-              Math.pow(perpendicularPoint.getX() - endX, 2)
-                  + Math.pow(perpendicularPoint.getY() - endY, 2));
-      // check if we're at corner
-      if (getCurrentPointIndex() < points.size() - 2) {
-        var futurePoint = points.get(getCurrentPointIndex() + 2).poseSupplier.get();
-        currentPointIndex++;
-        return getLookaheadPoint(
-            nextTargetWaypoint,
-            futurePoint,
-            nextTargetWaypoint,
-            LOOKAHEAD_DISTANCE - perpDistanceToEnd);
-      }
-      // otherwise just return the end point
-      else {
-        return new Pose2d(endX, endY, new Rotation2d());
+        // Otherwise, the lookahead point is past the end point, which means we need to go around
+        // corner.
+        // TODO: Fix for case of perp point is also past end point
+        var perpDistanceToEnd = Math.sqrt(
+            Math.pow(perpendicularPoint.getX() - endX, 2)
+                + Math.pow(perpendicularPoint.getY() - endY, 2));
+        // check if we're at corner
+        if (getCurrentPointIndex() < points.size() - 2) {
+          var futurePoint = points.get(getCurrentPointIndex() + 2).poseSupplier.get();
+          currentPointIndex++;
+          var targetPose = getLookaheadPoint(
+              nextTargetWaypoint,
+              futurePoint,
+              nextTargetWaypoint,
+              LOOKAHEAD_DISTANCE - perpDistanceToEnd);
+          DogLog.log("Autos/Trailblazer/PurePursuitPathTracker/TargetPose", targetPose);
+          return targetPose;
+
+        }
+        // otherwise just return the end point
+        else {
+          var targetPose = new Pose2d(endX, endY, new Rotation2d());
+          DogLog.log("Autos/Trailblazer/PurePursuitPathTracker/TargetPose", targetPose);
+          return targetPose;
+        }
       }
     }
-    return lookaheadPoint;
+    var targetPose = lookaheadPoint;
+    DogLog.log("Autos/Trailblazer/PurePursuitPathTracker/TargetPose", targetPose);
+    return targetPose;
   }
 
   @Override
@@ -100,6 +125,15 @@ public class PurePursuitPathTracker implements PathTracker {
 
   @Override
   public boolean isFinished() {
+    if (points.isEmpty()) {
+      return true;
+    }
+    DogLog.timestamp("aaaaa");
+    if (currentRobotPose.getTranslation()
+        .getDistance(points.get(points.size() - 1).poseSupplier.get().getTranslation()) < FINISHED_THRESHOLD) {
+          DogLog.timestamp("aaaaal,");
+          return true;
+    }
     return false;
   }
 
