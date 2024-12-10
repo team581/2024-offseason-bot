@@ -34,16 +34,16 @@ public class HeuristicPathTracker implements PathTracker {
     if (distanceToTarget < proximityRadius && currentPointIndex < points.size() - 1) {
       currentPointIndex++;
     }
-    DogLog.log("Autos/Trailblazer/CurrentTargetPose", currentTargetPose);
-    DogLog.log("Autos/Trailblazer/DistanceToTarget", distanceToTarget);
-    DogLog.log("Autos/Trailblazer/NextPointIndex", currentPointIndex);
+    DogLog.log("Autos/Trailblazer/HeuristicPathTracker/CurrentTargetPose", currentTargetPose);
+    DogLog.log("Autos/Trailblazer/HeuristicPathTracker/DistanceToTarget", distanceToTarget);
+    DogLog.log("Autos/Trailblazer/HeuristicPathTracker/NextPointIndex", currentPointIndex);
   }
 
   @Override
   public Pose2d getTargetPose() {
     var targetPose = points.get(currentPointIndex).poseSupplier.get();
 
-    DogLog.log("Autos/Trailblazer/TargetPose", targetPose);
+    DogLog.log("Autos/Trailblazer/HeuristicPathTracker/TargetPose", targetPose);
 
     return targetPose;
   }
