@@ -31,13 +31,8 @@ public class TestAuto extends BaseAuto {
         trailblazer.followSegment(
             new AutoSegment(
                 new AutoPoint(new Pose2d(12.00, 6.28, Rotation2d.fromDegrees(0.0))),
-                new AutoPoint(new Pose2d(10.63, 7.42, Rotation2d.fromDegrees(
-                    0.0))),
-
-                    new AutoPoint(new Pose2d(8.63, 7.42, Rotation2d.fromDegrees(0.0))))
-
-                    ),
-
+                new AutoPoint(new Pose2d(10.63, 7.42, Rotation2d.fromDegrees(0.0))),
+                new AutoPoint(new Pose2d(8.63, 7.42, Rotation2d.fromDegrees(0.0))))),
         trailblazer.followSegment(
             new AutoSegment(
                 new AutoPoint(new Pose2d(11.82, 6.59, Rotation2d.fromDegrees(-12.24))))),

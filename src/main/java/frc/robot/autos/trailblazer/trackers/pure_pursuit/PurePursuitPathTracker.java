@@ -33,10 +33,11 @@ public class PurePursuitPathTracker implements PathTracker {
     this.currentRobotPose = currentPose;
     DogLog.log(
         "Autos/Trailblazer/PurePursuitPathTracker/CurrentPointIndex", getCurrentPointIndex());
-        DogLog.log(
-            "Autos/Trailblazer/PurePursuitPathTracker/StartingRobotPose/Point", startingRobotPose);
-            DogLog.log(
-              "Autos/Trailblazer/PurePursuitPathTracker/StartingRobotPose/Updated", startingRobotPoseUpdated);
+    DogLog.log(
+        "Autos/Trailblazer/PurePursuitPathTracker/StartingRobotPose/Point", startingRobotPose);
+    DogLog.log(
+        "Autos/Trailblazer/PurePursuitPathTracker/StartingRobotPose/Updated",
+        startingRobotPoseUpdated);
 
     if (!startingRobotPoseUpdated) {
       startingRobotPose = currentPose;
@@ -89,18 +90,20 @@ public class PurePursuitPathTracker implements PathTracker {
         // Otherwise, the lookahead point is past the end point, which means we need to go around
         // corner.
         // TODO: Fix for case of perp point is also past end point
-        var perpDistanceToEnd = Math.sqrt(
-            Math.pow(perpendicularPoint.getX() - endX, 2)
-                + Math.pow(perpendicularPoint.getY() - endY, 2));
+        var perpDistanceToEnd =
+            Math.sqrt(
+                Math.pow(perpendicularPoint.getX() - endX, 2)
+                    + Math.pow(perpendicularPoint.getY() - endY, 2));
         // check if we're at corner
         if (getCurrentPointIndex() < points.size() - 2) {
           var futurePoint = points.get(getCurrentPointIndex() + 2).poseSupplier.get();
           currentPointIndex++;
-          var targetPose = getLookaheadPoint(
-              nextTargetWaypoint,
-              futurePoint,
-              nextTargetWaypoint,
-              LOOKAHEAD_DISTANCE - perpDistanceToEnd);
+          var targetPose =
+              getLookaheadPoint(
+                  nextTargetWaypoint,
+                  futurePoint,
+                  nextTargetWaypoint,
+                  LOOKAHEAD_DISTANCE - perpDistanceToEnd);
           DogLog.log("Autos/Trailblazer/PurePursuitPathTracker/TargetPose", targetPose);
           return targetPose;
 
@@ -111,6 +114,11 @@ public class PurePursuitPathTracker implements PathTracker {
           DogLog.log("Autos/Trailblazer/PurePursuitPathTracker/TargetPose", targetPose);
           return targetPose;
         }
+      } else {
+
+        var targetPose =  getLookaheadPoint(startingRobotPose, new Pose2d(startX, startY, new Rotation2d()), currentRobotPose, LOOKAHEAD_DISTANCE);
+          DogLog.log("Autos/Trailblazer/PurePursuitPathTracker/TargetPose", targetPose);
+          return targetPose;
       }
     }
     var targetPose = lookaheadPoint;
@@ -129,10 +137,12 @@ public class PurePursuitPathTracker implements PathTracker {
       return true;
     }
     DogLog.timestamp("aaaaa");
-    if (currentRobotPose.getTranslation()
-        .getDistance(points.get(points.size() - 1).poseSupplier.get().getTranslation()) < FINISHED_THRESHOLD) {
-          DogLog.timestamp("aaaaal,");
-          return true;
+    if (currentRobotPose
+            .getTranslation()
+            .getDistance(points.get(points.size() - 1).poseSupplier.get().getTranslation())
+        < FINISHED_THRESHOLD) {
+      DogLog.timestamp("aaaaal,");
+      return true;
     }
     return false;
   }
