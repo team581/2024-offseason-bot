@@ -1,13 +1,12 @@
 package frc.robot.autos.trailblazer.trackers.pure_pursuit;
 
-import java.util.List;
-
 import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.robot.autos.trailblazer.AutoPoint;
 import frc.robot.autos.trailblazer.trackers.PathTracker;
+import java.util.List;
 
 // TODO: Implement https://github.com/team581/2024-offseason-bot/issues/95
 public class PurePursuitPathTracker implements PathTracker {
@@ -116,9 +115,14 @@ public class PurePursuitPathTracker implements PathTracker {
         }
       } else {
 
-        var targetPose =  getLookaheadPoint(startingRobotPose, new Pose2d(startX, startY, new Rotation2d()), currentRobotPose, LOOKAHEAD_DISTANCE);
-          DogLog.log("Autos/Trailblazer/PurePursuitPathTracker/TargetPose", targetPose);
-          return targetPose;
+        var targetPose =
+            getLookaheadPoint(
+                startingRobotPose,
+                new Pose2d(startX, startY, new Rotation2d()),
+                currentRobotPose,
+                LOOKAHEAD_DISTANCE);
+        DogLog.log("Autos/Trailblazer/PurePursuitPathTracker/TargetPose", targetPose);
+        return targetPose;
       }
     }
     var targetPose = lookaheadPoint;
