@@ -227,17 +227,17 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
       leftY *= -1.0;
     }
 
-      //https://stackoverflow.com/a/32391780
-      var mappedX = 1/2* Math.sqrt( 2 + Math.pow(leftX, 2) - Math.pow(leftY, 2) + 2*leftX*Math.sqrt(2)) - 1/2* Math.sqrt( 2 + Math.pow(leftX, 2) - Math.pow(leftY, 2) - 2*leftX*Math.sqrt(2));
-    var mappedY =  1/2* Math.sqrt( 2 - Math.pow(leftX, 2) + Math.pow(leftY, 2) + 2*leftY*Math.sqrt(2)) - 1/2* Math.sqrt( 2 - Math.pow(leftX, 2) + Math.pow(leftY, 2) - 2*leftY*Math.sqrt(2));
+    DogLog.log("Swerve/LeftX", leftX);
+    DogLog.log("Swerve/LeftY", leftY);
+    Translation2d mappedpose = ControllerHelpers.fromCircularDiscCoordinates(leftX, leftY);
+    double mappedX = mappedpose.getX();
+    double mappedY = mappedpose.getY();
 
     teleopSpeeds =
         new ChassisSpeeds(
-          0,0,0
-        //    -1.0 *mappedY * MaxSpeed,
-        //    mappedX * MaxSpeed,
-         //   rightX * TELEOP_MAX_ANGULAR_RATE.getRadians()
-         );
+            -1.0 * mappedY * MaxSpeed,
+            mappedX * MaxSpeed,
+            rightX * TELEOP_MAX_ANGULAR_RATE.getRadians());
 
     sendSwerveRequest();
   }
