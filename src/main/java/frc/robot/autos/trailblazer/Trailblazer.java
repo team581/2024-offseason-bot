@@ -50,7 +50,7 @@ public class Trailblazer {
         Commands.runOnce(
                 () -> {
                   pathTracker.resetAndSetPoints(segment.points);
-
+                  previousAutoPointIndex = -1;
                   DogLog.log(
                       "Trailblazer/CurrentSegment/InitialPoints",
                       segment.points.stream()
@@ -91,7 +91,14 @@ public class Trailblazer {
             .withName("FollowSegmentIndefinitely");
 
     if (shouldEnd) {
-      return command.until(pathTracker::isFinished).withName("FollowSegmentUntilFinished");
+      return command
+          .until(pathTracker::isFinished)
+          .withName("FollowSegmentUntilFinished")
+          .andThen(
+              Commands.runOnce(
+                  () -> {
+                    swerve.setFieldRelativeAutoSpeeds(new ChassisSpeeds());
+                  }));
     }
 
     return command;
