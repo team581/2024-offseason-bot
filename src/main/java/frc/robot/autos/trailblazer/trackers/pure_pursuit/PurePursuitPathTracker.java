@@ -1,12 +1,13 @@
 package frc.robot.autos.trailblazer.trackers.pure_pursuit;
 
+import java.util.List;
+
 import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.robot.autos.trailblazer.AutoPoint;
 import frc.robot.autos.trailblazer.trackers.PathTracker;
-import java.util.List;
 
 // TODO: Implement https://github.com/team581/2024-offseason-bot/issues/95
 public class PurePursuitPathTracker implements PathTracker {
@@ -22,9 +23,10 @@ public class PurePursuitPathTracker implements PathTracker {
 
   @Override
   public void resetAndSetPoints(List<AutoPoint> points) {
+    startingRobotPose = new Pose2d();
+    startingRobotPoseUpdated = false;
     currentPointIndex = 0;
     this.points = points;
-    startingRobotPoseUpdated = false;
   }
 
   @Override
@@ -83,12 +85,8 @@ public class PurePursuitPathTracker implements PathTracker {
           Math.sqrt(Math.pow(lookaheadX - startX, 2) + Math.pow(lookaheadY - startY, 2));
       var distanceToEnd =
           Math.sqrt(Math.pow(lookaheadX - endX, 2) + Math.pow(lookaheadY - endY, 2));
-      // Check if lookaheadpoint is outside on the starting side of the line
+      // Check if lookaheadpoint is outside on the ending side of the line
       if (distanceToStart > distanceToEnd) {
-
-        // Otherwise, the lookahead point is past the end point, which means we need to go around
-        // corner.
-        // TODO: Fix for case of perp point is also past end point
         var perpDistanceToEnd =
             Math.sqrt(
                 Math.pow(perpendicularPoint.getX() - endX, 2)
@@ -109,17 +107,16 @@ public class PurePursuitPathTracker implements PathTracker {
         }
         // otherwise just return the end point
         else {
-          var targetPose = new Pose2d(endX, endY, new Rotation2d());
+          var targetPose = new Pose2d(endX, endY, getPointToPointInterpolatedRotation(currentTargetWaypoint, nextTargetWaypoint,  currentRobotPose));
           DogLog.log("Autos/Trailblazer/PurePursuitPathTracker/TargetPose", targetPose);
           return targetPose;
         }
       } else {
-
         var targetPose =
             getLookaheadPoint(
                 startingRobotPose,
-                new Pose2d(startX, startY, new Rotation2d()),
-                currentRobotPose,
+                currentTargetWaypoint,
+                getPerpendicularPoint(startingRobotPose, currentTargetWaypoint, currentRobotPose),
                 LOOKAHEAD_DISTANCE);
         DogLog.log("Autos/Trailblazer/PurePursuitPathTracker/TargetPose", targetPose);
         return targetPose;
@@ -140,12 +137,10 @@ public class PurePursuitPathTracker implements PathTracker {
     if (points.isEmpty()) {
       return true;
     }
-    DogLog.timestamp("aaaaa");
     if (currentRobotPose
             .getTranslation()
             .getDistance(points.get(points.size() - 1).poseSupplier.get().getTranslation())
         < FINISHED_THRESHOLD) {
-      DogLog.timestamp("aaaaal,");
       return true;
     }
     return false;
@@ -201,6 +196,32 @@ public class PurePursuitPathTracker implements PathTracker {
         y
             + lookaheadDistance
                 * ((y2 - y1) / (Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))));
-    return new Pose2d(xLookahead, yLookahead, new Rotation2d());
+    return new Pose2d(xLookahead, yLookahead, getPointToPointInterpolatedRotation(startPoint,  endPoint,  pointOnPath));
   }
+
+
+  private Rotation2d getPointToPointInterpolatedRotation(Pose2d startPoint, Pose2d endPoint, Pose2d pointOnPath) {
+    //TODO: do unit tests for interpolated rotation
+  var totalDistance = startPoint.getTranslation().getDistance(endPoint.getTranslation());
+  var pointToStart = pointOnPath.getTranslation().getDistance(startPoint.getTranslation());
+  var pointToEnd = pointOnPath.getTranslation().getDistance(endPoint.getTranslation());
+
+  if (!((pointOnPath.getX() - startPoint.getX()) * (pointOnPath.getX() - endPoint.getX()) <= 0
+      && (pointOnPath.getY() - startPoint.getY()) * (pointOnPath.getY() - endPoint.getY()) <= 0)) {
+    if (pointToEnd > pointToStart) {
+      return startPoint.getRotation();
+    } else {
+      return endPoint.getRotation();
+    }
+  }
+  var progressPercent = Math.abs((pointToStart / totalDistance));
+  if (progressPercent > 0.8) {
+    progressPercent = 1.0;
+  }
+
+  var interpolatedRotation = startPoint.getRotation().interpolate(endPoint.getRotation(), progressPercent);
+
+  return interpolatedRotation;
+
+   }
 }

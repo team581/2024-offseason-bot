@@ -11,8 +11,8 @@ import frc.robot.autos.trailblazer.constraints.AutoConstraintCalculator;
 import frc.robot.autos.trailblazer.constraints.AutoConstraintOptions;
 import frc.robot.autos.trailblazer.followers.PathFollower;
 import frc.robot.autos.trailblazer.followers.PidPathFollower;
-import frc.robot.autos.trailblazer.trackers.HeuristicPathTracker;
 import frc.robot.autos.trailblazer.trackers.PathTracker;
+import frc.robot.autos.trailblazer.trackers.pure_pursuit.PurePursuitPathTracker;
 import frc.robot.localization.LocalizationSubsystem;
 import frc.robot.swerve.SwerveSubsystem;
 
@@ -28,10 +28,10 @@ public class Trailblazer {
 
   private final SwerveSubsystem swerve;
   private final LocalizationSubsystem localization;
-  private final PathTracker pathTracker = new HeuristicPathTracker();
+  private final PathTracker pathTracker = new PurePursuitPathTracker();
   private final PathFollower pathFollower =
       new PidPathFollower(
-          new PIDController(4, 0, 0), new PIDController(4, 0, 0), new PIDController(2.5, 0, 0));
+          new PIDController(4, 0, 0), new PIDController(4, 0, 0), new PIDController(8, 0, 0));
   private int previousAutoPointIndex = -1;
   private ChassisSpeeds previousSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
   private double previousTimestamp = 0.0;
@@ -91,7 +91,14 @@ public class Trailblazer {
             .withName("FollowSegmentIndefinitely");
 
     if (shouldEnd) {
-      return command.until(pathTracker::isFinished).withName("FollowSegmentUntilFinished");
+      return command
+          .until(pathTracker::isFinished)
+          .withName("FollowSegmentUntilFinished")
+          .andThen(
+              Commands.runOnce(
+                  () -> {
+                    swerve.setFieldRelativeAutoSpeeds(new ChassisSpeeds());
+                  }));
     }
 
     return command;
