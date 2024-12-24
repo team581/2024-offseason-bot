@@ -27,27 +27,25 @@ public class TestAuto extends BaseAuto {
         Commands.runOnce(
             () ->
                 robotManager.localization.resetPose(
-                    new Pose2d(15.0, 5.65, Rotation2d.fromDegrees(0.0)))),
+                    new Pose2d(15.18, 6.41, Rotation2d.fromDegrees(0.0)))),
         trailblazer.followSegment(
             new AutoSegment(
-                new AutoPoint(new Pose2d(11.672, 5.638, Rotation2d.fromDegrees(0.0))),
-                new AutoPoint(new Pose2d(11.672, 6.638, Rotation2d.fromDegrees(0.0))),
-                new AutoPoint(new Pose2d(10.3, 5.746, Rotation2d.fromDegrees(0))),
-                new AutoPoint(new Pose2d(10.30, 3.8, Rotation2d.fromDegrees(0))))),
+                new AutoPoint(new Pose2d(12.00, 6.28, Rotation2d.fromDegrees(-100))),
+                new AutoPoint(new Pose2d(10.00, 5.28, Rotation2d.fromDegrees(40))),
+                new AutoPoint(new Pose2d(8.00, 6.28, Rotation2d.fromDegrees(-50))),
+                new AutoPoint(new Pose2d(6.00, 5.28, Rotation2d.fromDegrees(100))),
+                new AutoPoint(new Pose2d(4.00, 6.28, Rotation2d.fromDegrees(0)))
+
+                )),
+        trailblazer.followSegment(
+            new AutoSegment(new AutoPoint(new Pose2d(11.82, 6.59, Rotation2d.fromDegrees(24.0))))),
         trailblazer.followSegment(
             new AutoSegment(
-                new AutoPoint(new Pose2d(12.175, 4.437, Rotation2d.fromDegrees(10))),
-                new AutoPoint(new Pose2d(11.338, 5.035, Rotation2d.fromDegrees(-20))),
-                new AutoPoint(new Pose2d(12.263, 5.202, Rotation2d.fromDegrees(5))),
-                new AutoPoint(new Pose2d(11.5, 5.4, Rotation2d.fromDegrees(20))),
-                new AutoPoint(new Pose2d(12.2, 5.6, Rotation2d.fromDegrees(-10))),
-                new AutoPoint(new Pose2d(13.15, 6.737, Rotation2d.fromDegrees(30))))),
+                new AutoPoint(new Pose2d(9.98, 6.55, Rotation2d.fromDegrees(-5.0))),
+                new AutoPoint(new Pose2d(8.60, 5.85, Rotation2d.fromDegrees(100.0))))),
         trailblazer.followSegment(
             new AutoSegment(
-                new AutoPoint(new Pose2d(10.3, 4.136, Rotation2d.fromDegrees(180))))),
-        trailblazer.followSegment(
-            new AutoSegment(
-                new AutoPoint(new Pose2d(13.0, 4.136, Rotation2d.fromDegrees(-90))),
-                new AutoPoint(new Pose2d(15.0, 5.65, Rotation2d.fromDegrees(0))))));
+                new AutoPoint(new Pose2d(10.78, 7.34, Rotation2d.fromDegrees(-80.0))),
+                new AutoPoint(new Pose2d(13.3, 6.59, Rotation2d.fromDegrees(40.0))))));
   }
 }
