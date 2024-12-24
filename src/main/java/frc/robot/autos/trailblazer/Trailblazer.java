@@ -50,7 +50,7 @@ public class Trailblazer {
         Commands.runOnce(
                 () -> {
                   pathTracker.resetAndSetPoints(segment.points);
-
+                  previousAutoPointIndex = -1;
                   DogLog.log(
                       "Trailblazer/CurrentSegment/InitialPoints",
                       segment.points.stream()
