@@ -125,7 +125,7 @@ class AutoConstraintCalculatorTest {
         new ChassisSpeeds(0.0, 0.0, -10.0),
         new ChassisSpeeds(10.0, 10.0, 10.0),
         new AutoConstraintOptions().withMaxAngularAcceleration(10.0),
-        new ChassisSpeeds(-7.5, 10.0, 10.0));
+        new ChassisSpeeds(10.0, 10.0, -7.5));
   }
 
   /** Verify that all constraints being applied on a complex problem at once works. */
