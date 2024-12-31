@@ -41,7 +41,7 @@ class AutoConstraintCalculatorTest {
     assertConstraint(
         new ChassisSpeeds(0.0, -15.0, 0.0),
         new AutoConstraintOptions().withMaxLinearVelocity(10.0),
-        new ChassisSpeeds(0.0, -15.0, 0.0));
+        new ChassisSpeeds(0.0, -10.0, 0.0));
 
     // Constrain x velocity of 8 and y velocity of 9 down to 10.
     // The combined input velocity is sqrt(8**2 + 9**2), which is 12.04.
