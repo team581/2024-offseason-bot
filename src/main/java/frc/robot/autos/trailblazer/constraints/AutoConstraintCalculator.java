@@ -34,15 +34,29 @@ public class AutoConstraintCalculator {
     return constrainedSpeeds;
   }
 
-  private static ChassisSpeeds constrainLinearVelocity(
+  public static ChassisSpeeds constrainLinearVelocity(
       ChassisSpeeds inputSpeeds, AutoConstraintOptions options) {
-    // TODO: Implement linear velocity constraint
+    double currentLinearVelocity =
+        Math.hypot(inputSpeeds.vxMetersPerSecond, inputSpeeds.vyMetersPerSecond);
+    // double preserveTheta = Math.atan(inputSpeeds.vyMetersPerSecond /
+    // inputSpeeds.vxMetersPerSecond);
+    if (currentLinearVelocity > options.maxLinearVelocity()) {
+      double clampingFactor = options.maxLinearVelocity() / currentLinearVelocity;
+
+      return new ChassisSpeeds(
+          inputSpeeds.vxMetersPerSecond * clampingFactor,
+          inputSpeeds.vyMetersPerSecond * clampingFactor,
+          inputSpeeds.omegaRadiansPerSecond);
+    }
     return inputSpeeds;
   }
 
   private static ChassisSpeeds constrainRotationalVelocity(
       ChassisSpeeds inputSpeeds, AutoConstraintOptions options) {
     // TODO: Implement rotational velocity constraint
+    double unconstrainedRotationalVelocity =
+        Math.hypot(inputSpeeds.vxMetersPerSecond, inputSpeeds.vyMetersPerSecond);
+
     return inputSpeeds;
   }
 
@@ -51,10 +65,24 @@ public class AutoConstraintCalculator {
       ChassisSpeeds previousSpeeds,
       double timeBetweenPreviousAndInputSpeeds,
       AutoConstraintOptions options) {
-    // TODO: Implement linear acceleration constraint
-    // Could approach this by seeing if the acceleration exceeds the max acceleration.
-    // If it does, calculate the maximum velocity to achieve the max acceleration and
-    // use the same velocity clamp function as above.
+
+    double currentLinearAcceleration =
+        Math.hypot(inputSpeeds.vxMetersPerSecond, inputSpeeds.vyMetersPerSecond);
+    double previousLinearAcceleration =
+        Math.hypot(previousSpeeds.vxMetersPerSecond, previousSpeeds.vyMetersPerSecond);
+    double unconstrainedLinearAcceleration =
+        (currentLinearAcceleration - previousLinearAcceleration)
+            / timeBetweenPreviousAndInputSpeeds;
+    double preserveTheta = Math.atan(inputSpeeds.vyMetersPerSecond / inputSpeeds.vxMetersPerSecond);
+    if (unconstrainedLinearAcceleration > options.maxLinearAcceleration()) {
+      double finalAcceleration =
+          previousLinearAcceleration
+              + options.maxLinearAcceleration() * timeBetweenPreviousAndInputSpeeds;
+      double constrainedVx = finalAcceleration * Math.cos(preserveTheta);
+      double constrainedVy = finalAcceleration * Math.sin(preserveTheta);
+
+      return new ChassisSpeeds(constrainedVx, constrainedVy, inputSpeeds.omegaRadiansPerSecond);
+    }
     return inputSpeeds;
   }
 
