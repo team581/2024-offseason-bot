@@ -53,9 +53,14 @@ public class AutoConstraintCalculator {
 
   private static ChassisSpeeds constrainRotationalVelocity(
       ChassisSpeeds inputSpeeds, AutoConstraintOptions options) {
-    // TODO: Implement rotational velocity constraint
-    double unconstrainedRotationalVelocity =
-        Math.hypot(inputSpeeds.vxMetersPerSecond, inputSpeeds.vyMetersPerSecond);
+    double currentAngularVelocity = inputSpeeds.omegaRadiansPerSecond;
+    if (currentAngularVelocity > options.maxAngularVelocity()) {
+      double clampingFactor = options.maxAngularVelocity() / currentAngularVelocity;
+      return new ChassisSpeeds(
+          inputSpeeds.vxMetersPerSecond,
+          inputSpeeds.vyMetersPerSecond,
+          inputSpeeds.omegaRadiansPerSecond * clampingFactor);
+    }
 
     return inputSpeeds;
   }
@@ -91,7 +96,21 @@ public class AutoConstraintCalculator {
       ChassisSpeeds previousSpeeds,
       double timeBetweenPreviousAndInputSpeeds,
       AutoConstraintOptions options) {
-    // TODO: Implement angular acceleration constraint
+
+    double currentAngularSpeed = inputSpeeds.omegaRadiansPerSecond;
+    double previousAngularSpeed = previousSpeeds.omegaRadiansPerSecond;
+
+    double currentAngularAcceleration =
+        currentAngularSpeed - previousAngularSpeed / timeBetweenPreviousAndInputSpeeds;
+    if (currentAngularAcceleration > options.maxAngularAcceleration()) {
+      double constrainedAngularAcceleration =
+          previousAngularSpeed
+              + options.maxAngularAcceleration() * timeBetweenPreviousAndInputSpeeds;
+      return new ChassisSpeeds(
+          inputSpeeds.vxMetersPerSecond,
+          inputSpeeds.vyMetersPerSecond,
+          constrainedAngularAcceleration);
+    }
     return inputSpeeds;
   }
 
