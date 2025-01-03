@@ -1,7 +1,5 @@
 package frc.robot.autos.trailblazer.trackers.pure_pursuit;
 
-import java.util.List;
-
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -10,13 +8,14 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.autos.trailblazer.AutoPoint;
 import frc.robot.autos.trailblazer.trackers.PathTracker;
+import java.util.List;
 
 // TODO: Implement https://github.com/team581/2024-offseason-bot/issues/95
 public class PurePursuitPathTracker implements PathTracker {
   private static final boolean USE_DYNAMIC_LOOKAHEAD = true;
   private static final double NON_DYNAMIC_LOOKAHEAD_DISTANCE = 1.5;
   private static final double AT_END_OF_SEGMENT_DISTANCE_THRESHOLD = 0.1;
-  private static final double AT_END_OF_SEGMENT_ROTATION_THRESHOLD = 1;
+  private static final double AT_END_OF_SEGMENT_ROTATION_THRESHOLD = 2;
   private static final double DYNAMIC_LOOKAHEAD_TRANSITION_TIME = 0.0;
   private static final double DYNAMIC_LOOKAHEAD_SCALE = 0.5;
   private static final double DYNAMIC_LOOKAHEAD_MAX = 3.0;
@@ -140,9 +139,13 @@ public class PurePursuitPathTracker implements PathTracker {
       return true;
     }
     if ((currentRobotPose
-            .getTranslation()
-            .getDistance(points.get(points.size() - 1).poseSupplier.get().getTranslation())
-        < AT_END_OF_SEGMENT_DISTANCE_THRESHOLD) && MathUtil.isNear(points.get(points.size()-1).poseSupplier.get().getRotation().getDegrees(), currentRobotPose.getRotation().getDegrees(), AT_END_OF_SEGMENT_ROTATION_THRESHOLD)) {
+                .getTranslation()
+                .getDistance(points.get(points.size() - 1).poseSupplier.get().getTranslation())
+            < AT_END_OF_SEGMENT_DISTANCE_THRESHOLD)
+        && MathUtil.isNear(
+            points.get(points.size() - 1).poseSupplier.get().getRotation().getDegrees(),
+            currentRobotPose.getRotation().getDegrees(),
+            AT_END_OF_SEGMENT_ROTATION_THRESHOLD)) {
       return true;
     }
     return false;
