@@ -71,20 +71,21 @@ public class AutoConstraintCalculator {
       double timeBetweenPreviousAndInputSpeeds,
       AutoConstraintOptions options) {
 
-    double currentLinearAcceleration =
-        Math.hypot(inputSpeeds.vxMetersPerSecond, inputSpeeds.vyMetersPerSecond);
-    double previousLinearAcceleration =
-        Math.hypot(previousSpeeds.vxMetersPerSecond, previousSpeeds.vyMetersPerSecond);
+    double deltaVx = inputSpeeds.vxMetersPerSecond - previousSpeeds.vxMetersPerSecond;
+    double deltaVy = inputSpeeds.vyMetersPerSecond - previousSpeeds.vyMetersPerSecond;
     double unconstrainedLinearAcceleration =
-        (currentLinearAcceleration - previousLinearAcceleration)
-            / timeBetweenPreviousAndInputSpeeds;
-    double preserveTheta = Math.atan(inputSpeeds.vyMetersPerSecond / inputSpeeds.vxMetersPerSecond);
+        Math.sqrt(deltaVx * deltaVx + deltaVy * deltaVy) / timeBetweenPreviousAndInputSpeeds;
+
+    double constrainedLinearAcceleration =
+        Math.min(unconstrainedLinearAcceleration, options.maxLinearAcceleration());
+
     if (unconstrainedLinearAcceleration > options.maxLinearAcceleration()) {
-      double finalAcceleration =
-          previousLinearAcceleration
-              + options.maxLinearAcceleration() * timeBetweenPreviousAndInputSpeeds;
-      double constrainedVx = finalAcceleration * Math.cos(preserveTheta);
-      double constrainedVy = finalAcceleration * Math.sin(preserveTheta);
+      double constrainedVx =
+          previousSpeeds.vxMetersPerSecond
+              + (deltaVx / unconstrainedLinearAcceleration) * constrainedLinearAcceleration;
+      double constrainedVy =
+          previousSpeeds.vyMetersPerSecond
+              + (deltaVy / unconstrainedLinearAcceleration) * constrainedLinearAcceleration;
 
       return new ChassisSpeeds(constrainedVx, constrainedVy, inputSpeeds.omegaRadiansPerSecond);
     }
