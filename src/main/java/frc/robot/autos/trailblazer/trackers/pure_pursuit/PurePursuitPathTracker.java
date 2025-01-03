@@ -3,6 +3,7 @@ package frc.robot.autos.trailblazer.trackers.pure_pursuit;
 import java.util.List;
 
 import dev.doglog.DogLog;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -15,6 +16,7 @@ public class PurePursuitPathTracker implements PathTracker {
   private static final boolean USE_DYNAMIC_LOOKAHEAD = true;
   private static final double NON_DYNAMIC_LOOKAHEAD_DISTANCE = 1.5;
   private static final double AT_END_OF_SEGMENT_DISTANCE_THRESHOLD = 0.1;
+  private static final double AT_END_OF_SEGMENT_ROTATION_THRESHOLD = 1;
   private static final double DYNAMIC_LOOKAHEAD_TRANSITION_TIME = 0.0;
   private static final double DYNAMIC_LOOKAHEAD_SCALE = 0.5;
   private static final double DYNAMIC_LOOKAHEAD_MAX = 3.0;
@@ -137,10 +139,10 @@ public class PurePursuitPathTracker implements PathTracker {
     if (points.isEmpty()) {
       return true;
     }
-    if (currentRobotPose
+    if ((currentRobotPose
             .getTranslation()
             .getDistance(points.get(points.size() - 1).poseSupplier.get().getTranslation())
-        < AT_END_OF_SEGMENT_DISTANCE_THRESHOLD) {
+        < AT_END_OF_SEGMENT_DISTANCE_THRESHOLD) && MathUtil.isNear(points.get(points.size()-1).poseSupplier.get().getRotation().getDegrees(), currentRobotPose.getRotation().getDegrees(), AT_END_OF_SEGMENT_ROTATION_THRESHOLD)) {
       return true;
     }
     return false;
