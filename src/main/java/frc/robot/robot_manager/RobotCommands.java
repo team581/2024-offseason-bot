@@ -1,16 +1,23 @@
 package frc.robot.robot_manager;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.autos.trailblazer.AutoPoint;
+import frc.robot.autos.trailblazer.AutoSegment;
+import frc.robot.autos.trailblazer.Trailblazer;
 import java.util.List;
 
 public class RobotCommands {
   private final RobotManager robot;
   private final Subsystem[] requirements;
+  private final Trailblazer trailblazer;
 
-  public RobotCommands(RobotManager robot) {
+  public RobotCommands(RobotManager robot, Trailblazer trailblazer) {
     this.robot = robot;
+    this.trailblazer = trailblazer;
     var requirementsList = List.of(robot.arm, robot.intake, robot.queuer, robot.shooter);
     requirements = requirementsList.toArray(Subsystem[]::new);
   }
@@ -117,5 +124,22 @@ public class RobotCommands {
   public Command unjamCommand() {
     return Commands.runOnce(robot::unjamRequest, requirements)
         .andThen(robot.waitForState(RobotState.IDLE_NO_GP));
+  }
+
+  public Command redAutoIntake() {
+    return Commands.sequence(
+        trailblazer.followSegment(
+            new AutoSegment(
+                new AutoPoint(new Pose2d(15.14, 6.02, Rotation2d.fromDegrees(49.1))),
+                new AutoPoint(new Pose2d(15.629, 6.610, Rotation2d.fromDegrees(49.1))),
+                new AutoPoint(new Pose2d(16.079, 7.219, Rotation2d.fromDegrees(51.7))))),
+        Commands.print("Raise elevator, intake coral --> finished"),
+        trailblazer.followSegment(
+            new AutoSegment(
+                new AutoPoint(new Pose2d(15.14, 6.801, Rotation2d.fromDegrees(51.7))))));
+  }
+
+  public Command blueAutoIntake() {
+    return Commands.sequence(null);
   }
 }
