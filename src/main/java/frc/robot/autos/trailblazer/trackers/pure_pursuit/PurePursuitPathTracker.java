@@ -1,5 +1,7 @@
 package frc.robot.autos.trailblazer.trackers.pure_pursuit;
 
+import java.util.List;
+
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -8,7 +10,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.autos.trailblazer.AutoPoint;
 import frc.robot.autos.trailblazer.trackers.PathTracker;
-import java.util.List;
 
 // TODO: Implement https://github.com/team581/2024-offseason-bot/issues/95
 public class PurePursuitPathTracker implements PathTracker {
@@ -16,9 +17,9 @@ public class PurePursuitPathTracker implements PathTracker {
   private static final double NON_DYNAMIC_LOOKAHEAD_DISTANCE = 1.5;
   private static final double AT_END_OF_SEGMENT_DISTANCE_THRESHOLD = 0.1;
   private static final double AT_END_OF_SEGMENT_ROTATION_THRESHOLD = 2;
-  private static final double DYNAMIC_LOOKAHEAD_TRANSITION_TIME = 0.0;
+  private static final double DYNAMIC_LOOKAHEAD_TRANSITION_TIME = 0.5 ;
   private static final double DYNAMIC_LOOKAHEAD_SCALE = 0.5;
-  private static final double DYNAMIC_LOOKAHEAD_MAX = 3.0;
+  private static final double DYNAMIC_LOOKAHEAD_MAX = 2.0;
   private double lookaheadDistance = 0.0;
   private double lastRequestedLookaheadDistance = Double.MAX_VALUE;
   private double transitionStartTime = 0.0;
@@ -76,10 +77,9 @@ public class PurePursuitPathTracker implements PathTracker {
         getPerpendicularPoint(lastTargetWaypoint, currentTargetWaypoint, currentRobotPose);
 
     updateLookahead();
-
     var lookaheadPoint =
         getLookaheadPoint(
-            lastTargetWaypoint, currentTargetWaypoint, perpendicularPoint, lookaheadDistance);
+            lastTargetWaypoint, currentTargetWaypoint, perpendicularPoint, lookaheadDistance-currentRobotPose.getTranslation().getDistance(perpendicularPoint.getTranslation()));
     var lookaheadOutside =
         !((lookaheadPoint.getX() - lastTargetWaypoint.getX())
                     * (lookaheadPoint.getX() - currentTargetWaypoint.getX())
