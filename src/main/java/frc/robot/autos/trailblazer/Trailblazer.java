@@ -25,7 +25,7 @@ public class Trailblazer {
   private static AutoConstraintOptions resolveConstraints(
       AutoPoint point,
       AutoConstraintOptions segmentConstraints,
-     SegmentMotionProfile motionProfile,
+      SegmentMotionProfile motionProfile,
       Pose2d robotPose) {
     var constraints = point.constraints.orElse(segmentConstraints);
     return constraints;
@@ -78,15 +78,16 @@ public class Trailblazer {
                       var currentAutoPoint = segment.points.get(currentAutoPointIndex);
 
                       if (lastMotionProfileIndex != currentAutoPointIndex) {
-                        var currentAutoPointConstraints = currentAutoPoint.constraints.orElse(segment.defaultConstraints);
+                        var currentAutoPointConstraints =
+                            currentAutoPoint.constraints.orElse(segment.defaultConstraints);
                         currentEndVelocity = currentAutoPointConstraints.maxLinearVelocity();
-                        currentMaxAcceleration = currentAutoPointConstraints.maxLinearAcceleration();
+                        currentMaxAcceleration =
+                            currentAutoPointConstraints.maxLinearAcceleration();
                         lastMotionProfileIndex = currentAutoPointIndex;
                       }
 
                       var constrainedVelocityGoal =
-                          getSwerveSetpoint(
-                              currentAutoPoint, segment.defaultConstraints);
+                          getSwerveSetpoint(currentAutoPoint, segment.defaultConstraints);
                       swerve.setFieldRelativeAutoSpeeds(constrainedVelocityGoal);
 
                       DogLog.log("Trailblazer/Tracker/CurrentPointIndex", currentAutoPointIndex);
@@ -124,8 +125,7 @@ public class Trailblazer {
   }
 
   private ChassisSpeeds getSwerveSetpoint(
-      AutoPoint point,
-      AutoConstraintOptions segmentConstraints) {
+      AutoPoint point, AutoConstraintOptions segmentConstraints) {
     double currentTimestamp = Timer.getFPGATimestamp();
     if (previousTimestamp == 0.0) {
       previousTimestamp = currentTimestamp - 0.02;
@@ -133,11 +133,15 @@ public class Trailblazer {
     var robotPose = localization.getPose();
     var originalTargetPose = pathTracker.getTargetPose();
     var originalVelocityGoal = pathFollower.calculateSpeeds(robotPose, originalTargetPose);
-    var currentVelocity = Math.hypot(originalVelocityGoal.vxMetersPerSecond, originalVelocityGoal.vyMetersPerSecond);
-    motionProfile = new SegmentMotionProfile(point.poseSupplier.get(), currentEndVelocity,
-        currentVelocity, currentMaxAcceleration);
+    var currentVelocity =
+        Math.hypot(originalVelocityGoal.vxMetersPerSecond, originalVelocityGoal.vyMetersPerSecond);
+    motionProfile =
+        new SegmentMotionProfile(
+            point.poseSupplier.get(), currentEndVelocity, currentVelocity, currentMaxAcceleration);
     var usedConstraints = resolveConstraints(point, segmentConstraints, motionProfile, robotPose);
-    DogLog.log("Trailblazer/Constraints/VelocityCalculation/CalculatedVelocity", usedConstraints.maxLinearVelocity());
+    DogLog.log(
+        "Trailblazer/Constraints/VelocityCalculation/CalculatedVelocity",
+        usedConstraints.maxLinearVelocity());
     DogLog.log("Trailblazer/Tracker/RawOutput", originalTargetPose);
 
     DogLog.log("Trailblazer/Follower/RawOutput", originalVelocityGoal);

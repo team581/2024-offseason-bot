@@ -6,8 +6,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
 public class AutoConstraintCalculator {
 
-  public static AutoConstraintOptions generateLinearVelocityConstraint(Pose2d robotPose,
-      SegmentMotionProfile motionProfile, AutoConstraintOptions constraints) {
+  public static AutoConstraintOptions generateLinearVelocityConstraint(
+      Pose2d robotPose, SegmentMotionProfile motionProfile, AutoConstraintOptions constraints) {
     var endPoint = motionProfile.endPose();
     var endVelocity = motionProfile.endVelocity();
     var currentVelocity = motionProfile.currentVelocity();
@@ -16,21 +16,22 @@ public class AutoConstraintCalculator {
     DogLog.log("Trailblazer/Constraints/VelocityCalculation/CurrentVelocity", currentVelocity);
     DogLog.log("Trailblazer/Constraints/VelocityCalculation/MaxAccelaration", maxAcceleration);
 
-
-        var distanceToEnd = robotPose.getTranslation().getDistance(endPoint.getTranslation());
-    var currentAcceleration = ((endVelocity*endVelocity)- (currentVelocity*currentVelocity))/(2*distanceToEnd);
-    if (Math.abs(currentAcceleration)>maxAcceleration) {
+    var distanceToEnd = robotPose.getTranslation().getDistance(endPoint.getTranslation());
+    var currentAcceleration =
+        ((endVelocity * endVelocity) - (currentVelocity * currentVelocity)) / (2 * distanceToEnd);
+    if (Math.abs(currentAcceleration) > maxAcceleration) {
       var goalAcceleration = Math.copySign(maxAcceleration, currentAcceleration);
-      var newVelocity = Math.sqrt((endVelocity*endVelocity) - (goalAcceleration * (2*distanceToEnd)));
+      var newVelocity =
+          Math.sqrt((endVelocity * endVelocity) - (goalAcceleration * (2 * distanceToEnd)));
 
       return new AutoConstraintOptions(
-        constraints.collisionAvoidance(),
-        newVelocity,
-        constraints.maxAngularVelocity(),
-        constraints.maxLinearAcceleration(),
-        constraints.maxAngularAcceleration());
-      }
-      return constraints;
+          constraints.collisionAvoidance(),
+          newVelocity,
+          constraints.maxAngularVelocity(),
+          constraints.maxLinearAcceleration(),
+          constraints.maxAngularAcceleration());
+    }
+    return constraints;
   }
 
   public static ChassisSpeeds constrainVelocityGoal(
