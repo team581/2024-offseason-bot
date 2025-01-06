@@ -32,13 +32,13 @@ public class TestAuto extends BaseAuto {
         trailblazer.followSegment(
             new AutoSegment(
                 new AutoPoint(
-                    new Pose2d(10, 7, Rotation2d.fromDegrees(0)),
-                    new AutoConstraintOptions(false, 100, 100, 7, 500)),
+                    new Pose2d(12, 7, Rotation2d.fromDegrees(0)),
+                    new AutoConstraintOptions(false, 2, 100, 11.5, 500)),
                 new AutoPoint(
-                    new Pose2d(10, 5, Rotation2d.fromDegrees(0)),
-                    new AutoConstraintOptions(false, 500, 500, 7, 500)),
+                    new Pose2d(13, 6.5, Rotation2d.fromDegrees(0)),
+                    new AutoConstraintOptions(false, 2, 500, 11.5, 500)),
                 new AutoPoint(
-                    new Pose2d(14, 5, Rotation2d.fromDegrees(0)),
-                    new AutoConstraintOptions(false, 500, 500, 7, 500)))));
+                    new Pose2d(15, 6.5, Rotation2d.fromDegrees(0)),
+                    new AutoConstraintOptions(false, 2, 500, 11.5, 500)))));
   }
 }
