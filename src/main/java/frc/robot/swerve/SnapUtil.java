@@ -20,6 +20,62 @@ public class SnapUtil {
     return FmsSubsystem.isRedAlliance() ? 0 : (180.0);
   }
 
+  public static double getReef(int reefNum) {
+    switch (reefNum) {
+      case 1 -> {
+        return getReefAngle1();
+      }
+      case 2 -> {
+        return getReefAngle2();
+      }
+      case 3 -> {
+        return getReefAngle3();
+      }
+      case 4 -> {
+        return getReefAngle4();
+      }
+      case 5 -> {
+        return getReefAngle5();
+      }
+      case 6 -> {
+        return getReefAngle6();
+      }
+      default -> {
+        return 0.0;
+      }
+    }
+  }
+
+  public static double getReefAngle1() {
+    // return whatever the amp angle is
+    return FmsSubsystem.isRedAlliance() ? 0.0 : (180.0);
+  }
+
+  public static double getReefAngle2() {
+    // return whatever the amp angle is
+    return FmsSubsystem.isRedAlliance() ? 60.0 : (240.0);
+  }
+
+  public static double getReefAngle3() {
+    // return whatever the amp angle is
+    return FmsSubsystem.isRedAlliance() ? 120.0 : (300.0);
+  }
+
+  public static double getReefAngle4() {
+    // return whatever the amp angle is
+    return FmsSubsystem.isRedAlliance() ? 180.0 : (0.0);
+  }
+
+  public static double getReefAngle5() {
+    // return whatever the amp angle is
+    return FmsSubsystem.isRedAlliance() ? 240.0 : (60.0);
+  }
+
+  public static double getReefAngle6() {
+    // return whatever the amp angle is
+    return FmsSubsystem.isRedAlliance() ? 300.0 : (120.0);
+  }
+
   private static final List<Double> RED_STAGE_ANGLES = List.of(0.0, 120.0, -120.0);
   private static final List<Double> BLUE_STAGE_ANGLES =
       List.of(0.0 + 180.0, 120.0 - 180.0, -120 + 180.0);
