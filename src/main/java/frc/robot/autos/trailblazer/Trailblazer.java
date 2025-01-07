@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.autos.trailblazer.constraints.AutoConstraintCalculator;
 import frc.robot.autos.trailblazer.constraints.AutoConstraintOptions;
-import frc.robot.autos.trailblazer.constraints.SegmentMotionProfile;
 import frc.robot.autos.trailblazer.followers.PathFollower;
 import frc.robot.autos.trailblazer.followers.PidPathFollower;
 import frc.robot.autos.trailblazer.trackers.PathTracker;
@@ -23,14 +22,9 @@ public class Trailblazer {
    * while following that point.
    */
   private static AutoConstraintOptions resolveConstraints(
-      AutoPoint point,
-      AutoConstraintOptions segmentConstraints,
-      SegmentMotionProfile motionProfile,
-      Pose2d robotPose) {
+      AutoPoint point, AutoConstraintOptions segmentConstraints) {
     var constraints = point.constraints.orElse(segmentConstraints);
     return constraints;
-    // return AutoConstraintCalculator.generateLinearVelocityConstraint(
-    //     robotPose,motionProfile, constraints);
   }
 
   private final SwerveSubsystem swerve;
@@ -42,10 +36,6 @@ public class Trailblazer {
   private int previousAutoPointIndex = -1;
   private ChassisSpeeds previousSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
   private double previousTimestamp = 0.0;
-  private int lastMotionProfileIndex = -1;
-  private SegmentMotionProfile motionProfile = new SegmentMotionProfile(new Pose2d(), 0, 0, 0);
-  private double currentEndVelocity = 0.0;
-  private double currentMaxAcceleration = 0.0;
 
   public Trailblazer(SwerveSubsystem swerve, LocalizationSubsystem localization) {
     this.swerve = swerve;
@@ -62,7 +52,6 @@ public class Trailblazer {
                 () -> {
                   pathTracker.resetAndSetPoints(segment.points);
                   previousAutoPointIndex = -1;
-                  lastMotionProfileIndex = -1;
                   DogLog.log(
                       "Trailblazer/CurrentSegment/InitialPoints",
                       segment.points.stream()
@@ -76,15 +65,6 @@ public class Trailblazer {
                           localization.getPose(), swerve.getFieldRelativeSpeeds());
                       var currentAutoPointIndex = pathTracker.getCurrentPointIndex();
                       var currentAutoPoint = segment.points.get(currentAutoPointIndex);
-
-                      if (lastMotionProfileIndex != currentAutoPointIndex) {
-                        var currentAutoPointConstraints =
-                            currentAutoPoint.constraints.orElse(segment.defaultConstraints);
-                        currentEndVelocity = currentAutoPointConstraints.maxLinearVelocity();
-                        currentMaxAcceleration =
-                            currentAutoPointConstraints.maxLinearAcceleration();
-                        lastMotionProfileIndex = currentAutoPointIndex;
-                      }
 
                       var constrainedVelocityGoal =
                           getSwerveSetpoint(currentAutoPoint, segment.defaultConstraints);
@@ -135,10 +115,8 @@ public class Trailblazer {
     var originalVelocityGoal = pathFollower.calculateSpeeds(robotPose, originalTargetPose);
     var currentVelocity =
         Math.hypot(originalVelocityGoal.vxMetersPerSecond, originalVelocityGoal.vyMetersPerSecond);
-    motionProfile =
-        new SegmentMotionProfile(
-            point.poseSupplier.get(), currentEndVelocity, currentVelocity, currentMaxAcceleration);
-    var usedConstraints = resolveConstraints(point, segmentConstraints, motionProfile, robotPose);
+
+    var usedConstraints = resolveConstraints(point, segmentConstraints);
     DogLog.log(
         "Trailblazer/Constraints/VelocityCalculation/CalculatedVelocity",
         usedConstraints.maxLinearVelocity());
