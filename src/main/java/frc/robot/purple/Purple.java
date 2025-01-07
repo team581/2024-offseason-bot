@@ -8,7 +8,7 @@ public class Purple {
 
   public static ChassisSpeeds getPurpleAdjustmentRobotRelative() {
     var tx = LimelightHelpers.getTX("asdasd");
-    ;
+    
 
     if (tx == 0) {
       return new ChassisSpeeds();
