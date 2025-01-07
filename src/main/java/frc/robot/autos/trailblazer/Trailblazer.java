@@ -11,8 +11,8 @@ import frc.robot.autos.trailblazer.constraints.AutoConstraintCalculator;
 import frc.robot.autos.trailblazer.constraints.AutoConstraintOptions;
 import frc.robot.autos.trailblazer.followers.PathFollower;
 import frc.robot.autos.trailblazer.followers.PidPathFollower;
-import frc.robot.autos.trailblazer.trackers.HeuristicPathTracker;
 import frc.robot.autos.trailblazer.trackers.PathTracker;
+import frc.robot.autos.trailblazer.trackers.pure_pursuit.PurePursuitPathTracker;
 import frc.robot.localization.LocalizationSubsystem;
 import frc.robot.swerve.SwerveSubsystem;
 
@@ -23,15 +23,17 @@ public class Trailblazer {
    */
   private static AutoConstraintOptions resolveConstraints(
       AutoPoint point, AutoConstraintOptions segmentConstraints) {
-    return point.constraints.orElse(segmentConstraints);
+    var constraints = point.constraints.orElse(segmentConstraints);
+    return constraints;
   }
 
   private final SwerveSubsystem swerve;
   private final LocalizationSubsystem localization;
-  private final PathTracker pathTracker = new HeuristicPathTracker();
+  private final PathTracker pathTracker = new PurePursuitPathTracker();
   private final PathFollower pathFollower =
       new PidPathFollower(
           new PIDController(4, 0, 0), new PIDController(4, 0, 0), new PIDController(8.0, 0, 0));
+
   private int previousAutoPointIndex = -1;
   private ChassisSpeeds previousSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
   private double previousTimestamp = 0.0;
@@ -62,7 +64,6 @@ public class Trailblazer {
                     () -> {
                       pathTracker.updateRobotState(
                           localization.getPose(), swerve.getFieldRelativeSpeeds());
-
                       var currentAutoPointIndex = pathTracker.getCurrentPointIndex();
                       var currentAutoPoint = segment.points.get(currentAutoPointIndex);
 
@@ -110,13 +111,18 @@ public class Trailblazer {
     if (previousTimestamp == 0.0) {
       previousTimestamp = currentTimestamp - 0.02;
     }
-    var usedConstraints = resolveConstraints(point, segmentConstraints);
-
+    var robotPose = localization.getPose();
     var originalTargetPose = pathTracker.getTargetPose();
+    var originalVelocityGoal = pathFollower.calculateSpeeds(robotPose, originalTargetPose);
+    var currentVelocity =
+        Math.hypot(originalVelocityGoal.vxMetersPerSecond, originalVelocityGoal.vyMetersPerSecond);
+
+    var usedConstraints = resolveConstraints(point, segmentConstraints);
+    DogLog.log(
+        "Trailblazer/Constraints/VelocityCalculation/CalculatedVelocity",
+        usedConstraints.maxLinearVelocity());
     DogLog.log("Trailblazer/Tracker/RawOutput", originalTargetPose);
 
-    var originalVelocityGoal =
-        pathFollower.calculateSpeeds(localization.getPose(), originalTargetPose);
     DogLog.log("Trailblazer/Follower/RawOutput", originalVelocityGoal);
     var constrainedVelocityGoal =
         AutoConstraintCalculator.constrainVelocityGoal(

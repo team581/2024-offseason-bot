@@ -71,6 +71,7 @@ public class AutoConstraintCalculator {
       double timeBetweenPreviousAndInputSpeeds,
       AutoConstraintOptions options) {
 
+
     double currentLinearAcceleration =
         Math.hypot(inputSpeeds.vxMetersPerSecond, inputSpeeds.vyMetersPerSecond);
     double previousLinearAcceleration =
@@ -85,7 +86,6 @@ public class AutoConstraintCalculator {
               + options.maxLinearAcceleration() * timeBetweenPreviousAndInputSpeeds;
       double constrainedVx = finalAcceleration * Math.cos(preserveTheta);
       double constrainedVy = finalAcceleration * Math.sin(preserveTheta);
-
       return new ChassisSpeeds(constrainedVx, constrainedVy, inputSpeeds.omegaRadiansPerSecond);
     }
     return inputSpeeds;
