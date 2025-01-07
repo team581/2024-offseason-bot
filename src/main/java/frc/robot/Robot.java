@@ -40,8 +40,10 @@ public class Robot extends TimedRobot {
   private final ArmSubsystem arm = new ArmSubsystem(hardware.armLeft, hardware.armRight);
   private final IntakeSubsystem intake =
       new IntakeSubsystem(hardware.intakeMain, hardware.intakeCenteringMotor);
-  private final SwerveSubsystem swerve = new SwerveSubsystem();
+  private final SwerveSubsystem swerve = new SwerveSubsystem(queuer);
+
   private final ImuSubsystem imu = new ImuSubsystem(swerve.drivetrainPigeon);
+
   private final Limelight leftLimelight =
       new Limelight("left", RobotConfig.get().vision().interpolatedVisionSet().leftSet);
   private final Limelight rightLimelight =
