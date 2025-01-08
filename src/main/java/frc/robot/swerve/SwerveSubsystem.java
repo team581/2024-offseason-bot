@@ -13,6 +13,7 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.signals.InvertedValue;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -226,10 +227,16 @@ public class SwerveSubsystem extends StateMachine<SwerveState> {
       leftY *= -1.0;
     }
 
+    DogLog.log("Swerve/LeftX", leftX);
+    DogLog.log("Swerve/LeftY", leftY);
+    Translation2d mappedpose = ControllerHelpers.fromCircularDiscCoordinates(leftX, leftY);
+    double mappedX = mappedpose.getX();
+    double mappedY = mappedpose.getY();
+
     teleopSpeeds =
         new ChassisSpeeds(
-            -1.0 * leftY * MaxSpeed,
-            leftX * MaxSpeed,
+            -1.0 * mappedY * MaxSpeed,
+            mappedX * MaxSpeed,
             rightX * TELEOP_MAX_ANGULAR_RATE.getRadians());
 
     sendSwerveRequest();
