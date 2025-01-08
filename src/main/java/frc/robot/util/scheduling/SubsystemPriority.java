@@ -17,6 +17,7 @@ public enum SubsystemPriority {
   ARM(10),
   SHOOTER(10),
   QUEUER(10),
+  PROTOTYPE(10),
   INTAKE(10),
 
   // 0-9 is for manager subsystems

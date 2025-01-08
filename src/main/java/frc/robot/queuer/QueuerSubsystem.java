@@ -43,7 +43,7 @@ public class QueuerSubsystem extends StateMachine<QueuerState> {
 
   @Override
   protected void collectInputs() {
-    sensorHasNote = sensor.get();
+    sensorHasNote = !sensor.get();
     debouncedSensorHasNote = debouncer.calculate(sensorHasNote);
     motorPosition = motor.getRotorPosition().getValueAsDouble();
   }

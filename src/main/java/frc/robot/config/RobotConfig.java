@@ -17,7 +17,8 @@ public record RobotConfig(
     IntakeConfig intake,
     ArmConfig arm,
     VisionConfig vision,
-    LightsConfig lights) {
+    LightsConfig lights,
+    PrototypeConfig prototype) {
   public record SwerveConfig(
       PhoenixPIDController snapController,
       boolean invertRotation,
@@ -59,6 +60,13 @@ public record RobotConfig(
       Consumer<InterpolatingDoubleTreeMap> speakerDistanceToAngle,
       double minAngle,
       double maxAngle) {}
+
+  public record PrototypeConfig(
+    int leftMotorID,
+    int rightMotorID,
+    TalonFXConfiguration leftMotorConfig,
+    TalonFXConfiguration rightMotorConfig
+  ) {}
 
   public record VisionConfig(
       int translationHistoryArraySize,

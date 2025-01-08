@@ -19,6 +19,7 @@ import frc.robot.intake.IntakeSubsystem;
 import frc.robot.lights.LightsSubsystem;
 import frc.robot.localization.LocalizationSubsystem;
 import frc.robot.queuer.QueuerSubsystem;
+import frc.robot.reefscape_intake.PrototypeIntakeSubsystem;
 import frc.robot.robot_manager.RobotCommands;
 import frc.robot.robot_manager.RobotManager;
 import frc.robot.shooter.ShooterSubsystem;
@@ -49,8 +50,9 @@ public class Robot extends TimedRobot {
 
   private final VisionSubsystem vision = new VisionSubsystem(imu, leftLimelight, rightLimelight);
   private final LocalizationSubsystem localization = new LocalizationSubsystem(imu, vision, swerve);
+  private final PrototypeIntakeSubsystem prototype = new PrototypeIntakeSubsystem(hardware.prototypeLeft, hardware.prototypeRight);
   private final RobotManager robotManager =
-      new RobotManager(arm, shooter, localization, vision, imu, intake, queuer, swerve);
+      new RobotManager(arm, shooter, localization, vision, imu, intake, queuer, swerve, prototype);
   private final Trailblazer trailblazer = new Trailblazer(swerve, localization);
   private final RobotCommands robotCommands = new RobotCommands(robotManager, trailblazer);
   private final Autos autos = new Autos(robotManager, trailblazer);

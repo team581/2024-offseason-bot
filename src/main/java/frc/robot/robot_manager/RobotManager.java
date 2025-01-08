@@ -1,6 +1,8 @@
 package frc.robot.robot_manager;
 
 import dev.doglog.DogLog;
+import frc.robot.reefscape_intake.PrototypeIntakeSubsystem;
+import frc.robot.reefscape_intake.PrototypeState;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
@@ -34,6 +36,7 @@ public class RobotManager extends StateMachine<RobotState> {
   public final IntakeSubsystem intake;
   public final QueuerSubsystem queuer;
   public final SwerveSubsystem swerve;
+  public final PrototypeIntakeSubsystem prototype;
   private final Timer shotTimer = new Timer();
 
   private DistanceAngle fieldRelativeDistanceAngleToSpeaker = new DistanceAngle(0, 0, false);
@@ -51,7 +54,8 @@ public class RobotManager extends StateMachine<RobotState> {
       ImuSubsystem imu,
       IntakeSubsystem intake,
       QueuerSubsystem queuer,
-      SwerveSubsystem swerve) {
+      SwerveSubsystem swerve,
+      PrototypeIntakeSubsystem prototype) {
     super(SubsystemPriority.ROBOT_MANAGER, RobotState.IDLE_NO_GP);
     this.arm = arm;
     this.shooter = shooter;
@@ -61,6 +65,7 @@ public class RobotManager extends StateMachine<RobotState> {
     this.intake = intake;
     this.queuer = queuer;
     this.swerve = swerve;
+    this.prototype = prototype;
   }
 
   @Override
@@ -279,6 +284,7 @@ public class RobotManager extends StateMachine<RobotState> {
         arm.setState(ArmState.HOLD_FOR_INTAKE);
         shooter.setState(ShooterState.IDLE_STOPPED);
         intake.setState(IntakeState.INTAKING);
+        prototype.setState(PrototypeState.INTAKE);
         queuer.setState(QueuerState.INTAKING);
         swerve.setSnapsEnabled(false);
         swerve.setSnapToAngle(0);
@@ -334,6 +340,7 @@ public class RobotManager extends StateMachine<RobotState> {
         arm.setState(ArmState.IDLE);
         shooter.setState(ShooterState.IDLE_STOPPED);
         intake.setState(IntakeState.OUTTAKING);
+        prototype.setState(PrototypeState.OUTTAKE);
         queuer.setState(QueuerState.OUTTAKING);
         swerve.setSnapsEnabled(false);
         swerve.setSnapToAngle(0);
@@ -358,6 +365,7 @@ public class RobotManager extends StateMachine<RobotState> {
         arm.setState(ArmState.IDLE);
         shooter.setState(ShooterState.IDLE_STOPPED);
         intake.setState(IntakeState.IDLE);
+        prototype.setState(PrototypeState.IDLE);
         queuer.setState(QueuerState.IDLE);
         swerve.setSnapsEnabled(false);
         swerve.setSnapToAngle(0);
@@ -366,6 +374,7 @@ public class RobotManager extends StateMachine<RobotState> {
         arm.setState(ArmState.IDLE);
         shooter.setState(ShooterState.IDLE_WARMUP);
         intake.setState(IntakeState.IDLE);
+        prototype.setState(PrototypeState.IDLE);
         queuer.setState(QueuerState.IDLE);
         swerve.setSnapsEnabled(false);
         swerve.setSnapToAngle(0);

@@ -21,6 +21,7 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.config.RobotConfig.ArmConfig;
 import frc.robot.config.RobotConfig.IntakeConfig;
 import frc.robot.config.RobotConfig.LightsConfig;
+import frc.robot.config.RobotConfig.PrototypeConfig;
 import frc.robot.config.RobotConfig.QueuerConfig;
 import frc.robot.config.RobotConfig.ShooterConfig;
 import frc.robot.config.RobotConfig.SwerveConfig;
@@ -229,7 +230,20 @@ class CompConfig {
                   Units.inchesToMeters(-57.128),
                   Units.inchesToMeters(-49.00),
                   new Rotation3d(0.0, 0.0, 0.0))),
-          new LightsConfig("rio", 3));
+          new LightsConfig("rio", 3),
+          new PrototypeConfig(
+            30,
+           31,
+            new TalonFXConfiguration()
+              .withCurrentLimits(
+                new CurrentLimitsConfigs()
+                    .withStatorCurrentLimit(20)
+                    .withSupplyCurrentLimit(25)),
+             new TalonFXConfiguration()
+              .withCurrentLimits(
+                new CurrentLimitsConfigs()
+                    .withStatorCurrentLimit(20)
+                    .withSupplyCurrentLimit(25))));
 
   private CompConfig() {}
 }
